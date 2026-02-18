@@ -27,10 +27,7 @@ export function GenerateApp({
 }: GenerateAppProps) {
   const [status, setStatus] = useState<GenerateStatus>(() => {
     if (initialType) {
-      // If type is summaries or all, need model input (unless model provided)
-      if ((initialType === 'summaries' || initialType === 'all') && !initialModel) {
-        return 'model-input';
-      }
+      if ((initialType === 'summaries' || initialType === 'all') && !initialModel) return 'model-input';
       return 'checking';
     }
     return 'selecting';
@@ -51,43 +48,18 @@ export function GenerateApp({
 
   const needsLlm = selectedType === 'summaries' || selectedType === 'all';
 
-  const handleTypeSelect = (value: string) => {
-    if (value === 'cancel') {
-      onComplete?.();
-      return;
-    }
-    setSelectedType(value as GenerateSelection);
-    // If summaries or all, need model input
-    if (value === 'summaries' || value === 'all') {
-      setStatus('model-input');
-    } else {
-      setStatus('checking');
-    }
-  };
-
-  const handleModelSubmit = (value: string) => {
-    setModel(value || DEFAULT_LLM_MODEL);
-    setStatus('checking');
-  };
-
   const executeGenerate = useCallback(async () => {
     try {
       setStatus('generating');
 
       if (selectedType === 'all') {
-        // Run all generators with progress tracking
         const allResults = await runGenerateAll({
           model,
           force,
           onProgress: (label) => setCurrentTask(label),
         });
-
-        // Check if cancelled during execution
         if (isUnmountedRef.current) return;
-
         setResults(allResults);
-
-        // Check if any failed
         const failed = [...allResults.entries()].find(([, r]) => !r.success);
         if (failed) {
           setError(`Failed to generate ${GENERATE_ITEMS.find((i) => i.id === failed[0])?.label}`);
@@ -96,17 +68,11 @@ export function GenerateApp({
           setStatus('done');
         }
       } else if (selectedType && selectedType !== 'cancel') {
-        // Run single generator
         const item = GENERATE_ITEMS.find((i) => i.id === selectedType);
         setCurrentTask(item?.label || '');
-
         const result = await runGenerate(selectedType, { model, force });
-
-        // Check if cancelled during execution
         if (isUnmountedRef.current) return;
-
         setResults(new Map([[selectedType, result]]));
-
         if (!result.success) {
           setError(`Generation failed (exit code: ${result.code})`);
           setStatus('error');
@@ -122,51 +88,38 @@ export function GenerateApp({
       if (isUnmountedRef.current) return;
       setError(err instanceof Error ? err.message : String(err));
       setStatus('error');
-      if (!showReturnHint) {
-        retimer(setTimeout(() => onComplete?.(), AUTO_EXIT_DELAY));
-      }
+      if (!showReturnHint) retimer(setTimeout(() => onComplete?.(), AUTO_EXIT_DELAY));
     }
   }, [selectedType, model, force, showReturnHint, onComplete, retimer]);
 
-  // Pre-flight check
   useEffect(() => {
     if (status !== 'checking') return;
-
     let cancelled = false;
 
     const check = async () => {
-      if (needsLlm) {
-        const llmAvailable = await checkLlmServer();
-        if (cancelled) return;
+      const available = await checkLlmServer(model);
+      if (cancelled) return;
 
-        if (!llmAvailable) {
-          setError('LLM server is not running. Please start LM Studio, Ollama, or another LLM service first.');
-          setStatus('error');
-          if (!showReturnHint) {
-            retimer(setTimeout(() => onComplete?.(), AUTO_EXIT_DELAY));
-          }
-          return;
-        }
-      }
-      if (!cancelled) {
+      if (needsLlm && !available) {
+        setError('AI Service Unavailable. Please ensure GEMINI_API_KEY is in your .env file.');
+        setStatus('error');
+        if (!showReturnHint) retimer(setTimeout(() => onComplete?.(), AUTO_EXIT_DELAY));
+      } else {
         executeGenerate();
       }
     };
 
     check();
-
     return () => {
       cancelled = true;
     };
-  }, [status, needsLlm, executeGenerate, showReturnHint, onComplete, retimer]);
+  }, [status, model, needsLlm, executeGenerate, showReturnHint, onComplete, retimer]);
 
-  // Listen for key press to return to menu
   usePressAnyKey((status === 'done' || status === 'error') && showReturnHint, () => {
     onComplete?.();
   });
 
   const successCount = [...results.values()].filter((r) => r.success).length;
-  const failedCount = [...results.values()].filter((r) => !r.success).length;
 
   return (
     <Box flexDirection="column">
@@ -175,34 +128,40 @@ export function GenerateApp({
           <Text>Select content to generate:</Text>
           <Select
             options={[
-              ...GENERATE_ITEMS.map((item) => ({
-                label: `${item.label} (${item.description})`,
-                value: item.id,
-              })),
+              ...GENERATE_ITEMS.map((item) => ({ label: `${item.label} (${item.description})`, value: item.id })),
               { label: 'Generate All', value: 'all' },
               { label: 'Back', value: 'cancel' },
             ]}
-            onChange={handleTypeSelect}
+            onChange={(value) => {
+              if (value === 'cancel') onComplete?.();
+              else {
+                setSelectedType(value as GenerateSelection);
+                setStatus(value === 'summaries' || value === 'all' ? 'model-input' : 'checking');
+              }
+            }}
           />
         </Box>
       )}
 
       {status === 'model-input' && (
         <Box flexDirection="column">
-          <Text>Please enter the LLM model name:</Text>
+          <Text>Enter Model Name (e.g., gemini-1.5-flash):</Text>
           <Box marginTop={1}>
             <Text dimColor>{'> '}</Text>
-            <TextInput defaultValue={DEFAULT_LLM_MODEL} onSubmit={handleModelSubmit} />
-          </Box>
-          <Box marginTop={1}>
-            <Text dimColor>(Press Enter to use the default model: {DEFAULT_LLM_MODEL})</Text>
+            <TextInput
+              defaultValue={model}
+              onSubmit={(v) => {
+                setModel(v || DEFAULT_LLM_MODEL);
+                setStatus('checking');
+              }}
+            />
           </Box>
         </Box>
       )}
 
       {status === 'checking' && (
         <Box>
-          <Spinner label={needsLlm ? 'Checking LLM server...' : 'Preparing...'} />
+          <Spinner label={needsLlm ? 'Connecting to Gemini Cloud...' : 'Preparing...'} />
         </Box>
       )}
 
@@ -211,41 +170,25 @@ export function GenerateApp({
           <Box marginBottom={1}>
             <Spinner label={`Generating ${currentTask}...`} />
           </Box>
-          <Text dimColor>Subprocess output will be displayed below:</Text>
+          <Text dimColor>Subprocess output:</Text>
           <Text dimColor>─────────────────────────────────</Text>
         </Box>
       )}
 
       {status === 'done' && (
         <Box flexDirection="column">
-          <Box marginBottom={1}>
-            <Text bold color="green">
-              Generation complete
+          <Text bold color="green">
+            Generation complete
+          </Text>
+          {[...results.entries()].map(([type, result]) => (
+            <Text key={type}>
+              {result.success ? <Text color="green"> ✓ </Text> : <Text color="red"> ✗ </Text>}
+              {GENERATE_ITEMS.find((i) => i.id === type)?.label}
             </Text>
-          </Box>
-          {[...results.entries()].map(([type, result]) => {
-            const item = GENERATE_ITEMS.find((i) => i.id === type);
-            return (
-              <Text key={type}>
-                {result.success ? <Text color="green">{'  '}✓ </Text> : <Text color="red">{'  '}✗ </Text>}
-                <Text>{item?.label}</Text>
-              </Text>
-            );
-          })}
-          <Box marginTop={1}>
-            <Text>
-              Success: <Text color="green">{successCount}</Text>
-              {failedCount > 0 && (
-                <>
-                  {' '}
-                  Failed: <Text color="red">{failedCount}</Text>
-                </>
-              )}
-            </Text>
-          </Box>
+          ))}
           {showReturnHint && (
             <Box marginTop={1}>
-              <Text dimColor>Press any key to return to the main menu...</Text>
+              <Text dimColor>Press any key to return...</Text>
             </Box>
           )}
         </Box>
@@ -257,16 +200,9 @@ export function GenerateApp({
             Generation failed
           </Text>
           <Text color="red">{error}</Text>
-          {needsLlm && error.includes('LLM') && (
-            <Box marginTop={1} flexDirection="column">
-              <Text dimColor>Hint: Retry after starting the LLM service</Text>
-              <Text dimColor>{'  '}• LM Studio: Start the application and load a model</Text>
-              <Text dimColor>{'  '}• Ollama: ollama serve</Text>
-            </Box>
-          )}
           {showReturnHint && (
             <Box marginTop={1}>
-              <Text dimColor>Press any key to return to the main menu...</Text>
+              <Text dimColor>Press any key to return...</Text>
             </Box>
           )}
         </Box>

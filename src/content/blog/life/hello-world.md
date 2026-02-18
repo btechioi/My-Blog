@@ -1,11 +1,9 @@
 ---
-title: Hello World
+title: Hello_World!
 link: hello-world
-catalog: true
-date: 2025-02-18 06:00:00
+date: 2026-02-18 12:31:55
 tags:
   - Essay
-  - Life
 categories:
   - Life
 ---

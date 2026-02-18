@@ -1,19 +1,8 @@
 /**
- * Generate AI summaries for blog posts using xsai SDK
- *
- * This script:
- * 1. Reads all markdown files from src/content/blog/
- * 2. Extracts plain text from body using remark
- * 3. Calls LLM API (OpenAI-compatible) to generate summaries
- * 4. Caches results for incremental updates
- * 5. Outputs summaries.json for page display
- *
- * Usage:
- *   pnpm generate:summaries                    # Use default model
- *   pnpm generate:summaries --model qwen2.5:1.5b
- *   pnpm generate:summaries --force            # Regenerate all
+ * Generate AI summaries for blog posts using Google Gemini
  */
 
+import 'dotenv/config.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -30,11 +19,10 @@ const CACHE_FILE = '.cache/summaries-cache.json';
 const OUTPUT_FILE = 'src/assets/summaries.json';
 const CACHE_VERSION = '1';
 
-// LLM API settings (OpenAI-compatible)
-// Works with: LM Studio, Ollama, OpenAI, etc.
-const API_BASE_URL = 'http://127.0.0.1:1234/v1/';
-const API_KEY = 'lm-studio'; // LM Studio doesn't require a real key
-const DEFAULT_MODEL = 'qwen/qwen3-4b-2507';
+// Gemini API settings via OpenAI-compatible endpoint
+const API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/';
+const API_KEY = process.env.GEMINI_API_KEY || '';
+const DEFAULT_MODEL = 'gemini-1.5-flash';
 
 // --------- Parse CLI Arguments ---------
 function parseArgs(): { model: string; force: boolean } {
@@ -128,6 +116,9 @@ function extractSlug(filePath: string, link?: string): string {
 // --------- LLM API ---------
 
 async function checkApiRunning(): Promise<boolean> {
+  // If we have an API key, we assume the cloud endpoint is up
+  if (API_KEY && API_BASE_URL.includes('googleapis.com')) return true;
+
   try {
     const response = await fetch(`${API_BASE_URL}models`);
     return response.ok;
@@ -137,8 +128,7 @@ async function checkApiRunning(): Promise<boolean> {
 }
 
 async function generateSummary(text: string, model: string): Promise<string> {
-  // Truncate text to avoid token limits
-  const truncatedText = text.slice(0, 6000);
+  const truncatedText = text.slice(0, 8000); // Gemini has a large context, but let's keep it tidy
 
   const { text: summary } = await generateText({
     apiKey: API_KEY,
@@ -148,53 +138,38 @@ async function generateSummary(text: string, model: string): Promise<string> {
       {
         role: 'system',
         content:
-          '你是一个文章总结助手。请用中文，用 2-3 句话简洁地总结文章的核心内容。只输出总结，不要有任何前缀、解释或思考过程。',
+          'You are a professional blog editor. Summarize the following article in English using 2-3 concise sentences. Focus on the core message. Output only the summary without any prefix or commentary.',
       },
       {
         role: 'user',
-        content: `请总结以下文章：\n\n${truncatedText}`,
+        content: `Summarize the following article:\n\n${truncatedText}`,
       },
     ],
     temperature: 0.3,
-    maxTokens: 200,
+    maxTokens: 250,
   });
 
   if (!summary) {
-    throw new Error('No summary received from LLM response');
+    throw new Error('No summary received from Gemini');
   }
   return summary.trim();
 }
 
-// --------- File Processing ---------
+// --------- File Processing (Same as original) ---------
 
 async function processFile(filePath: string): Promise<PostData | null> {
   try {
     const content = await fs.readFile(filePath, 'utf-8');
     const { data: frontmatter, content: body } = matter(content);
-
     if (frontmatter.draft) return null;
-
-    if (!frontmatter.title) {
-      console.log(chalk.yellow(`  Skipping ${filePath}: no title`));
-      return null;
-    }
-
-    // Skip posts with excludeFromSummary: true in frontmatter
-    if (frontmatter.excludeFromSummary === true) {
-      return null;
-    }
+    if (!frontmatter.title) return null;
+    if (frontmatter.excludeFromSummary === true) return null;
 
     const slug = extractSlug(filePath, frontmatter.link as string | undefined);
-
     const plainText = await getPlainText(body);
     const hash = computeHash(content);
 
-    return {
-      slug,
-      title: frontmatter.title as string,
-      text: plainText,
-      hash,
-    };
+    return { slug, title: frontmatter.title as string, text: plainText, hash };
   } catch (error) {
     console.error(chalk.red(`  Error processing ${filePath}:`), error);
     return null;
@@ -220,75 +195,50 @@ async function main() {
   const { model, force } = parseArgs();
 
   try {
-    console.log(chalk.cyan('=== AI Summary Generator ===\n'));
-    console.log(chalk.gray(`Model: ${model}`));
-    if (force) {
-      console.log(chalk.yellow('Force regenerate: ignoring cache'));
-    }
-    console.log('');
+    console.log(chalk.cyan('=== Gemini Summary Generator (English) ===\n'));
 
-    // Check LLM API is running
-    console.log(chalk.blue(`Checking API connection (${API_BASE_URL})...`));
+    if (!API_KEY) {
+      console.log(chalk.red('Error: GEMINI_API_KEY is missing from .env file.'));
+      process.exit(1);
+    }
+
+    console.log(chalk.gray(`Model: ${model}`));
+
+    // Check API
     const apiRunning = await checkApiRunning();
     if (!apiRunning) {
-      console.log(chalk.red('Error: LLM API is not running.'));
-      console.log(chalk.gray('Please start your LLM server (LM Studio, Ollama, etc.)'));
-      process.exitCode = 1;
-      return;
+      console.log(chalk.red('Error: Could not connect to Gemini API. Check your internet or API key.'));
+      process.exit(1);
     }
-    console.log(chalk.green('API connected!\n'));
 
-    // Load cache
     let cache = force ? null : await loadCache();
-    if (cache) {
-      if (isCacheValid(cache, model)) {
-        console.log(chalk.gray(`Loaded cache with ${Object.keys(cache.entries).length} entries\n`));
-      } else {
-        console.log(chalk.yellow('Cache invalidated (model changed), will regenerate all\n'));
-        cache = null;
-      }
-    } else if (!force) {
-      console.log(chalk.gray('No cache found, will generate all summaries\n'));
+    if (cache && !isCacheValid(cache, model)) {
+      console.log(chalk.yellow('Cache invalidated (model changed), regenerating all...\n'));
+      cache = null;
     }
 
-    // Find all markdown files
     const files = await glob(CONTENT_GLOB);
-    if (!files.length) {
-      console.log(chalk.yellow('No content files found.'));
-      return;
-    }
-    console.log(chalk.blue(`Found ${files.length} markdown files\n`));
+    if (!files.length) return console.log(chalk.yellow('No content files found.'));
 
-    // Process all files
     const posts = await loadPosts(files);
-    if (!posts.length) {
-      console.log(chalk.red('No valid posts found.'));
-      return;
-    }
-    console.log(chalk.green(`Loaded ${posts.length} posts\n`));
-
-    // Generate summaries incrementally
     const validCache = cache?.entries || {};
     const newEntries: Record<string, CacheEntry> = {};
-    let cached = 0;
-    let generated = 0;
-    let errors = 0;
+    let cached = 0,
+      generated = 0,
+      errors = 0;
 
-    console.log(chalk.blue('Generating summaries...'));
+    console.log(chalk.blue('Generating English summaries...'));
 
     for (let i = 0; i < posts.length; i++) {
       const post = posts[i];
       const cachedEntry = validCache[post.slug];
 
       if (cachedEntry && cachedEntry.hash === post.hash) {
-        // Use cached summary
         newEntries[post.slug] = cachedEntry;
         cached++;
-        process.stdout.write(`\r  [${i + 1}/${posts.length}] ${chalk.gray('cached')}: ${post.slug.slice(0, 40)}...`);
+        process.stdout.write(`\r  [${i + 1}/${posts.length}] ${chalk.gray('cached')}: ${post.slug.slice(0, 30)}...`);
       } else {
-        // Generate new summary
-        process.stdout.write(`\r  [${i + 1}/${posts.length}] ${chalk.yellow('generating')}: ${post.slug.slice(0, 40)}...`);
-
+        process.stdout.write(`\r  [${i + 1}/${posts.length}] ${chalk.yellow('generating')}: ${post.slug.slice(0, 30)}...`);
         try {
           const summary = await generateSummary(post.text, model);
           newEntries[post.slug] = {
@@ -299,48 +249,30 @@ async function main() {
           };
           generated++;
         } catch (error) {
-          console.log('');
-          console.error(chalk.red(`  Error generating summary for ${post.slug}:`), error);
+          console.error(chalk.red(`\n  Failed: ${post.slug}`));
           errors++;
-          // Keep old cached entry if available
-          if (cachedEntry) {
-            newEntries[post.slug] = cachedEntry;
-          }
+          if (cachedEntry) newEntries[post.slug] = cachedEntry;
         }
       }
     }
 
-    console.log('');
-    console.log(chalk.green(`  Cached: ${cached}, Generated: ${generated}, Errors: ${errors}`));
+    console.log(`\n\n${chalk.green('Done!')} Cached: ${cached}, Generated: ${generated}, Errors: ${errors}`);
 
-    // Save cache
-    const newCache: SummariesCache = {
-      version: CACHE_VERSION,
-      model,
-      entries: newEntries,
-    };
-    await saveCache(newCache);
-    console.log(chalk.gray(`\nCache saved to: ${CACHE_FILE}`));
+    // Save outputs
+    await saveCache({ version: CACHE_VERSION, model, entries: newEntries });
 
-    // Generate output file for page display
     const output: Record<string, SummaryOutput> = {};
     for (const [slug, entry] of Object.entries(newEntries)) {
-      output[slug] = {
-        title: entry.title,
-        summary: entry.summary,
-      };
+      output[slug] = { title: entry.title, summary: entry.summary };
     }
 
-    const outputDir = path.dirname(OUTPUT_FILE);
-    await fs.mkdir(outputDir, { recursive: true });
+    await fs.mkdir(path.dirname(OUTPUT_FILE), { recursive: true });
     await fs.writeFile(OUTPUT_FILE, JSON.stringify(output, null, 2));
 
-    const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-    console.log(chalk.green(`\nDone! Generated summaries for ${Object.keys(newEntries).length} posts in ${elapsed}s`));
     console.log(chalk.cyan(`Output saved to: ${OUTPUT_FILE}`));
   } catch (error) {
-    console.error(chalk.red('\nError:'), error);
-    process.exitCode = 1;
+    console.error(chalk.red('\nFatal Error:'), error);
+    process.exit(1);
   }
 }
 

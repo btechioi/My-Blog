@@ -1,15 +1,5 @@
-/**
- * ContentEnhancer - Portal-based React orchestrator for markdown content toolbars.
- *
- * Replaces vanilla DOM enhancers with a single React component that scans the DOM
- * and renders toolbars via createPortal. Scanning logic lives in content-scanner.ts.
- *
- * Strategy: One React root → many portals (avoids creating separate React roots per block).
- */
-
 import { setupCollapseAnimations } from '@lib/collapse-animation';
 import {
-  scanAudioPlayers,
   scanEncryptedBlocks,
   scanEncryptedPosts,
   scanFriendLinks,
@@ -21,7 +11,6 @@ import {
 } from '@lib/content-scanner';
 import { useCallback, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { AudioPlayer } from './AudioPlayer';
 import { CodeBlockToolbar } from './CodeBlockToolbar';
 import { EncryptedBlock } from './EncryptedBlock';
 import { EncryptedPost } from './EncryptedPost';
@@ -56,7 +45,7 @@ export default function ContentEnhancer({
       ...scanPreElements(container),
       ...(enableQuiz ? scanQuizElements(container) : []),
       ...scanFriendLinks(container),
-      ...scanAudioPlayers(container),
+      // Removed scanAudioPlayers(container)
       ...scanVideoPlayers(container),
       ...scanNoteBlocks(container),
       ...(enableEncryptedBlock ? scanEncryptedBlocks(container) : []),
@@ -123,8 +112,7 @@ export default function ContentEnhancer({
             return createPortal(<QuizBlock key={entry.id} element={entry.preElement} />, entry.mountPoint);
           case 'friend-links':
             return createPortal(<FriendLinksGrid key={entry.id} gridElement={entry.preElement} />, entry.mountPoint);
-          case 'audio':
-            return createPortal(<AudioPlayer key={entry.id} element={entry.preElement} />, entry.mountPoint);
+          // Removed case 'audio'
           case 'video':
             return createPortal(<VideoPlayer key={entry.id} element={entry.preElement} />, entry.mountPoint);
           case 'note':

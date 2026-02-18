@@ -1,26 +1,8 @@
-/**
- * DOM scanning functions for ContentEnhancer.
- *
- * Each scanner finds elements of a specific type in a container,
- * creates mount points for React portals, and returns ToolbarEntry objects.
- * Extracted to keep ContentEnhancer focused on rendering.
- */
-
 import { extractLanguage, isInfographicBlock, wrapElement } from './content-enhancer-utils';
 
 export interface ToolbarEntry {
   id: string;
-  type:
-    | 'code'
-    | 'mermaid'
-    | 'infographic'
-    | 'quiz'
-    | 'friend-links'
-    | 'audio'
-    | 'video'
-    | 'note'
-    | 'encrypted'
-    | 'encrypted-post';
+  type: 'code' | 'mermaid' | 'infographic' | 'quiz' | 'friend-links' | 'video' | 'note' | 'encrypted' | 'encrypted-post';
   mountPoint: HTMLElement;
   preElement: HTMLElement;
 }
@@ -114,23 +96,6 @@ export function scanFriendLinks(container: Element): ToolbarEntry[] {
     grid.appendChild(mount);
     grid.dataset.reactEnhanced = 'true';
     entries.push({ id: `friend-links-${fIndex}`, type: 'friend-links', mountPoint: mount, preElement: grid });
-  });
-
-  return entries;
-}
-
-/** Scan audio player elements */
-export function scanAudioPlayers(container: Element): ToolbarEntry[] {
-  const entries: ToolbarEntry[] = [];
-  const audioPlayers = container.querySelectorAll<HTMLElement>('[data-audio-player]');
-
-  audioPlayers.forEach((el, aIndex) => {
-    if (el.dataset.reactEnhanced === 'true') return;
-    const mount = document.createElement('div');
-    mount.className = 'audio-player-mount';
-    el.appendChild(mount);
-    el.dataset.reactEnhanced = 'true';
-    entries.push({ id: `audio-${aIndex}`, type: 'audio', mountPoint: mount, preElement: el });
   });
 
   return entries;

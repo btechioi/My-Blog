@@ -1,34 +1,42 @@
 ---
 layout: ../layouts/PageLayout.astro
 title: "About"
-coverTitle: "关于我"
+coverTitle: "Hello World"
 date: 2025-01-03 01:01:33
-description: "关于我？"
+description: "Exploring the intersection of AI and automation."
 ---
 
-## 你好，这里是余弦
+## Hi, I'm btechioi
 
-[![github badge](https://img.shields.io/badge/dynamic/json?color=blue&label=Github&query=%24.data.totalSubs&url=https%3A%2F%2Fapi.spencerwoo.com%2Fsubstats%2F%3Fsource%3Dgithub%26queryKey%3Dyusixian)](https://github.com/yusixian)
+[![github badge](https://img.shields.io/badge/dynamic/json?color=blue&label=Github&query=%24.data.totalSubs&url=https%3A%2F%2Fapi.spencerwoo.com%2Fsubstats%2F%3Fsource%3Dgithub%26queryKey%3Dbtechioi)](https://github.com/btechioi)
 
-cosine = 余弦 = cos
+**Builder | Automator | Curiosity-Driven Developer**
 
-愿热情永存，愿热爱不灭，愿生活无憾
+"If it can be automated, it shouldn't be manual."
 
-> 我们 都只是无名之辈 \
-> 做你自己最喜欢的事 \
-> 像花一样 肆意绽放 \
-> 不去管 有没有人欣赏
+> We are all just "nobodies"
+> Building tools to make the world a bit smarter
+> Like a well-written script, execute with purpose
+> Regardless of whether the console logs a 'success' or 'error'
 
-### 找到我
+### What I Do
 
-个人 Telegram 前端频道：日常碎碎念，偶尔掉落优质前端博文推荐、学习资源等
+I'm a developer who loves breaking down complex problems into clean, automated solutions. Whether it's crafting **Discord bots**, experimenting with **AI-integrated tools**, or optimizing **full-stack web apps**, I'm always looking for the next thing to build.
 
-https://t.me/cosine_front_end
+* **Automation:** Turning repetitive tasks into one-click wonders.
+* **Open Source:** Contributing to and creating tools for the community.
+* **Learning:** Currently diving deeper into scalable architecture and AI models.
 
-Gitbook 前端学习记录
+### Find Me
 
-https://book.cosine.ren/
+**GitHub Repositories:** Check out my latest projects and what I'm currently hacking on.
 
-[![GitHub State](https://git-stats.cosine.ren/api?username=yusixian&theme=dark&show_icons=true&hide_border=true)](https://github.com/anuraghazra/github-readme-stats)
+https://github.com/btechioi
 
-[![GitHub Streak](https://github-readme-streak-stats-rust-tau.vercel.app?user=yusixian&theme=dark&date_format=%5BY%20%5DM%20&hide_border=true)](https://git.io/streak-stats)
+**Contact & Collaboration**
+
+Always open to interesting projects, bug hunts, or just talking shop about the latest in tech.
+
+[![GitHub Stats](https://github-readme-stats.vercel.app/api?username=btechioi&theme=dark&show_icons=true&hide_border=true)](https://github.com/anuraghazra/github-readme-stats)
+
+[![GitHub Streak](https://github-readme-streak-stats.herokuapp.com/?user=btechioi&theme=dark&hide_border=true)](https://git.io/streak-stats)
