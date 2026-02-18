@@ -6,7 +6,7 @@ import { tarCreate } from './tar';
 import { getVersion } from './version';
 
 /**
- * 备份结果
+ * Backup result
  */
 export interface BackupResult {
   item: BackupItem;
@@ -15,7 +15,7 @@ export interface BackupResult {
 }
 
 /**
- * 备份输出
+ * Backup output
  */
 export interface BackupOutput {
   results: BackupResult[];
@@ -25,31 +25,31 @@ export interface BackupOutput {
 }
 
 /**
- * 执行备份操作
- * @param isFullBackup 是否完整备份
- * @param onProgress 进度回调
+ * Execute backup operation
+ * @param isFullBackup Whether it's a full backup
+ * @param onProgress Progress callback
  */
 export function runBackup(isFullBackup: boolean, onProgress?: (results: BackupResult[]) => void): BackupOutput {
-  // 创建备份目录
+  // Create backup directory
   fs.mkdirSync(BACKUP_DIR, { recursive: true });
 
-  // 生成时间戳
+  // Generate timestamp
   const now = new Date();
   const timestamp = now.toISOString().replace(/[:.]/g, '-').slice(0, 19).replace('T', '-');
   const backupName = `backup-${timestamp}`;
   const tempDir = path.join(BACKUP_DIR, `.tmp-${backupName}`);
   const backupFilePath = path.join(BACKUP_DIR, `${backupName}.tar.gz`);
 
-  // 清理并创建临时目录
+  // Clean and create temporary directory
   fs.rmSync(tempDir, { recursive: true, force: true });
   fs.mkdirSync(tempDir, { recursive: true });
 
   const results: BackupResult[] = [];
 
-  // 过滤要备份的项目
+  // Filter items to backup
   const itemsToBackup = BACKUP_ITEMS.filter((item) => item.required || isFullBackup);
 
-  // 执行备份
+  // Perform backup
   for (const item of itemsToBackup) {
     const srcPath = path.join(PROJECT_ROOT, item.src);
     const destPath = path.join(tempDir, item.dest);
@@ -81,7 +81,7 @@ export function runBackup(isFullBackup: boolean, onProgress?: (results: BackupRe
     onProgress?.([...results]);
   }
 
-  // 生成 manifest.json
+  // Generate manifest.json
   const manifest = {
     name: MANIFEST_NAME,
     version: getVersion(),
@@ -92,13 +92,13 @@ export function runBackup(isFullBackup: boolean, onProgress?: (results: BackupRe
   };
   fs.writeFileSync(path.join(tempDir, 'manifest.json'), JSON.stringify(manifest, null, 2));
 
-  // 创建压缩包
+  // Create archive
   tarCreate(backupFilePath, tempDir);
 
-  // 清理临时目录
+  // Clean up temporary directory
   fs.rmSync(tempDir, { recursive: true, force: true });
 
-  // 获取文件大小
+  // Get file size
   const stats = fs.statSync(backupFilePath);
 
   return {

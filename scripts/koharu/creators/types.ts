@@ -28,7 +28,7 @@ export interface ContentCreator {
  * Category tree item for display
  */
 export interface CategoryTreeItem {
-  /** Category name (Chinese) */
+  /** Category name */
   name: string;
   /** URL-friendly slug */
   slug: string;

@@ -1,7 +1,7 @@
-/** 自动退出延迟（毫秒） */
+/** Auto exit delay (milliseconds) */
 export const AUTO_EXIT_DELAY = 100;
 
-/** UI 颜色配置 */
+/** UI color configuration */
 export const UI_COLORS = {
   success: 'green',
   warning: 'yellow',
@@ -11,7 +11,7 @@ export const UI_COLORS = {
   dim: 'gray',
 } as const;
 
-/** UI 符号配置 */
+/** UI symbol configuration */
 export const UI_SYMBOLS = {
   success: '+',
   error: '-',

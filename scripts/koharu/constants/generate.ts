@@ -12,22 +12,22 @@ export interface GenerateItem {
 export const GENERATE_ITEMS: GenerateItem[] = [
   {
     id: 'lqips',
-    label: 'LQIP 图片占位符',
-    description: '快速 - 生成低质量图片占位符',
+    label: 'LQIP Image Placeholders',
+    description: 'Fast - Generate Low Quality Image Placeholders',
     duration: 'fast',
     script: 'src/scripts/generateLqips.ts', // TODO: Refactor to root scripts directory
   },
   {
     id: 'similarities',
-    label: '相似度向量',
-    description: '较慢 - 生成语义相似度向量 (首次需下载模型并缓存)',
+    label: 'Similarity Vectors',
+    description: 'Slower - Generate semantic similarity vectors (requires model download and caching for first time)',
     duration: 'medium',
     script: 'src/scripts/generateSimilarities.ts', // TODO: Refactor to root scripts directory
   },
   {
     id: 'summaries',
-    label: 'AI 摘要',
-    description: '依赖 LLM - 生成 AI 文章摘要',
+    label: 'AI Summaries',
+    description: 'LLM Dependent - Generate AI article summaries',
     duration: 'slow',
     script: 'src/scripts/generateSummaries.ts', // TODO: Refactor to root scripts directory
     requiresLlm: true,

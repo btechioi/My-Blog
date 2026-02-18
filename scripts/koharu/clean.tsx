@@ -25,7 +25,7 @@ export function CleanApp({ keepCount = null, showReturnHint = false, onComplete 
   const [backups] = useState<BackupInfo[]>(() => getBackupList());
   const [status, setStatus] = useState<CleanStatus>(keepCount !== null ? 'confirming' : 'selecting');
   const [selectedPaths, setSelectedPaths] = useState<string[]>(() => {
-    // 如果有 --keep 参数，自动选择要删除的备份
+    // If --keep parameter is provided, automatically select backups to delete
     if (keepCount !== null && backups.length > keepCount) {
       return backups.slice(keepCount).map((b) => b.path);
     }
@@ -40,7 +40,7 @@ export function CleanApp({ keepCount = null, showReturnHint = false, onComplete 
       setSelectedPaths(paths);
       setStatus('confirming');
     } else {
-      // 没有选择任何项目，视为取消
+      // No items selected, treat as cancellation
       onComplete?.();
     }
   };
@@ -65,21 +65,21 @@ export function CleanApp({ keepCount = null, showReturnHint = false, onComplete 
     }
   }, [showReturnHint, onComplete, retimer]);
 
-  // 监听按键返回主菜单
+  // Listen for any key press to return to the main menu
   usePressAnyKey((status === 'done' || status === 'cancelled') && showReturnHint, () => {
     onComplete?.();
   });
 
-  // 自动模式：如果有 --keep 参数且有备份要删除，直接确认
+  // Auto mode: if --keep is provided and there are backups to delete, confirm directly
   useEffect(() => {
     if (keepCount !== null && status === 'confirming' && selectedPaths.length > 0) {
-      // 给用户一点时间看到信息
+      // Give the user some time to see the message
       retimer(setTimeout(() => handleConfirm(), AUTO_CONFIRM_DELAY));
     }
     return () => retimer();
   }, [status, selectedPaths.length, handleConfirm, keepCount, retimer]);
 
-  // 处理无需操作时自动退出
+  // Handle auto-exit when no action is needed
   const shouldAutoExit = backups.length === 0 || (keepCount !== null && selectedPaths.length === 0);
   useEffect(() => {
     if (shouldAutoExit && !showReturnHint) {
@@ -91,10 +91,10 @@ export function CleanApp({ keepCount = null, showReturnHint = false, onComplete 
   if (backups.length === 0) {
     return (
       <Box flexDirection="column">
-        <Text color="yellow">没有找到备份文件</Text>
+        <Text color="yellow">No backup files found</Text>
         {showReturnHint && (
           <Box marginTop={1}>
-            <Text dimColor>按任意键返回主菜单...</Text>
+            <Text dimColor>Press any key to return to the main menu...</Text>
           </Box>
         )}
       </Box>
@@ -105,11 +105,11 @@ export function CleanApp({ keepCount = null, showReturnHint = false, onComplete 
     return (
       <Box flexDirection="column">
         <Text color="green">
-          当前有 {backups.length} 个备份，保留 {keepCount} 个，无需清理
+          There are currently {backups.length} backups, keeping {keepCount}, no cleanup needed
         </Text>
         {showReturnHint && (
           <Box marginTop={1}>
-            <Text dimColor>按任意键返回主菜单...</Text>
+            <Text dimColor>Press any key to return to the main menu...</Text>
           </Box>
         )}
       </Box>
@@ -123,11 +123,11 @@ export function CleanApp({ keepCount = null, showReturnHint = false, onComplete 
     <Box flexDirection="column">
       {status === 'selecting' && (
         <Box flexDirection="column">
-          <Text>选择要删除的备份（空格选择，回车确认，不选直接回车取消）:</Text>
+          <Text>Select backups to delete (Space to select, Enter to confirm, Enter without selection to cancel):</Text>
           <Box marginTop={1}>
             <MultiSelect
               options={backups.map((b) => ({
-                label: `${b.name}  ${b.sizeFormatted}  ${b.type === 'full' ? '[完整]' : '[基础]'}`,
+                label: `${b.name}  ${b.sizeFormatted}  ${b.type === 'full' ? '[Full]' : '[Basic]'}`,
                 value: b.path,
               }))}
               onChange={setSelectedPaths}
@@ -141,8 +141,8 @@ export function CleanApp({ keepCount = null, showReturnHint = false, onComplete 
         <Box flexDirection="column">
           {keepCount !== null && (
             <Text>
-              保留最近 <Text color="green">{keepCount}</Text> 个备份，删除以下{' '}
-              <Text color="yellow">{selectedPaths.length}</Text> 个:
+              Keeping the last <Text color="green">{keepCount}</Text> backups, deleting the following{' '}
+              <Text color="yellow">{selectedPaths.length}</Text>:
             </Text>
           )}
           {selectedBackups.map((b) => (
@@ -154,12 +154,12 @@ export function CleanApp({ keepCount = null, showReturnHint = false, onComplete 
           ))}
           <Box marginTop={1}>
             <Text>
-              将释放: <Text color="yellow">{formatSize(totalSize)}</Text>
+              This will free up: <Text color="yellow">{formatSize(totalSize)}</Text>
             </Text>
           </Box>
           {keepCount === null && (
             <Box marginTop={1}>
-              <Text color="yellow">确认删除 {selectedPaths.length} 个备份?</Text>
+              <Text color="yellow">Confirm deletion of {selectedPaths.length} backups?</Text>
               <Box marginLeft={1}>
                 <ConfirmInput onConfirm={handleConfirm} onCancel={handleCancel} />
               </Box>
@@ -170,7 +170,7 @@ export function CleanApp({ keepCount = null, showReturnHint = false, onComplete 
 
       {status === 'deleting' && (
         <Text>
-          <Text color="yellow">正在删除...</Text>
+          <Text color="yellow">Deleting...</Text>
         </Text>
       )}
 
@@ -178,16 +178,16 @@ export function CleanApp({ keepCount = null, showReturnHint = false, onComplete 
         <Box flexDirection="column">
           <Box marginBottom={1}>
             <Text bold color="green">
-              清理完成
+              Cleanup complete
             </Text>
           </Box>
           <Text>
-            已删除 <Text color="green">{deletedCount}</Text> 个备份，释放 <Text color="yellow">{formatSize(freedSpace)}</Text>{' '}
-            空间
+            Deleted <Text color="green">{deletedCount}</Text> backups, freeing{' '}
+            <Text color="yellow">{formatSize(freedSpace)}</Text> of space
           </Text>
           {showReturnHint && (
             <Box marginTop={1}>
-              <Text dimColor>按任意键返回主菜单...</Text>
+              <Text dimColor>Press any key to return to the main menu...</Text>
             </Box>
           )}
         </Box>
@@ -195,10 +195,10 @@ export function CleanApp({ keepCount = null, showReturnHint = false, onComplete 
 
       {status === 'cancelled' && (
         <Box flexDirection="column">
-          <Text color="yellow">已取消</Text>
+          <Text color="yellow">Cancelled</Text>
           {showReturnHint && (
             <Box marginTop={1}>
-              <Text dimColor>按任意键返回主菜单...</Text>
+              <Text dimColor>Press any key to return to the main menu...</Text>
             </Box>
           )}
         </Box>

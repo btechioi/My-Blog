@@ -1,16 +1,16 @@
-/** Upstream 远程仓库名称 */
+/** Upstream remote repository name */
 export const UPSTREAM_REMOTE = 'upstream';
 
-/** Upstream 仓库 URL */
+/** Upstream repository URL */
 export const UPSTREAM_URL = 'https://github.com/cosZone/astro-koharu.git';
 
-/** GitHub 仓库路径 (用于 API 调用) */
+/** GitHub repository path (for API calls) */
 export const GITHUB_REPO = 'cosZone/astro-koharu';
 
-/** 主分支名称 */
+/** Main branch name */
 export const MAIN_BRANCH = 'main';
 
-/** Commit 信息 */
+/** Commit information */
 export interface CommitInfo {
   hash: string;
   message: string;
@@ -18,99 +18,99 @@ export interface CommitInfo {
   author: string;
 }
 
-/** Git 状态信息 */
+/** Git status information */
 export interface GitStatusInfo {
-  /** 当前分支 */
+  /** Current branch */
   currentBranch: string;
-  /** 工作区是否干净 */
+  /** Whether the working directory is clean */
   isClean: boolean;
-  /** 未提交的文件数 */
+  /** Number of uncommitted files */
   uncommittedCount: number;
-  /** 未暂存的文件列表 */
+  /** List of unstaged files */
   uncommittedFiles: string[];
 }
 
-/** 更新状态信息 */
+/** Update status information */
 export interface UpdateInfo {
-  /** 是否已配置 upstream */
+  /** Whether upstream is configured */
   hasUpstream: boolean;
-  /** 本地落后于 upstream 的提交数 */
+  /** Number of commits behind upstream */
   behindCount: number;
-  /** 本地领先于 upstream 的提交数 */
+  /** Number of commits ahead of upstream */
   aheadCount: number;
-  /** 新提交列表（升级时为新增提交，降级时为将移除的提交） */
+  /** New commit list (new commits when upgrading, commits to be removed when downgrading) */
   commits: CommitInfo[];
-  /** 本地领先的提交列表（rebase 时将被重放的提交） */
+  /** List of local ahead commits (commits to be rebased) */
   localCommits: CommitInfo[];
-  /** 当前版本 */
+  /** Current version */
   currentVersion: string;
-  /** 最新版本（或目标版本） */
+  /** Latest version (or target version) */
   latestVersion: string;
-  /** 是否为降级操作 */
+  /** Whether it is a downgrade operation */
   isDowngrade: boolean;
 }
 
-/** 合并结果 */
+/** Merge result */
 export interface MergeResult {
   success: boolean;
-  /** 是否有冲突 */
+  /** Whether there are conflicts */
   hasConflict: boolean;
-  /** 冲突文件列表 */
+  /** List of conflict files */
   conflictFiles: string[];
-  /** 错误信息 */
+  /** Error message */
   error?: string;
-  /** 是否为 rebase 冲突 */
+  /** Whether it is a rebase conflict */
   isRebaseConflict?: boolean;
-  /** 被自动解决的用户内容冲突文件 */
+  /** User content conflict files that were automatically resolved */
   autoResolvedFiles?: string[];
-  /** Clean 模式合并前的 commit SHA（用于还原失败时回滚） */
+  /** Commit SHA before clean mode merge (for rollback if restore fails) */
   preCleanSha?: string;
 }
 
-/** GitHub Release 信息 */
+/** GitHub Release information */
 export interface ReleaseInfo {
-  /** Tag 名称，如 "v2.2.0" */
+  /** Tag name, e.g., "v2.2.0" */
   tagName: string;
-  /** Release 页面 URL */
+  /** Release page URL */
   url: string;
   /** Release Notes (Markdown) */
   body: string | null;
 }
 
-// ============ 状态机类型 ============
+// ============ State Machine Types ============
 
-/** 更新流程状态 */
+/** Update process status */
 export type UpdateStatus =
-  | 'checking' // 检查 Git 状态
-  | 'dirty-warning' // 工作区有未提交更改
-  | 'backup-confirm' // 确认备份
-  | 'backing-up' // 正在备份
-  | 'fetching' // 获取更新
-  | 'preview' // 显示更新预览
-  | 'merging' // 合并中
-  | 'clean-restoring' // clean 模式还原用户内容
-  | 'installing' // 安装依赖
-  | 'done' // 完成
-  | 'conflict' // 有冲突
-  | 'up-to-date' // 已是最新
-  | 'error'; // 错误
+  | 'checking' // Check Git status
+  | 'dirty-warning' // Uncommitted changes in working directory
+  | 'backup-confirm' // Confirm backup
+  | 'backing-up' // Backing up
+  | 'fetching' // Fetching updates
+  | 'preview' // Show update preview
+  | 'merging' // Merging
+  | 'clean-restoring' // Clean mode restoring user content
+  | 'installing' // Installing dependencies
+  | 'done' // Done
+  | 'conflict' // Conflicts
+  | 'up-to-date' // Up to date
+  | 'error'; // Error
 
-/** 更新流程配置选项 */
+/** Update process configuration options */
 export interface UpdateOptions {
   checkOnly: boolean;
   skipBackup: boolean;
   force: boolean;
-  /** 指定更新到的目标版本 tag (如 "v2.1.0" 或 "2.1.0") */
+  /** Specify the target version tag to update to (e.g., "v2.1.0" or "2.1.0") */
   targetTag?: string;
-  /** 使用 rebase 模式（重写历史） */
+  /** Use rebase mode (rewrite history) */
   rebase: boolean;
-  /** 预览操作（不实际执行） */
+  /** Preview operation (no actual execution) */
   dryRun: boolean;
-  /** 使用 clean 模式（替换所有主题文件，还原用户内容） */
+  /** Use clean mode (replace all theme files, restore user content) */
   clean: boolean;
 }
 
-/** 状态机 State */
+/** State Machine State */
 export interface UpdateState {
   status: UpdateStatus;
   gitStatus: GitStatusInfo | null;
@@ -118,16 +118,16 @@ export interface UpdateState {
   mergeResult: MergeResult | null;
   backupFile: string;
   error: string;
-  /** 非 main 分支警告信息 */
+  /** Warning message for non-main branch */
   branchWarning: string;
   options: UpdateOptions;
-  /** 首次从 squash merge 迁移到 regular merge 的标志 */
+  /** Flag for first-time migration from squash merge to regular merge */
   needsMigration: boolean;
-  /** Clean 模式还原的文件路径列表 */
+  /** List of restored file paths in clean mode */
   restoredFiles: string[];
 }
 
-/** 状态机 Action */
+/** State Machine Action */
 export type UpdateAction =
   | { type: 'GIT_CHECKED'; payload: GitStatusInfo }
   | { type: 'FETCHED'; payload: UpdateInfo; needsMigration?: boolean }

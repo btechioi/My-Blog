@@ -1,5 +1,5 @@
 /**
- * 格式化文件大小为人类可读格式
+ * Format file size into human-readable format
  */
 export function formatSize(bytes: number): string {
   const units = ['B', 'KB', 'MB', 'GB'];
