@@ -12,7 +12,6 @@ tags:
   -  USB Gadget
 categories:
   - Tools
-sticky: true
 ---
 
 # Pico-Pro Platform: Complete Implementation Guide with Code Examples

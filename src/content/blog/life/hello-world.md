@@ -6,6 +6,7 @@ tags:
   - Essay
 categories:
   - Life
+sticky: true
 ---
 
 Hello, World! BTech_IOI here.
