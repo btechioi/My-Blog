@@ -119,7 +119,7 @@ export function GenerateApp({
     onComplete?.();
   });
 
-  const successCount = [...results.values()].filter((r) => r.success).length;
+  const _successCount = [...results.values()].filter((r) => r.success).length;
 
   return (
     <Box flexDirection="column">

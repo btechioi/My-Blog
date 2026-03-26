@@ -222,6 +222,17 @@ export default defineConfig({
     build: {
       // Enable sourcemap for Sonda bundle analysis
       sourcemap: isAnalyze,
+      // Twikoo is a ~500KB lazy chunk; avoid noisy warning in normal builds.
+      chunkSizeWarningLimit: 700,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('twikoo')) {
+              return 'twikoo';
+            }
+          },
+        },
+      },
     },
     plugins: [yaml(), conditionalSnowfall(), svgr(), tailwindcss()],
     ssr: {

@@ -117,6 +117,79 @@ export async function getPostCount(locale?: string) {
 }
 
 /**
+ * Calculate ISO week start and end dates for a given date
+ * Week starts on Monday (ISO 8601)
+ * @internal
+ */
+function getISOWeekRange(date: Date): { start: Date; end: Date } {
+  const d = new Date(date);
+  const day = d.getDay();
+  // ISO week: Monday = 1, Sunday = 0
+  // Convert to: Monday = 1, Sunday = 7
+  const dayOfWeek = day === 0 ? 7 : day;
+  // Get Monday of the week
+  const start = new Date(d);
+  start.setDate(d.getDate() - (dayOfWeek - 1));
+  start.setHours(0, 0, 0, 0);
+  // Get Sunday of the week
+  const end = new Date(start);
+  end.setDate(start.getDate() + 6);
+  end.setHours(23, 59, 59, 999);
+  return { start, end };
+}
+
+/**
+ * Get posts from the current week (Monday-Sunday, ISO week)
+ * @param locale Optional locale filter
+ * @returns Posts from this week sorted by date (newest first)
+ */
+export async function getThisWeeksPosts(locale?: string): Promise<CollectionEntry<'blog'>[]> {
+  const posts = await getSortedPosts(locale);
+  const today = new Date();
+  const { start, end } = getISOWeekRange(today);
+
+  return posts.filter((post) => {
+    const postDate = new Date(post.data.date);
+    return postDate >= start && postDate <= end;
+  });
+}
+
+/**
+ * Get posts from the current week, organized by day
+ * @param locale Optional locale filter
+ * @returns Object with week info and posts grouped by day
+ */
+export async function getThisWeeksPostsByDay(locale?: string): Promise<{
+  weekStart: Date;
+  weekEnd: Date;
+  postsByDay: Record<string, CollectionEntry<'blog'>[]>;
+}> {
+  const posts = await getThisWeeksPosts(locale);
+  const today = new Date();
+  const { start: weekStart, end: weekEnd } = getISOWeekRange(today);
+
+  const postsByDay = {
+    Monday: [] as CollectionEntry<'blog'>[],
+    Tuesday: [] as CollectionEntry<'blog'>[],
+    Wednesday: [] as CollectionEntry<'blog'>[],
+    Thursday: [] as CollectionEntry<'blog'>[],
+    Friday: [] as CollectionEntry<'blog'>[],
+    Saturday: [] as CollectionEntry<'blog'>[],
+    Sunday: [] as CollectionEntry<'blog'>[],
+  };
+
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+
+  for (const post of posts) {
+    const postDate = new Date(post.data.date);
+    const dayName = dayNames[postDate.getDay()];
+    postsByDay[dayName as keyof typeof postsByDay].push(post);
+  }
+
+  return { weekStart, weekEnd, postsByDay };
+}
+
+/**
  * 获取分类下的所有文章
  * @param categoryName 分类名
  * @returns 文章列表

@@ -72,6 +72,13 @@ export const uiStrings: UIStrings = {
   'archives.title': 'Archives',
   'archives.totalPosts': '{count} posts',
 
+  // ── Weekly ──────────────────────────────────────────────────
+  'weekly.title': 'Weekly',
+  'weekly.description': 'Posts from this week',
+  'weekly.weekOf': 'Weekly {start} - {end}',
+  'weekly.noPosts': 'No posts this week',
+  'weekly.postCount': '{count} posts',
+
   // ── Search ──────────────────────────────────────────────────
   'search.placeholder': 'Search by keyword',
   'search.label': 'Search this site',

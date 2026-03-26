@@ -1,5 +1,5 @@
 ---
-import { siteConfig } from '@constants/site-config';
+import { defaultCoverList, siteConfig } from '@constants/site-config';
 import { displayDate } from '@lib/date';
 import { getLqipStyle } from '@lib/lqip';
 import { Icon } from 'astro-icon/components';
@@ -13,20 +13,33 @@ import WaveSvg from './wave';
 export interface CoverProps {
   data?: BlogPost;
   title?: string;
+  cover?: string;
 }
 
-const { data, title } = Astro.props as CoverProps;
+const { data, title, cover: coverProp } = Astro.props as CoverProps;
 
 /* --- GET LOCALE AND INITIALIZE TRANSLATION --- */
 const locale = getLocaleFromUrl(Astro.url.pathname);
 const translate = (key: string) => t(locale, key as any);
 
-const { date, updated, title: dataTitle, draft } = data?.data ?? {};
+const { date, updated, title: dataTitle, draft, cover: dataCover } = data?.data ?? {};
 
 const readState = readingTime(data?.body ?? '');
 const isDraft = import.meta.env.DEV && draft === true;
 
-const bannerLqipStyle = getLqipStyle('/img/site_header_1920.webp');
+// Helper for deterministic random cover selection
+const getRandomCover = (seed: string) => {
+  let hash = 0;
+  for (let i = 0; i < seed.length; i++) {
+    hash = (hash << 5) - hash + seed.charCodeAt(i);
+    hash |= 0;
+  }
+  return defaultCoverList[Math.abs(hash) % defaultCoverList.length];
+};
+
+const seed = data?.id ?? title ?? dataTitle;
+const finalCover = coverProp ?? dataCover ?? (seed ? getRandomCover(seed) : '/img/site_header_1920.webp');
+const bannerLqipStyle = getLqipStyle(finalCover);
 ---
 
 <div class="relative flex h-[60dvh] z-0 max-h-200 overflow-hidden">
@@ -102,11 +115,11 @@ const bannerLqipStyle = getLqipStyle('/img/site_header_1920.webp');
     style={bannerLqipStyle}
   >
     <img
-      src="/img/site_header_1920.webp"
+      src={finalCover}
       alt="cover"
       class="h-full w-full object-cover"
       sizes="50vw"
-      srcset="/img/site_header_800.webp 800w,/img/site_header_1920.webp 1200w"
+      srcset={finalCover === '/img/site_header_1920.webp' ? "/img/site_header_800.webp 800w,/img/site_header_1920.webp 1200w" : undefined}
       loading="eager"
       fetchpriority="high"
       decoding="async"

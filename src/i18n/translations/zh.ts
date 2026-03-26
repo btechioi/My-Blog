@@ -71,6 +71,13 @@ export const uiStrings = {
   'archives.title': '归档',
   'archives.totalPosts': '共 {count} 篇',
 
+  // ── Weekly ──────────────────────────────────────────────────
+  'weekly.title': '周刊',
+  'weekly.description': '本周文章',
+  'weekly.weekOf': '周刊 {start} - {end}',
+  'weekly.noPosts': '本周暂无文章',
+  'weekly.postCount': '共 {count} 篇文章',
+
   // ── Search ──────────────────────────────────────────────────
   'search.placeholder': '请输入关键词搜索',
   'search.label': '搜索本站',

@@ -1,0 +1,77 @@
+---
+import HomeSider from '@components/layout/HomeSider.astro';
+import Cover from '@components/ui/cover/Cover.astro';
+import { CONTENT_PADDING } from '@constants/layout';
+import { siteConfig } from '@constants/site-config';
+import TwoColumnLayout from '@layouts/TwoColumnLayout.astro';
+import { getPostSlug, getThisWeeksPosts } from '@lib/content';
+import { displayDate } from '@lib/date';
+import { encodeSlug } from '@lib/route';
+import { getLocaleFromUrl, localizedPath, t } from '@/i18n';
+import Layout from '../layouts/Layout.astro';
+
+const locale = getLocaleFromUrl(Astro.url.pathname);
+const posts = await getThisWeeksPosts(locale);
+
+// Get week range
+const today = new Date();
+const dayOfWeek = today.getDay();
+const weekStart = new Date(today);
+weekStart.setDate(today.getDate() - (dayOfWeek === 0 ? 6 : dayOfWeek - 1));
+const weekEnd = new Date(weekStart);
+weekEnd.setDate(weekStart.getDate() + 6);
+
+const weekStartStr = displayDate.date(weekStart);
+const weekEndStr = displayDate.date(weekEnd);
+---
+
+<Layout
+  title={`${t(locale, 'weekly.title')} | ${siteConfig.title}`}
+  description={t(locale, 'weekly.description')}
+>
+  <TwoColumnLayout>
+    <Cover slot="cover" title={t(locale, 'weekly.title')} />
+    <HomeSider slot="sider" />
+    <div class={`shadow-box bg-gradient-start mx-0 flex w-full flex-col ${CONTENT_PADDING.standard}`}>
+      <h2 class="shoka-decoration-circle group relative h-19 px-6 py-5 text-2xl/9 font-bold md:text-xl/9">
+        <a
+          href={localizedPath('/', locale)}
+          class="dashed-border text-muted-foreground group-hover:border-blue group-hover:text-blue border-b"
+          >{t(locale, 'nav.home')}</a
+        >
+        <span class="text-muted-foreground text-lg md:text-base"> / </span>
+        {
+          posts.length > 0
+            ? t(locale, 'weekly.postCount', { count: posts.length })
+            : t(locale, 'weekly.noPosts')
+        }
+      </h2>
+      <div class="flex flex-col gap-4 md:gap-5 px-6 py-4">
+        <p class="text-muted-foreground text-sm">
+          {t(locale, 'weekly.weekOf', { start: weekStartStr, end: weekEndStr })}
+        </p>
+        {
+          posts.length > 0 ? (
+            <div class="flex flex-col gap-4">
+              {posts.map((post) => (
+                <p class="shoka-decoration-circle group text-primary hover:text-blue relative px-6 py-2 text-base/9 md:flex md:flex-col md:items-stretch md:text-sm/9">
+                  <span class="text-muted-foreground mr-2 text-xs">{displayDate.date(post.data.date)}</span>
+                  <a
+                    href={localizedPath(`/post/${encodeSlug(getPostSlug(post))}`, locale)}
+                    class="dashed-border text-primary hover:text-blue truncate transition-colors"
+                  >
+                    {post.data.title}
+                  </a>
+                </p>
+              ))}
+            </div>
+          ) : (
+            <div class="text-center py-8">
+              <p class="text-muted-foreground">{t(locale, 'weekly.noPosts')}</p>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </TwoColumnLayout>
+</Layout>

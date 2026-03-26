@@ -2,7 +2,7 @@
 import CategoryPostList from '@components/category/CategoryPostList.astro';
 import HomeSider from '@components/layout/HomeSider.astro';
 import Cover from '@components/ui/cover/Cover.astro';
-import { seoConfig } from '@constants/site-config';
+import { seoConfig, siteConfig } from '@constants/site-config';
 import Layout from '@layouts/Layout.astro';
 import TwoColumnLayout from '@layouts/TwoColumnLayout.astro';
 import { getCategoryByLink, getCategoryLinks, getCategoryList, translateCategoryName } from '@lib/content';
@@ -30,13 +30,21 @@ const { categories: allCategories, countMap } = await getCategoryList(locale);
 const slug = Astro.params.slug;
 const category = slug ? getCategoryByLink(allCategories, slug) : propCategory;
 
+// If the category is featured, use its configured cover image (for category hero cover)
+const featuredCategory = siteConfig.featuredCategories?.find((item) => item.link === slug);
+const coverImage = featuredCategory?.image;
+
 // 如果是子分类，只展示当前分类的内容
 const displayCategories = category ? [category] : allCategories;
 ---
 
 <Layout title={`${t(locale, 'category.postsInCategory', { name: translateCategoryName(category?.name ?? '', locale) })} | ${seoConfig.title}`}>
   <TwoColumnLayout>
-    <Cover slot="cover" title={t(locale, 'category.postsInCategory', { name: translateCategoryName(category?.name ?? '', locale) })} />
+    <Cover
+      slot="cover"
+      title={t(locale, 'category.postsInCategory', { name: translateCategoryName(category?.name ?? '', locale) })}
+      cover={coverImage}
+    />
     <HomeSider slot="sider" />
     <CategoryPostList rootCategory={category} categories={displayCategories} countMap={countMap} />
   </TwoColumnLayout>

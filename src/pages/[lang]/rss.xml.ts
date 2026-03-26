@@ -12,8 +12,8 @@ export function getStaticPaths() {
 }
 
 export async function GET(context: APIContext) {
-  const lang = context.params.lang as string;
-  const posts = await getSortedPosts(lang);
+  const _lang = context.params.lang as string;
+  const posts = await getSortedPosts(defaultLocale); // always use English source
   const { site } = context;
 
   if (!site) {
@@ -25,7 +25,7 @@ export async function GET(context: APIContext) {
     description: siteConfig.subtitle || 'No description',
     site,
     trailingSlash: false,
-    customData: `<language>${getHtmlLang(lang)}</language>`,
+    customData: `<language>${getHtmlLang(defaultLocale)}</language>`,
     stylesheet: '/rss/feed.xsl',
     items: posts
       .map((post: BlogPost) => {
@@ -36,8 +36,8 @@ export async function GET(context: APIContext) {
         ];
 
         const postSlug = getPostSlug(post);
-        const postLink = localizedPath(`/post/${encodeSlug(postSlug)}`, lang);
-        const { title, description, content } = buildRssItemFields(post, lang);
+        const postLink = localizedPath(`/post/${encodeSlug(postSlug)}`, defaultLocale);
+        const { title, description, content } = buildRssItemFields(post, defaultLocale);
 
         return {
           title,
@@ -46,7 +46,7 @@ export async function GET(context: APIContext) {
           link: postLink,
           content,
           categories,
-          customData: `<guid isPermaLink="false">${lang}:${postSlug}</guid>`,
+          customData: `<guid isPermaLink="false">${defaultLocale}:${postSlug}</guid>`,
         };
       })
       .slice(0, 20),

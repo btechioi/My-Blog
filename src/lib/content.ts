@@ -57,6 +57,8 @@ export {
   getSeriesBySlug,
   getSeriesPosts,
   getSortedPosts,
+  getThisWeeksPosts,
+  getThisWeeksPostsByDay,
   /** @deprecated Use getPostsBySeriesSlug('weekly') instead */
   getWeeklyPosts,
 } from './content/posts';

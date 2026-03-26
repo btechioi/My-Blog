@@ -191,7 +191,7 @@ async function loadPosts(files: string[]): Promise<PostData[]> {
 // --------- Main Execution ---------
 
 async function main() {
-  const startTime = Date.now();
+  const _startTime = Date.now();
   const { model, force } = parseArgs();
 
   try {
@@ -248,7 +248,7 @@ async function main() {
             generatedAt: new Date().toISOString(),
           };
           generated++;
-        } catch (error) {
+        } catch (_error) {
           console.error(chalk.red(`\n  Failed: ${post.slug}`));
           errors++;
           if (cachedEntry) newEntries[post.slug] = cachedEntry;

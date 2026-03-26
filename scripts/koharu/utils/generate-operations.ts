@@ -1,6 +1,6 @@
 import { spawn } from 'node:child_process';
 import path from 'node:path';
-import { DEFAULT_LLM_MODEL, GENERATE_ITEMS, type GenerateType, LLM_API_URL } from '../constants/generate';
+import { GENERATE_ITEMS, type GenerateType, LLM_API_URL } from '../constants/generate';
 import { PROJECT_ROOT } from '../constants/paths';
 
 export interface RunScriptResult {

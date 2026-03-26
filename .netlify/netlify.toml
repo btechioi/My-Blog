@@ -7,7 +7,7 @@ redirects = []
 [functions."*"]
 
 [build]
-publish = "/home/Banumath/Projects/My-Blog/dist"
+publish = "/mnt/backup/Projects/My-Blog/dist"
 publishOrigin = "ui"
 commandOrigin = "ui"
 command = "pnpm run build"
