@@ -13,6 +13,8 @@ interface FormData {
   color: string;
 }
 
+type SubmitStatus = 'idle' | 'submitting' | 'success' | 'error';
+
 export default function FriendRequestForm() {
   const { t } = useTranslation();
   const [formData, setFormData] = useState<FormData>({
@@ -23,6 +25,7 @@ export default function FriendRequestForm() {
     image: '',
     color: '#ffc0cb',
   });
+  const [submitStatus, setSubmitStatus] = useState<SubmitStatus>('idle');
 
   const { copied, copy } = useClipboard({ timeout: 2000 });
 
@@ -40,16 +43,45 @@ color: "${formData.color || '#ffc0cb'}"`;
     copy(yaml);
   }, [copy, generateText]);
 
-  const handleChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      const { name, value } = e.target;
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    },
-    [], // 空依赖 - 使用函数式更新
-  );
+  const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  }, []);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitStatus('submitting');
+
+    try {
+      const response = await fetch('/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          'form-name': 'friend-request',
+          ...formData,
+        }).toString(),
+      });
+
+      if (response.ok) {
+        setSubmitStatus('success');
+        setFormData({
+          site: '',
+          owner: '',
+          url: '',
+          desc: '',
+          image: '',
+          color: '#ffc0cb',
+        });
+      } else {
+        setSubmitStatus('error');
+      }
+    } catch {
+      setSubmitStatus('error');
+    }
+  };
 
   return (
     <div className="mb-4 w-full">
@@ -58,7 +90,36 @@ color: "${formData.color || '#ffc0cb'}"`;
         <div className="absolute -top-6 -right-6 h-24 w-24 rounded-full bg-pink-100/50 dark:bg-pink-900/20" />
         <div className="absolute -bottom-6 -left-6 h-24 w-24 rounded-full bg-blue-100/50 dark:bg-blue-900/20" />
 
-        <div className="grid grid-cols-2 gap-12 md:grid-cols-1 md:gap-8">
+        {/* Success Message */}
+        {submitStatus === 'success' && (
+          <div className="mb-6 rounded-xl bg-green-50 p-4 font-medium text-green-700 text-sm dark:bg-green-900/20 dark:text-green-300">
+            {t('friends.submitSuccess')}
+          </div>
+        )}
+
+        {/* Error Message */}
+        {submitStatus === 'error' && (
+          <div className="mb-6 rounded-xl bg-red-50 p-4 font-medium text-red-700 text-sm dark:bg-red-900/20 dark:text-red-300">
+            {t('friends.submitError')}
+          </div>
+        )}
+
+        <form
+          name="friend-request"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+          onSubmit={handleSubmit}
+          className="grid grid-cols-2 gap-12 md:grid-cols-1 md:gap-8"
+        >
+          {/* Hidden input for Netlify Forms */}
+          <input type="hidden" name="form-name" value="friend-request" />
+          <p className="hidden">
+            <label>
+              Don't fill this out: <input name="bot-field" />
+            </label>
+          </p>
+
           {/* Left Side: Form */}
           <div className="relative z-10">
             <div className="mb-6">
@@ -206,7 +267,18 @@ color: "${formData.color || '#ffc0cb'}"`;
               {t('friends.hint')}
             </div>
           </div>
-        </div>
+
+          {/* Submit Button */}
+          <div className="col-span-2 md:col-span-1">
+            <button
+              type="submit"
+              disabled={submitStatus === 'submitting'}
+              className="w-full rounded-xl bg-gradient-to-r from-pink-400 to-purple-400 px-6 py-3 font-bold text-sm text-white transition-all hover:from-pink-500 hover:to-purple-500 hover:shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {submitStatus === 'submitting' ? t('friends.submitting') : t('friends.submit')}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );
