@@ -156,7 +156,8 @@ export async function GET(_context: APIContext) {
 
   return new Response(xsl, {
     headers: {
-      'Content-Type': 'application/xslt+xml; charset=utf-8',
+      'Content-Type': 'application/xml; charset=utf-8',
+      'X-Content-Type-Options': 'nosniff',
     },
   });
 }
