@@ -8,9 +8,9 @@
 # =============================================================================
 site:
   title: Banu's Blog
-  alternate: banumath
+  alternate: BTech_IOI
   subtitle: Tech, Projects & Life
-  name: banumath
+  name: BTech_IOI
   description: A personal blog about technology, embedded systems, and life
   avatar: /img/avatar.webp
   showLogo: true
@@ -80,7 +80,7 @@ featuredSeries:
     enabled: true
     icon: ri:newspaper-line
     links:
-      github: https://github.com/banumath
+      github: https://github.com/btecioi
       rss: /rss.xml
 
 # =============================================================================
@@ -88,7 +88,7 @@ featuredSeries:
 # =============================================================================
 social:
   github:
-    url: https://github.com/banumath
+    url: https://github.com/btecioi
     icon: ri:github-fill
     color: '#191717'
   email:

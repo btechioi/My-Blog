@@ -54,7 +54,7 @@ export async function GET(context: APIContext) {
       .slice(0, 20),
   });
 
-  // 显式设置 Content-Type 包含 charset，解决中文乱码问题
+  // Explicitly set Content-Type with charset to prevent encoding issues
   const headers = new Headers(response.headers);
   headers.set('Content-Type', 'application/xml; charset=utf-8');
   return new Response(response.body, {
