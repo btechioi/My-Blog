@@ -34,6 +34,6 @@ export const GENERATE_ITEMS: GenerateItem[] = [
   },
 ];
 
-export const DEFAULT_LLM_MODEL = 'gemini-1.5-flash';
+export const DEFAULT_LLM_MODEL = 'gemini-2.5-flash';
 // Gemini OpenAI-compatible base URL
 export const LLM_API_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/';

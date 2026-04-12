@@ -24,7 +24,7 @@ import CodeBlockFullscreen from '@components/markdown/CodeBlockFullscreen';
 import DiagramFullscreen from '@components/markdown/DiagramFullscreen';
 import ImageLightbox from '@components/markdown/ImageLightbox';
 import { Toaster } from '@components/ui/sonner';
-import { bgmConfig, christmasConfig, seoConfig, siteConfig } from '@constants/site-config';
+import { bgmConfig, christmasConfig, seoConfig, siteConfig, socialConfig } from '@constants/site-config';
 import { getOgImageUrl } from '@lib/seo/og-image';
 import LoadingIndicator from 'astro-loading-indicator/component';
 import { SEO } from 'astro-seo';
@@ -69,6 +69,23 @@ const hreflangLinks = localeList.map((loc) => ({
 }));
 const xDefaultHref = new URL(getAlternateUrl(Astro.url.pathname, defaultLocale), Astro.site).href;
 const canonicalHref = canonicalOverride ?? Astro.url.href;
+
+// WebSite schema for Google Rich Results
+const websiteJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: siteConfig.title,
+  url: Astro.site?.href,
+  description: siteConfig.description,
+  author: {
+    '@type': 'Person',
+    name: siteConfig.author ?? siteConfig.name,
+    url: Astro.site?.href,
+  },
+  ...(socialConfig.github?.url && {
+    sameAs: [socialConfig.github.url],
+  }),
+};
 ---
 
 <!doctype html>
@@ -117,9 +134,14 @@ const canonicalHref = canonicalOverride ?? Astro.url.href;
         ...(ogImage && { image: ogImage }),
       }}
       extend={{
-        meta: [{ name: 'author', content: siteConfig.author || '' }],
+        meta: [
+          { name: 'author', content: siteConfig.author || '' },
+          { name: 'theme-color', content: '#ffffff', media: '(prefers-color-scheme: light)' },
+          { name: 'theme-color', content: '#1a1a1a', media: '(prefers-color-scheme: dark)' },
+        ],
       }}
     />
+    <script is:inline slot="head" type="application/ld+json" set:html={JSON.stringify(websiteJsonLd)} />
     <link rel="alternate" type="application/rss+xml" title={siteConfig.title} href={rssHref} />
     {/* hreflang alternate links for SEO — only output when multiple locales are configured */}
     {isI18nEnabled && hreflangLinks.map(({ lang, href }) => (

@@ -6,7 +6,7 @@ import 'dotenv/config.js';
 import crypto from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { generateText } from '@xsai/generate-text';
+import { GoogleGenAI } from '@google/genai';
 import chalk from 'chalk';
 import { glob } from 'glob';
 import matter from 'gray-matter';
@@ -19,10 +19,46 @@ const CACHE_FILE = '.cache/summaries-cache.json';
 const OUTPUT_FILE = 'src/assets/summaries.json';
 const CACHE_VERSION = '1';
 
-// Gemini API settings via OpenAI-compatible endpoint
-const API_BASE_URL = 'https://generativelanguage.googleapis.com/v1beta/openai/';
+// Gemini API settings
 const API_KEY = process.env.GEMINI_API_KEY || '';
-const DEFAULT_MODEL = 'gemini-1.5-flash';
+const DEFAULT_MODEL = 'gemini-2.5-flash';
+
+// Rate limiting: 5 requests per minute
+const RATE_LIMIT = 5;
+const RATE_WINDOW_MS = 60_000;
+const requestQueue: Array<() => void> = [];
+let requestCount = 0;
+let windowStart = Date.now();
+
+function resetWindow() {
+  windowStart = Date.now();
+  requestCount = 0;
+}
+
+function waitForRateLimit(): Promise<void> {
+  return new Promise((resolve) => {
+    requestQueue.push(resolve);
+    processQueue();
+  });
+}
+
+function processQueue() {
+  const now = Date.now();
+  if (now - windowStart >= RATE_WINDOW_MS) {
+    resetWindow();
+  }
+
+  while (requestQueue.length > 0 && requestCount < RATE_LIMIT) {
+    const resolve = requestQueue.shift()!;
+    requestCount++;
+    resolve();
+  }
+
+  if (requestQueue.length > 0) {
+    const waitTime = RATE_WINDOW_MS - (Date.now() - windowStart);
+    setTimeout(processQueue, Math.max(0, waitTime + 100));
+  }
+}
 
 // --------- Parse CLI Arguments ---------
 function parseArgs(): { model: string; force: boolean } {
@@ -115,47 +151,63 @@ function extractSlug(filePath: string, link?: string): string {
 
 // --------- LLM API ---------
 
-async function checkApiRunning(): Promise<boolean> {
-  // If we have an API key, we assume the cloud endpoint is up
-  if (API_KEY && API_BASE_URL.includes('googleapis.com')) return true;
+const ai = new GoogleGenAI({ apiKey: API_KEY });
 
+async function checkApiRunning(): Promise<boolean> {
+  if (!API_KEY) return false;
   try {
-    const response = await fetch(`${API_BASE_URL}models`);
-    return response.ok;
+    await ai.models.list();
+    return true;
   } catch {
     return false;
   }
 }
 
-async function generateSummary(text: string, model: string): Promise<string> {
-  const truncatedText = text.slice(0, 8000); // Gemini has a large context, but let's keep it tidy
+async function generateSummary(text: string, model: string, retries = 5): Promise<string> {
+  await waitForRateLimit();
 
-  const { text: summary } = await generateText({
-    apiKey: API_KEY,
-    baseURL: API_BASE_URL,
-    model,
-    messages: [
-      {
-        role: 'system',
-        content:
-          'You are a professional blog editor. Summarize the following article in English using 2-3 concise sentences. Focus on the core message. Output only the summary without any prefix or commentary.',
-      },
-      {
-        role: 'user',
-        content: `Summarize the following article:\n\n${truncatedText}`,
-      },
-    ],
-    temperature: 0.3,
-    maxTokens: 250,
-  });
+  const truncatedText = text.slice(0, 8000);
+  let lastError: Error | null = null;
 
-  if (!summary) {
-    throw new Error('No summary received from Gemini');
+  for (let attempt = 1; attempt <= retries; attempt++) {
+    try {
+      const response = await ai.models.generateContent({
+        model,
+        contents: [
+          {
+            role: 'user',
+            parts: [
+              {
+                text: `Summarize the following article in 2-3 concise English sentences. Focus on the core message. Output only the summary:\n\n${truncatedText}`,
+              },
+            ],
+          },
+        ],
+        config: {
+          systemInstruction: 'You are a professional blog editor. Write concise, informative summaries.',
+          temperature: 0.3,
+          maxOutputTokens: 250,
+        },
+      });
+
+      const summary = response.text;
+      if (!summary) {
+        throw new Error('No summary received from Gemini');
+      }
+      return summary.trim();
+    } catch (error) {
+      lastError = error instanceof Error ? error : new Error(String(error));
+      if (attempt < retries) {
+        console.log(chalk.gray(`    Retry ${attempt}/${retries - 1}...`));
+        await new Promise((resolve) => setTimeout(resolve, 2000 * attempt));
+      }
+    }
   }
-  return summary.trim();
+
+  throw lastError || new Error('Failed to generate summary after retries');
 }
 
-// --------- File Processing (Same as original) ---------
+// --------- File Processing ---------
 
 async function processFile(filePath: string): Promise<PostData | null> {
   try {
@@ -191,11 +243,10 @@ async function loadPosts(files: string[]): Promise<PostData[]> {
 // --------- Main Execution ---------
 
 async function main() {
-  const _startTime = Date.now();
   const { model, force } = parseArgs();
 
   try {
-    console.log(chalk.cyan('=== Gemini Summary Generator (English) ===\n'));
+    console.log(chalk.cyan('=== Gemini Summary Generator ===\n'));
 
     if (!API_KEY) {
       console.log(chalk.red('Error: GEMINI_API_KEY is missing from .env file.'));
@@ -203,6 +254,7 @@ async function main() {
     }
 
     console.log(chalk.gray(`Model: ${model}`));
+    console.log(chalk.gray(`Rate limit: ${RATE_LIMIT} requests/minute\n`));
 
     // Check API
     const apiRunning = await checkApiRunning();
@@ -227,7 +279,7 @@ async function main() {
       generated = 0,
       errors = 0;
 
-    console.log(chalk.blue('Generating English summaries...'));
+    console.log(chalk.blue('Generating summaries...'));
 
     for (let i = 0; i < posts.length; i++) {
       const post = posts[i];

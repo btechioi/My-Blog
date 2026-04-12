@@ -1,1 +1,42 @@
-{}
+{
+  "tools/spi-drivers": {
+    "title": "SPI Driver Documentation",
+    "summary": "Pico-Pro platform, enabling high-speed data exchange between a Linux host (Pico-Pro/Raspberry Pi Zero W) and RP2040-based slaves (Pi Pico). It details the `spi_master_linux` driver for the host and `spi_slave_pico` for the RP2040, covering installation, multi-slave configuration, motor control, sensor reading, and IRQ handling. The system supports 10 MHz SPI transfers with automatic chip select management and thread-safe operations for robust communication."
+  },
+  "tools/pico-pro": {
+    "title": "Pico-Pro Platform - Complete Implementation",
+    "summary": "This guide provides a comprehensive implementation overview for the Pico-Pro platform, detailing its system architecture and code examples. It highlights the platform's capability to act as an SPI Master, coordinating Pi Pico and ESP32 slaves for real-time sensor processing and multi-processor tasks. The document also covers the U-Boot bootloader implementation and the SPI communication protocol, emphasizing its role in achieving high-bandwidth, low-latency data exchange."
+  },
+  "tools/pico-pro-alpine": {
+    "title": "Pico-Pro Platform on Alpine Linux - Buildroot-Free Implementation",
+    "summary": "The Pico-Pro platform now uses Alpine Linux as its base OS, offering a production-ready embedded experience without the complexities of Buildroot. This shift provides benefits like pre-built packages, faster build times, and a proven init system. The guide details the installation, A/B partition setup, and the C++ system controller implementation for managing boot modes, watchdog, heartbeat, and USB gadget functionality."
+  },
+  "tools/minimal-linux-alternatives": {
+    "title": "Minimal Linux Alternatives to Buildroot",
+    "summary": "systems, this article explores more practical, pre-built minimal Linux alternatives for resource-constrained hardware like the Raspberry Pi Zero W. It compares Alpine Linux, TinyCore, OpenWrt, and DietPi based on size, RAM usage, and features, providing installation and configuration guides for each. The author ultimately recommends Alpine Linux for its balance of efficiency, package management, and Docker compatibility, with Buildroot as a secondary choice for ultimate control."
+  },
+  "tools/diy-mocap-system": {
+    "title": "DIY Mocap System",
+    "summary": "This guide details a DIY, high-"
+  },
+  "pico-pro": {
+    "title": "Pico-Pro Platform - Complete Implementation",
+    "summary": "This document provides a comprehensive implementation guide for the Pico"
+  },
+  "note/pico-parallel-gpio": {
+    "title": "Breaking the Serial Speed Limit: RP2040 Parallel GPIO with PIO",
+    "summary": "The RP2040 microcontroller can overcome"
+  },
+  "note/drone-architecure": {
+    "title": "Building an Autonomous Drone Brain with Pi Zero W, Pico, and ESP32",
+    "summary": "This project details the development of a tri-"
+  },
+  "life/weekly-projects-roundup": {
+    "title": "Weekly Projects Roundup: Embedded Systems Edition",
+    "summary": "This week's roundup details several embedded"
+  },
+  "life/weekly-progress-update": {
+    "title": "Weekly Progress Update: Building the Weekly Blog Page",
+    "summary": "A new `/weekly` page has been implemented for this Astro blog, providing readers with a fast snapshot of all content published within the current ISO week. This feature helps users quickly discover new posts and supports content visibility, with plans for future enhancements like historical week browsing."
+  }
+}

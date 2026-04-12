@@ -119,8 +119,6 @@ export function GenerateApp({
     onComplete?.();
   });
 
-  const _successCount = [...results.values()].filter((r) => r.success).length;
-
   return (
     <Box flexDirection="column">
       {status === 'selecting' && (

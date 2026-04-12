@@ -12,7 +12,6 @@ export function getStaticPaths() {
 }
 
 export async function GET(context: APIContext) {
-  const _lang = context.params.lang as string;
   const posts = await getSortedPosts(defaultLocale); // always use English source
   const { site } = context;
 

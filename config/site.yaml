@@ -206,6 +206,12 @@ analytics:
 seo:
   robots:
     host: true
+    sitemap: /sitemap-index.xml
+    rules:
+      - allow: /
+      - disallow: /api/
+      - disallow: /cms
+      - user-agent: '*'
 
 # =============================================================================
 # Background Music

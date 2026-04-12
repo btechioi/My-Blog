@@ -1,164 +1,299 @@
 {
-  "getting-started": [
+  "tools/spi-drivers": [
     {
-      "slug": "astro-koharu-guide",
-      "title": "astro-koharu 使用指南",
-      "similarity": 0.752
+      "slug": "tools/pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.742
     },
     {
-      "slug": "theme-customization",
-      "title": "主题定制指南",
-      "similarity": 0.675
+      "slug": "note/pico-parallel-gpio",
+      "title": "Breaking the Serial Speed Limit: RP2040 Parallel GPIO with PIO",
+      "similarity": 0.545
     },
     {
-      "slug": "markdown-features",
-      "title": "Markdown 增强功能演示",
-      "similarity": 0.649
+      "slug": "tools/pico-pro-alpine",
+      "title": "Pico-Pro Platform on Alpine Linux - Buildroot-Free Implementation",
+      "similarity": 0.53
     },
     {
-      "slug": "toc-no-numbering",
-      "title": "关闭目录编号示例",
-      "similarity": 0.513
+      "slug": "pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.485
     },
     {
-      "slug": "hello-world",
-      "title": "Hello World",
-      "similarity": 0.425
+      "slug": "note/drone-architecure",
+      "title": "Building an Autonomous Drone Brain with Pi Zero W, Pico, and ESP32",
+      "similarity": 0.481
     }
   ],
-  "astro-koharu-guide": [
+  "tools/pico-pro": [
     {
-      "slug": "getting-started",
-      "title": "欢迎使用 astro-koharu",
-      "similarity": 0.752
+      "slug": "tools/spi-drivers",
+      "title": "SPI Driver Documentation",
+      "similarity": 0.742
     },
     {
-      "slug": "markdown-features",
-      "title": "Markdown 增强功能演示",
-      "similarity": 0.735
+      "slug": "pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.725
     },
     {
-      "slug": "theme-customization",
-      "title": "主题定制指南",
-      "similarity": 0.7
+      "slug": "tools/pico-pro-alpine",
+      "title": "Pico-Pro Platform on Alpine Linux - Buildroot-Free Implementation",
+      "similarity": 0.608
     },
     {
-      "slug": "toc-no-numbering",
-      "title": "关闭目录编号示例",
-      "similarity": 0.561
+      "slug": "note/drone-architecure",
+      "title": "Building an Autonomous Drone Brain with Pi Zero W, Pico, and ESP32",
+      "similarity": 0.549
     },
     {
-      "slug": "hello-world",
-      "title": "Hello World",
-      "similarity": 0.527
+      "slug": "note/pico-parallel-gpio",
+      "title": "Breaking the Serial Speed Limit: RP2040 Parallel GPIO with PIO",
+      "similarity": 0.494
     }
   ],
-  "toc-no-numbering": [
+  "tools/pico-pro-alpine": [
     {
-      "slug": "theme-customization",
-      "title": "主题定制指南",
-      "similarity": 0.564
+      "slug": "tools/pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.608
     },
     {
-      "slug": "astro-koharu-guide",
-      "title": "astro-koharu 使用指南",
-      "similarity": 0.561
+      "slug": "tools/minimal-linux-alternatives",
+      "title": "Minimal Linux Alternatives to Buildroot",
+      "similarity": 0.595
     },
     {
-      "slug": "markdown-features",
-      "title": "Markdown 增强功能演示",
-      "similarity": 0.541
+      "slug": "pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.571
     },
     {
-      "slug": "getting-started",
-      "title": "欢迎使用 astro-koharu",
-      "similarity": 0.513
+      "slug": "tools/spi-drivers",
+      "title": "SPI Driver Documentation",
+      "similarity": 0.53
     },
     {
-      "slug": "hello-world",
-      "title": "Hello World",
-      "similarity": 0.364
+      "slug": "note/drone-architecure",
+      "title": "Building an Autonomous Drone Brain with Pi Zero W, Pico, and ESP32",
+      "similarity": 0.453
     }
   ],
-  "markdown-features": [
+  "tools/minimal-linux-alternatives": [
     {
-      "slug": "astro-koharu-guide",
-      "title": "astro-koharu 使用指南",
-      "similarity": 0.735
+      "slug": "tools/pico-pro-alpine",
+      "title": "Pico-Pro Platform on Alpine Linux - Buildroot-Free Implementation",
+      "similarity": 0.595
     },
     {
-      "slug": "getting-started",
-      "title": "欢迎使用 astro-koharu",
-      "similarity": 0.649
+      "slug": "note/drone-architecure",
+      "title": "Building an Autonomous Drone Brain with Pi Zero W, Pico, and ESP32",
+      "similarity": 0.393
     },
     {
-      "slug": "theme-customization",
-      "title": "主题定制指南",
-      "similarity": 0.611
+      "slug": "tools/spi-drivers",
+      "title": "SPI Driver Documentation",
+      "similarity": 0.344
     },
     {
-      "slug": "toc-no-numbering",
-      "title": "关闭目录编号示例",
-      "similarity": 0.541
+      "slug": "tools/pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.323
     },
     {
-      "slug": "hello-world",
-      "title": "Hello World",
-      "similarity": 0.406
+      "slug": "note/pico-parallel-gpio",
+      "title": "Breaking the Serial Speed Limit: RP2040 Parallel GPIO with PIO",
+      "similarity": 0.296
     }
   ],
-  "hello-world": [
+  "tools/diy-mocap-system": [
     {
-      "slug": "astro-koharu-guide",
-      "title": "astro-koharu 使用指南",
-      "similarity": 0.527
+      "slug": "pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.456
     },
     {
-      "slug": "theme-customization",
-      "title": "主题定制指南",
-      "similarity": 0.462
+      "slug": "life/weekly-projects-roundup",
+      "title": "Weekly Projects Roundup: Embedded Systems Edition",
+      "similarity": 0.39
     },
     {
-      "slug": "getting-started",
-      "title": "欢迎使用 astro-koharu",
-      "similarity": 0.425
+      "slug": "note/drone-architecure",
+      "title": "Building an Autonomous Drone Brain with Pi Zero W, Pico, and ESP32",
+      "similarity": 0.365
     },
     {
-      "slug": "markdown-features",
-      "title": "Markdown 增强功能演示",
-      "similarity": 0.406
+      "slug": "tools/pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.321
     },
     {
-      "slug": "toc-no-numbering",
-      "title": "关闭目录编号示例",
-      "similarity": 0.364
+      "slug": "tools/pico-pro-alpine",
+      "title": "Pico-Pro Platform on Alpine Linux - Buildroot-Free Implementation",
+      "similarity": 0.299
     }
   ],
-  "theme-customization": [
+  "pico-pro": [
     {
-      "slug": "astro-koharu-guide",
-      "title": "astro-koharu 使用指南",
-      "similarity": 0.7
+      "slug": "tools/pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.725
     },
     {
-      "slug": "getting-started",
-      "title": "欢迎使用 astro-koharu",
-      "similarity": 0.675
+      "slug": "tools/pico-pro-alpine",
+      "title": "Pico-Pro Platform on Alpine Linux - Buildroot-Free Implementation",
+      "similarity": 0.571
     },
     {
-      "slug": "markdown-features",
-      "title": "Markdown 增强功能演示",
-      "similarity": 0.611
+      "slug": "note/drone-architecure",
+      "title": "Building an Autonomous Drone Brain with Pi Zero W, Pico, and ESP32",
+      "similarity": 0.492
     },
     {
-      "slug": "toc-no-numbering",
-      "title": "关闭目录编号示例",
-      "similarity": 0.564
+      "slug": "tools/spi-drivers",
+      "title": "SPI Driver Documentation",
+      "similarity": 0.485
     },
     {
-      "slug": "hello-world",
-      "title": "Hello World",
-      "similarity": 0.462
+      "slug": "tools/diy-mocap-system",
+      "title": "DIY Mocap System",
+      "similarity": 0.456
+    }
+  ],
+  "note/pico-parallel-gpio": [
+    {
+      "slug": "tools/spi-drivers",
+      "title": "SPI Driver Documentation",
+      "similarity": 0.545
+    },
+    {
+      "slug": "tools/pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.494
+    },
+    {
+      "slug": "note/drone-architecure",
+      "title": "Building an Autonomous Drone Brain with Pi Zero W, Pico, and ESP32",
+      "similarity": 0.443
+    },
+    {
+      "slug": "pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.367
+    },
+    {
+      "slug": "tools/pico-pro-alpine",
+      "title": "Pico-Pro Platform on Alpine Linux - Buildroot-Free Implementation",
+      "similarity": 0.334
+    }
+  ],
+  "note/drone-architecure": [
+    {
+      "slug": "tools/pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.549
+    },
+    {
+      "slug": "pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.492
+    },
+    {
+      "slug": "tools/spi-drivers",
+      "title": "SPI Driver Documentation",
+      "similarity": 0.481
+    },
+    {
+      "slug": "tools/pico-pro-alpine",
+      "title": "Pico-Pro Platform on Alpine Linux - Buildroot-Free Implementation",
+      "similarity": 0.453
+    },
+    {
+      "slug": "note/pico-parallel-gpio",
+      "title": "Breaking the Serial Speed Limit: RP2040 Parallel GPIO with PIO",
+      "similarity": 0.443
+    }
+  ],
+  "life/weekly-projects-roundup": [
+    {
+      "slug": "life/weekly-progress-update",
+      "title": "Weekly Progress Update: Building the Weekly Blog Page",
+      "similarity": 0.47
+    },
+    {
+      "slug": "note/drone-architecure",
+      "title": "Building an Autonomous Drone Brain with Pi Zero W, Pico, and ESP32",
+      "similarity": 0.398
+    },
+    {
+      "slug": "tools/diy-mocap-system",
+      "title": "DIY Mocap System",
+      "similarity": 0.39
+    },
+    {
+      "slug": "pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.362
+    },
+    {
+      "slug": "tools/pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.329
+    }
+  ],
+  "life/weekly-progress-update": [
+    {
+      "slug": "life/weekly-projects-roundup",
+      "title": "Weekly Projects Roundup: Embedded Systems Edition",
+      "similarity": 0.47
+    },
+    {
+      "slug": "life/hello-world",
+      "title": "Hello_World!",
+      "similarity": 0.388
+    },
+    {
+      "slug": "pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.3
+    },
+    {
+      "slug": "tools/pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.286
+    },
+    {
+      "slug": "tools/pico-pro-alpine",
+      "title": "Pico-Pro Platform on Alpine Linux - Buildroot-Free Implementation",
+      "similarity": 0.285
+    }
+  ],
+  "life/hello-world": [
+    {
+      "slug": "life/weekly-progress-update",
+      "title": "Weekly Progress Update: Building the Weekly Blog Page",
+      "similarity": 0.388
+    },
+    {
+      "slug": "pico-pro",
+      "title": "Pico-Pro Platform - Complete Implementation",
+      "similarity": 0.315
+    },
+    {
+      "slug": "note/drone-architecure",
+      "title": "Building an Autonomous Drone Brain with Pi Zero W, Pico, and ESP32",
+      "similarity": 0.294
+    },
+    {
+      "slug": "life/weekly-projects-roundup",
+      "title": "Weekly Projects Roundup: Embedded Systems Edition",
+      "similarity": 0.281
+    },
+    {
+      "slug": "tools/diy-mocap-system",
+      "title": "DIY Mocap System",
+      "similarity": 0.28
     }
   ]
 }
