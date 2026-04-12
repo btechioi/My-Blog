@@ -1,12 +1,18 @@
+---
 title: "Weekly Projects Roundup: Embedded Systems Edition"
 date: "2026-07-15"
-category: "Life"
-keywords: ["Update", "Embedded", "RP2040", "Linux", "Pico-Pro", "Life"]
+categories:
+  - Life
+tags:
+  - Update
+  - Embedded
+  - RP2040
+  - Linux
+  - Pico-Pro
 description: "This week's roundup covers several embedded systems projects I've been working on. From Linux distribution comparisons to low-level GPIO..."
-author: "btechioi"
 ---
 
-This week’s roundup covers several embedded systems projects I’ve been working on. From Linux distribution comparisons to low-level GPIO communication, here’s what I’ve been building.
+This week's roundup covers several embedded systems projects I've been working on. From Linux distribution comparisons to low-level GPIO communication, here's what I've been building.
 
 ## SPI Driver Stack: Linux ↔ RP2040 Communication
 
@@ -30,11 +36,20 @@ GP18 (SCK)  →    GPIO 18 (SCK)
 GP19 (MOSI) →    GPIO 19 (MOSI)  
 GP16 (MISO) ←    GPIO 16 (MISO)
 GP17 (CS)   ←    GPIO 17 (CS)
+
 ## Minimal Linux Alternatives to Buildroot
 
 The **Minimal Linux Alternatives** post compares lightweight distributions suitable for embedded systems, from TinyCore to Alpine. I evaluated six options for the Pico-Pro platform:
 
-DistroSizeRAM MinInit SystemBest ForAlpine Linux130 MB256 MBOpenRCContainers, embeddedTinyCore16 MB48 MBBusyBoxAbsolute minimumOpenWrt4-16 MB64 MBProcdNetwork featuresBuildroot4-64 MB128 MBCustomMaximum controlDietPi2 GB512 MBsystemdEase of useRaspberry Pi OS Lite1 GB512 MBsystemdCompatibility
+| Distro | Size | RAM Min | Init System | Best For |
+|--------|------|---------|-------------|----------|
+| Alpine Linux | 130 MB | 256 MB | OpenRC | Containers, embedded |
+| TinyCore | 16 MB | 48 MB | BusyBox | Absolute minimum |
+| OpenWrt | 4-16 MB | 64 MB | Procd | Network features |
+| Buildroot | 4-64 MB | 128 MB | Custom | Maximum control |
+| DietPi | 2 GB | 512 MB | systemd | Ease of use |
+| Raspberry Pi OS Lite | 1 GB | 512 MB | systemd | Compatibility |
+
 **My recommendation for Pico-Pro:** Alpine Linux with OpenRC — musl libc, lightweight init, apk package manager, Docker support, and reasonable resource usage.
 
 ## Pico-Pro on Alpine Linux
@@ -43,21 +58,19 @@ Building on the distro comparison, the **Pico-Pro Alpine** post documents a comp
 
 - **A/B partitioning** for safe firmware updates
 - **Custom system controller** in C++ with:
-
-GPIO control
-- LED state management (fast/slow blink, solid, off)
-- Hardware watchdog integration
-- Heartbeat monitoring via named pipe
-- USB gadget mass storage mode
-
-**SPI multi-processor architecture** with the Pi Pico as a co-processor
-**OpenRC service scripts** for system management
+  - GPIO control
+  - LED state management (fast/slow blink, solid, off)
+  - Hardware watchdog integration
+  - Heartbeat monitoring via named pipe
+  - USB gadget mass storage mode
+- **SPI multi-processor architecture** with the Pi Pico as a co-processor
+- **OpenRC service scripts** for system management
 
 The controller (`pico-pro-ctl`) runs as a daemon managing system state, partition switching, and health monitoring.
 
 ## Parallel GPIO with RP2040 PIO
 
-The **Pico Parallel GPIO** post explores breaking the serial speed limit using RP2040’s PIO (Programmable I/O) blocks for parallel bus communication.
+The **Pico Parallel GPIO** post explores breaking the serial speed limit using RP2040's PIO (Programmable I/O) blocks for parallel bus communication.
 
 **Why parallel beats serial:**
 
@@ -73,7 +86,7 @@ The **Pico Parallel GPIO** post explores breaking the serial speed limit using R
 
 The implementation includes DMA integration for zero-CPU throughput transfers, with performance benchmarks showing significant improvements over SPI for bulk data movement.
 
-## What’s Next
+## What's Next
 
 - ESP32 integration for wireless telemetry
 - Real-time motor control loop tuning

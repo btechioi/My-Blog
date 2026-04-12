@@ -1,30 +1,30 @@
 # yaml-language-server: $schema=https://json-schema.org/draft-07/schema
 # =============================================================================
-# Site Configuration - btechioi
+# Site Configuration
 # =============================================================================
 
 # =============================================================================
 # Site Basic Information
 # =============================================================================
 site:
-  title: My Blog
-  alternate: BTech_IOI
-  subtitle: My Portfolio and Blog
-  name: btechioi
-  description: A modern blog theme powered by Astro
+  title: Banu's Blog
+  alternate: banumath
+  subtitle: Tech, Projects & Life
+  name: banumath
+  description: A personal blog about technology, embedded systems, and life
   avatar: /img/avatar.webp
   showLogo: true
-  author: btechioi
-  url: https://btechioi.netlify.app
+  author: Banumath Hettiarachchi
+  url: https://banumath.dev
   defaultOgImage: /img/avatar.webp
   startYear: 2026
   timezone: Asia/Colombo
   keywords:
     - Blog
-    - Astro
+    - Embedded Systems
+    - Linux
+    - Robotics
     - Technology
-    - Frontend
-    - Portfolio
 
 # =============================================================================
 # Internationalization (i18n)
@@ -80,7 +80,7 @@ featuredSeries:
     enabled: true
     icon: ri:newspaper-line
     links:
-      github: https://github.com/btechioi
+      github: https://github.com/banumath
       rss: /rss.xml
 
 # =============================================================================
@@ -88,7 +88,7 @@ featuredSeries:
 # =============================================================================
 social:
   github:
-    url: https://github.com/btechioi
+    url: https://github.com/banumath
     icon: ri:github-fill
     color: '#191717'
   email:
@@ -223,7 +223,7 @@ christmas:
 # Development Tools
 # =============================================================================
 dev:
-  localProjectPath: '/home/Banumath/Projects/My-Blog'
+  localProjectPath: '/home/banumath/My-Blog'
   contentRelativePath: 'src/content/blog'
   editors:
     - id: vscode
