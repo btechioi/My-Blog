@@ -56,7 +56,7 @@ function categoriesToString(categories?: string | string[] | string[][]): string
   if (!categories) return '';
   if (typeof categories === 'string') return categories;
 
-  // Handle nested array like [['笔记', '前端']]
+  // Handle nested array like [['Notes', 'Frontend']]
   const flat = categories.flatMap((c) => (Array.isArray(c) ? c : [c]));
   return flat.join(' > ');
 }
@@ -329,7 +329,7 @@ export const FrontmatterEditor = forwardRef<FrontmatterEditorRef, FrontmatterEdi
         <FormField
           label="Categories"
           id="categories"
-          placeholder="笔记 > 前端 > React"
+          placeholder="Notes > Frontend > React"
           error={errors.categories?.message}
           {...register('categories')}
         />

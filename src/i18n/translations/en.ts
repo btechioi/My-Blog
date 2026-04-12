@@ -1,12 +1,12 @@
 /**
- * English (en) — UI strings
+ * English (en) — Default locale UI strings
  *
- * Keys not present here will fall back to the default locale (zh).
+ * This is the source-of-truth dictionary for English-only sites.
+ * All translation keys are defined here with complete English translations.
+ * Exported as const to allow type inference without circular dependencies.
  */
 
-import type { UIStrings } from '../types';
-
-export const uiStrings: UIStrings = {
+export const uiStrings = {
   // ── Navigation ──────────────────────────────────────────────
   'nav.home': 'Home',
   'nav.posts': 'Posts',
@@ -323,4 +323,4 @@ export const uiStrings: UIStrings = {
 
   // ── Copy Link ───────────────────────────────────────────────
   'cover.copyLink': 'Copy link',
-};
+} as const;

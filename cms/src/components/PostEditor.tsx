@@ -499,7 +499,7 @@ export function PostEditor({ postId, onClose, onSaved }: PostEditorProps) {
                 )}
               >
                 <Icon icon="ri:settings-3-line" className="mr-1 inline-block size-4" />
-                属性
+                Properties
               </button>
               <button
                 type="button"
@@ -512,7 +512,7 @@ export function PostEditor({ postId, onClose, onSaved }: PostEditorProps) {
                 )}
               >
                 <Icon icon="ri:list-unordered" className="mr-1 inline-block size-4" />
-                目录
+                TOC
               </button>
               <button
                 type="button"
@@ -525,7 +525,7 @@ export function PostEditor({ postId, onClose, onSaved }: PostEditorProps) {
                 )}
               >
                 <Icon icon="ri:eye-line" className="mr-1 inline-block size-4" />
-                预览
+                Preview
               </button>
             </div>
 

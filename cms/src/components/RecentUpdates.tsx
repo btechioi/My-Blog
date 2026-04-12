@@ -6,7 +6,6 @@
 
 import { Icon } from '@iconify/react';
 import { formatDistanceToNow } from 'date-fns';
-import { zhCN } from 'date-fns/locale';
 import { cn } from '@/lib/utils';
 import type { PostListItem } from '@/types';
 
@@ -21,7 +20,7 @@ export function RecentUpdates({ posts, maxDisplay = 5, onEdit }: RecentUpdatesPr
 
   const formatRelativeTime = (dateString: string) => {
     try {
-      return formatDistanceToNow(new Date(dateString), { addSuffix: true, locale: zhCN });
+      return formatDistanceToNow(new Date(dateString), { addSuffix: true });
     } catch {
       return dateString;
     }

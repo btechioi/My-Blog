@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-astro-koharu is an Astro-based blog rebuilt from Hexo, inspired by the Shoka theme. It uses React for interactive components, Tailwind CSS for styling, and maintains compatibility with legacy Hexo blog content.
+This repository is a personal Astro-based blog project. It uses React for interactive components and Tailwind CSS for styling. The guidance in this file is intended to help contributors and maintainers work with this specific repository.
 
 ## Core Engineering Principles
 
@@ -54,28 +54,18 @@ Package manager: **pnpm** (`pnpm@9.15.1`)
 
 ```bash
 # Development
-pnpm dev              # Start dev server at http://localhost:4321
+pnpm dev              # Start dev server
 pnpm build            # Build for production
 pnpm preview          # Preview production build
-pnpm check            # Run Astro type checking
+pnpm check            # Run type checking and content sync
 
 # Linting & Code Quality
-pnpm lint             # Run Biome linter and formatter
+pnpm lint             # Run linter and formatter
 pnpm lint:fix         # Auto-fix linting issues
 pnpm knip             # Find unused files/dependencies
 
-# Koharu CLI (Interactive TUI)
-pnpm koharu              # Interactive menu
-pnpm koharu backup       # Backup blog content and config (--full for complete backup)
-pnpm koharu restore      # Restore from backup (--latest, --dry-run, --force)
-pnpm koharu update       # Update theme from upstream (--check, --skip-backup, --force, --rebase, --clean)
-pnpm koharu generate     # Generate content assets (interactive menu)
-pnpm koharu generate lqips        # Generate LQIP image placeholders
-pnpm koharu generate similarities # Generate semantic similarity vectors
-pnpm koharu generate summaries    # Generate AI summaries (--model, --force)
-pnpm koharu generate all          # Generate all content assets
-pnpm koharu clean        # Clean old backups (--keep N to retain N most recent)
-pnpm koharu list         # List all backups
+# Note: Any project-specific interactive CLI tools have been removed or are not included
+# in this sanitized copy. Use the npm/pnpm scripts above for development and maintenance tasks.
 ```
 
 **Note on Configuration Changes:** After modifying `config/site.yaml`, restart the dev server or rebuild. The YAML configuration is cached during build for performance.

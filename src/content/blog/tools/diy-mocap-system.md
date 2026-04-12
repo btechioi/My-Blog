@@ -1,16 +1,15 @@
 ---
-title: DIY Mocap System
-link: diy-mocap-system
-date: 2026-02-18 16:04:27
-description: Step-by-step technical deep-dive into a low-cost, 100 Hz+ infrared motion tracking system for drones and humans using OV9281 global shutter cameras, Artix Linux, Fedora, ESP32 active markers, OpenCV, EKF, and ESP-NOW.
-tags: 
- - Robotics 
- - Linux 
- - Drone 
- - MoCap 
- - ESP32
+title: "DIY Mocap System"
+date: "2026-02-18"
 categories:
   - Tools
+tags:
+  - Robotics
+  - Linux
+  - Drone
+  - MoCap
+  - ESP32
+description: "Step-by-step technical deep-dive into a low-cost, 100 Hz+ infrared motion tracking system for drones and humans using OV9281 global shutter cameras, Artix Linux, Fedora, ESP32 active markers, OpenCV, EKF, and ESP-NOW."
 ---
 
 # DIY High-Speed Motion Capture Lab: Tracking at 10 m/s
@@ -21,16 +20,10 @@ The core idea: active infrared LED markers on targets, global shutter cameras fo
 
 DIY setups like this one (compact rig with small active-marker drones) prove the concept works at low cost:
 
-<grok-card data-id="dd3de1" data-type="image_card" data-plain-type="render_searched_image"  data-arg-size="LARGE" ></grok-card>
-
-
-
-<grok-card data-id="f7ec70" data-type="image_card" data-plain-type="render_searched_image"  data-arg-size="LARGE" ></grok-card>
-
-
 ## Hardware Architecture
 
 ### Cameras: OV9281 Global Shutter Modules
+
 - **Why global shutter?** At 10 m/s, rolling shutter would cause severe distortion (jello effect) during fast motion. Global shutter captures the entire frame simultaneously → no blur or skew.
 - Typical config: 4–8 × OV9281 (1 MP monochrome, up to 120 fps at 1280×800 or higher at reduced res).
 - IR-sensitive (NoIR variant) + 850/940 nm bandpass filter to reject ambient light.
@@ -38,30 +31,13 @@ DIY setups like this one (compact rig with small active-marker drones) prove the
 
 Real OV9281 modules look compact and industrial-grade:
 
-<grok-card data-id="e84d8e" data-type="image_card" data-plain-type="render_searched_image"  data-arg-size="LARGE" ></grok-card>
-
-
-
-<grok-card data-id="34d769" data-type="image_card" data-plain-type="render_searched_image"  data-arg-size="LARGE" ></grok-card>
-
-
-
-<grok-card data-id="a1ef8a" data-type="image_card" data-plain-type="render_searched_image"  data-arg-size="LARGE" ></grok-card>
-
-
 ### Processing Nodes
+
 - **Tracking Node** (Artix Linux PC, e.g., old i5-3470 quad-core): Low-latency vision pipeline. Uses VA-API hardware acceleration for frame decoding/processing.
 - **Control Node** (Fedora laptop, e.g., i5-7440HQ): Fuses multi-camera data, runs EKF for smoothing + prediction, visualizes (KDE Plasma/Qt), sends setpoints via ESP-NOW.
 - **Targets** (ESP32-C3 drones): 1 kHz PID attitude loop + active IR blinking LEDs for unique IDs (time-multiplexed patterns).
 
 Typical active-marker micro-drones (ESP32 + IR LEDs for optical ID):
-
-<grok-card data-id="3ea24f" data-type="image_card" data-plain-type="render_searched_image"  data-arg-size="LARGE" ></grok-card>
-
-
-
-<grok-card data-id="2beb38" data-type="image_card" data-plain-type="render_searched_image"  data-arg-size="LARGE" ></grok-card>
-
 
 ## Data Flow & Latency Budget
 
@@ -76,13 +52,6 @@ End-to-end latency target: < 40–50 ms to maintain stability at 10 m/s (object 
 
 High-speed drone passes in similar indoor MoCap environments:
 
-<grok-card data-id="ae22cc" data-type="image_card" data-plain-type="render_searched_image"  data-arg-size="LARGE" ></grok-card>
-
-
-
-<grok-card data-id="b34c91" data-type="image_card" data-plain-type="render_searched_image"  data-arg-size="LARGE" ></grok-card>
-
-
 ## Performance at 10 m/s – Nuances & Edge Cases
 
 - **Spatial accuracy**: Sub-cm to mm-level possible with good calibration and baselines. At 10 m/s, even 1 cm error + latency causes noticeable position jitter → EKF critical.
@@ -94,6 +63,7 @@ High-speed drone passes in similar indoor MoCap environments:
 ## Project Timeline & Testing
 
 Phased build:
+
 - Weeks 1–2: Camera rigging, leveling, calibration (chessboard + OpenCV).
 - Weeks 3–5: ESP32 marker PCBs, blink sync, basic tracking.
 - Weeks 6–8: Full pipeline + EKF tuning.
@@ -106,10 +76,11 @@ Test rigorously: high-speed video ground truth, RMS error logs, latency scope me
 This setup delivers research-grade tracking (100+ Hz, sub-cm, predictive) on a hobbyist budget. It enables experiments in autonomous drone swarms, aggressive flight control, human motion studies, or robotics validation — all without proprietary lock-in.
 
 Key takeaways:
+
 - Global shutter + active IR is the sweet spot for speed + robustness.
 - Distributed Linux nodes + ESP-NOW close the real-time loop affordably.
 - Prediction/filtering turns usable tracking into controllable tracking at high velocity.
 
-If you're building something similar, start with 4 cameras + one marker drone, calibrate meticulously, and measure every latency hop. The physics and engineering constraints are unforgiving at 10 m/s, but the results are incredibly rewarding.
+If you’re building something similar, start with 4 cameras + one marker drone, calibrate meticulously, and measure every latency hop. The physics and engineering constraints are unforgiving at 10 m/s, but the results are incredibly rewarding.
 
 Happy hacking!

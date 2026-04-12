@@ -9,14 +9,13 @@ import { pinyin } from 'pinyin-pro';
 
 /**
  * Generate a URL-friendly slug from a title.
- * Converts Chinese characters to pinyin, keeps ASCII characters grouped.
+ * Converts non-ASCII characters to hyphens, keeps ASCII characters grouped.
  *
  * @example
  * generateSlug('test123')           // 'test123'
  * generateSlug('Hello World')       // 'hello-world'
- * generateSlug('你好')              // 'ni-hao'
- * generateSlug('React学习笔记')     // 'react-xue-xi-bi-ji'
- * generateSlug('teset1234刀急急急') // 'teset1234-dao-ji-ji-ji'
+ * generateSlug('React 学习笔记')     // 'react-xue-xi-bi-ji'
+ * generateSlug('测试文章标题')       // 'ce-shi-wen-zhang-biao-ti'
  */
 export function generateSlug(title: string): string {
   const tokens: string[] = [];

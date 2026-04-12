@@ -1,23 +1,22 @@
 ---
-title: Hello_World!
-link: hello-world
-date: 2026-02-18 12:31:55
-tags:
-  - Essay
+title: "Hello_World!"
+date: "2026-02-18"
 categories:
   - Life
-sticky: true
+tags:
+  - Essay
+description: "Hello, World! BTech_IOI here. About This Post This is my first blog post – a space where I'll be documenting my journey building unconventional tech..."
 ---
 
 Hello, World! BTech_IOI here.
 
 ## About This Post
 
-This is my first blog post – a space where I'll be documenting my journey building unconventional tech projects. Expect deep dives, failure stories, breakthroughs, and everything in between.
+This is my first blog post – a space where I’ll be documenting my journey building unconventional tech projects. Expect deep dives, failure stories, breakthroughs, and everything in between.
 
 ## Who Am I?
 
-I'm BTech_IOI, a builder obsessed with pushing hardware and AI to their limits. My background is in electronics and computer science, but my real education has been in late-night debugging sessions and watching things fly (literally).
+I’m BTech_IOI, a builder obsessed with pushing hardware and AI to their limits. My background is in electronics and computer science, but my real education has been in late-night debugging sessions and watching things fly (literally).
 
 ## Project 1: The Autonomous Drone with Custom Flight Controller
 
@@ -25,22 +24,24 @@ Most drones fly. I want mine to *think*.
 
 ### The Hardware Stack
 
-I'm going with a modular, distributed approach with all controllers communicating over **SPI** using **hardware interrupts** for instant response:
+I’m going with a modular, distributed approach with all controllers communicating over **SPI** using **hardware interrupts** for instant response:
 
-- **Raspberry Pi Zero** – The "brain" for autonomy. Acts as SPI master. Runs the heavy stuff: optical flow, object detection, path planning. Sends high-level commands to the Pico when it has new data, triggering interrupts.
-- **Raspberry Pi Pico** – Running the main flight controller logic. SPI slave. The RP2040's dual-core architecture and programmable I/O make it perfect for handling real-time sensor reading and motor mixing. Listens for commands from the Pi Zero via interrupts.
-- **ESP32-C3** – Dedicated to comms and telemetry. Also an SPI slave. WiFi for high-bandwidth data when nearby, plus I'm experimenting with ESP-NOW for low-latency control. The built-in Bluetooth is a bonus for controller pairing.
+- **Raspberry Pi Zero** – The “brain” for autonomy. Acts as SPI master. Runs the heavy stuff: optical flow, object detection, path planning. Sends high-level commands to the Pico when it has new data, triggering interrupts.
+- **Raspberry Pi Pico** – Running the main flight controller logic. SPI slave. The RP2040’s dual-core architecture and programmable I/O make it perfect for handling real-time sensor reading and motor mixing. Listens for commands from the Pi Zero via interrupts.
+- **ESP32-C3** – Dedicated to comms and telemetry. Also an SPI slave. WiFi for high-bandwidth data when nearby, plus I’m experimenting with ESP-NOW for low-latency control. The built-in Bluetooth is a bonus for controller pairing.
 
 ### The Interrupt-Driven Design
 
-Here's the clever part: **the Pi Zero is the SPI master, but the Pico is the real-time brain that never stops flying.**
+Here’s the clever part: **the Pi Zero is the SPI master, but the Pico is the real-time brain that never stops flying.**
 
 If the Pi Zero freezes or dies mid-flight:
+
 - **The Pico keeps flying** – It continues running its control loop, reading sensors, and stabilizing the drone
-- **No single point of failure** – The Pico doesn't depend on the Zero for basic flight
+- **No single point of failure** – The Pico doesn’t depend on the Zero for basic flight
 - **Fail-safe mode** – The Pico can detect missed interrupts/timeouts and switch to a safe return-to-launch behavior
 
 Communication happens through hardware interrupts:
+
 - Pi Zero pulls a pin high when it has new commands → Pico drops everything to read them
 - Pico can also interrupt the Zero when critical telemetry needs attention
 - ESP32 can interrupt either when ground commands arrive
@@ -48,13 +49,13 @@ Communication happens through hardware interrupts:
 
 ### Why This Split?
 
-Each component does what it's best at, with safety built in:
+Each component does what it’s best at, with safety built in:
 
 - **Pi Zero**: Complex vision/AI (expendable, can reboot without crashing the drone)
 - **Pico**: Hard real-time flight control (must keep running no matter what)
 - **ESP32-C3**: Wireless connectivity (optional for flight, but critical for telemetry)
 
-It's like having a distributed operating system for a drone – fault isolation, clear boundaries between concerns, a high-speed SPI backbone, and most importantly: **the drone stays in the air even when the Linux box crashes.**
+It’s like having a distributed operating system for a drone – fault isolation, clear boundaries between concerns, a high-speed SPI backbone, and most importantly: **the drone stays in the air even when the Linux box crashes.**
 
 ### Current Status
 
@@ -77,20 +78,20 @@ A virtual YouTuber powered by actual AI – not just a motion-captured human, bu
 
 Because the intersection of AI and human interaction is fascinating. And honestly? Building a digital persona raises every interesting question in modern AI: language, vision, speech, emotion, and real-time systems – all in one package.
 
-## What's Next
+## What’s Next
 
-This blog will track both projects as they evolve. I'll share:
+This blog will track both projects as they evolve. I’ll share:
 
 - Circuit diagrams and Pico C SDK code for the flight controller
 - SPI interrupt protocol design between the three controllers
 - Fail-safe modes and recovery strategies
 - ESP32 wireless protocols and ground station setup
 - Pi Zero model architectures and training logs
-- Benchmarks, failures, and "aha!" moments
-- Code, when it's ready for prime time
+- Benchmarks, failures, and “aha!” moments
+- Code, when it’s ready for prime time
 
-## Let's Connect
+## Let’s Connect
 
-If you're working on something similar – or just curious – reach out. The best part of building in public is the conversations that come out of it.
+If you’re working on something similar – or just curious – reach out. The best part of building in public is the conversations that come out of it.
 
 More soon. Time to write some code.

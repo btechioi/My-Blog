@@ -29,7 +29,7 @@ type CreatePostParams = z.infer<typeof createPostRequestSchema>;
 
 /**
  * Generates the file path based on categories
- * e.g., ['笔记', '前端'] + 'React Hooks' => 'note/front-end/react-hooks.md'
+ * e.g., ['Notes', 'Frontend'] + 'React Hooks' => 'notes/frontend/react-hooks.md'
  */
 function generateFilePath(title: string, categories?: string[], customMappings?: Record<string, string>): string {
   const slug = generateSlug(title);

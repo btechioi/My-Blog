@@ -49,6 +49,7 @@ export interface BlogSchema {
   excludeFromSummary?: boolean;
   math?: boolean;
   quiz?: boolean;
+  [key: string]: unknown;
 }
 
 /**

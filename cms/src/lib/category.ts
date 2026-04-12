@@ -29,8 +29,8 @@ export function getCategoryMap(): Record<string, string> {
  * Delegates to the shared generateSlug utility.
  *
  * @example
- * generateCategorySlug('算法') // 'suan-fa'
- * generateCategorySlug('前端') // 'qian-duan'
+ * generateCategorySlug('Algorithms') // 'algorithms'
+ * generateCategorySlug('Frontend') // 'frontend'
  * generateCategorySlug('React') // 'react'
  */
 export function generateCategorySlug(name: string): string {
@@ -66,9 +66,9 @@ export function extractCategoryNames(categories?: string | string[] | string[][]
  * @returns A record of { categoryName: suggestedSlug } for new categories
  *
  * @example
- * detectNewCategories(['算法', '笔记'])
- * // If '算法' is new and '笔记' exists:
- * // { '算法': 'suan-fa' }
+ * detectNewCategories(['Algorithms', 'Notes'])
+ * // If 'Algorithms' is new and 'Notes' exists:
+ * // { 'Algorithms': 'algorithms' }
  */
 export function detectNewCategories(categories?: string | string[] | string[][]): Record<string, string> {
   const names = extractCategoryNames(categories);

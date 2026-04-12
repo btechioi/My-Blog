@@ -1,268 +1,191 @@
 ---
 name: blog-writer
-description: 帮助用户按照 astro-koharu 博客的规范创建新博文。自动生成正确的 frontmatter 结构、选择合适的分类路径，并提供 Markdown 内容框架建议。使用场景：写一篇博文、创建新文章、写文章、写博客、new post、create blog post。
+description: Help the user create a new blog post following this project's conventions. Generate correct frontmatter, choose appropriate category paths, and provide a Markdown content scaffold.
 ---
 
-# Blog Writer Skill
+# Blog Writer Skill (English-only)
 
-帮助用户按照 astro-koharu 博客的规范创建新博文。
+This skill helps create new blog posts that follow this repository's content conventions. It generates a complete frontmatter block, suggests an appropriate file path based on selected categories, and produces a Markdown scaffold with recommended sections and examples.
 
-## 你的任务
+## When to use
 
-当用户请求创建新博文时：
+Run this skill when a user asks to:
+- Create a new blog post
+- Generate a post template with frontmatter
+- Suggest categories, tags, and slug
+- Produce an outline or initial content for a post
 
-1. **收集必要信息**（如果用户未提供）：
-   - 文章标题
-   - 文章分类（从下面的分类列表中选择）
-   - 文章主题/关键词（用于生成标签和描述）
+## Data to collect (if not provided by the user)
 
-2. **生成 frontmatter**：
-   ```yaml
-   ---
-   title: [文章标题]
-   link: [URL slug，使用英文短横线分隔]
-   catalog: true
-   date: [当前日期时间，格式：YYYY-MM-DD HH:mm:ss]
-   description: [一句话描述文章内容，50-100字]
-   tags:
-     - [相关标签1]
-     - [相关标签2]
-     - [相关标签3]
-   categories:
-     - [一级分类, 二级分类]
-   ---
-   ```
+- Title
+- Category (choose from existing categories or propose a new one)
+- Short description (one sentence)
+- Tags (3–6 suggested tags)
+- Desired slug (optional — otherwise auto-generate from title)
+- Draft status (true/false)
+- Date (defaults to current date/time if omitted)
+- Any special features: infographic, code examples, diagrams, cover image
 
-   **分类格式说明**：
-   - 嵌套分类使用数组格式：`- [一级分类, 二级分类]`
-   - 例如：`- [笔记, 前端]` 会创建 URL `/categories/note/front-end` 和面包屑 "笔记 → 前端"
-   - 单个分类直接写分类名：`categories: 随笔`
+## Frontmatter template
 
-3. **确定文件路径**：
-   - 基础路径：`src/content/blog/`
-   - 根据分类生成对应的子目录结构
-   - 文件名：使用 `link` 字段值 + `.md` 扩展名
+Provide this frontmatter at the top of the Markdown file.
 
-4. **生成 Markdown 内容框架**：
-   - 提供文章结构建议（引言、正文章节、总结等）
-   - 如果适合，建议使用 infographic 信息图
-   - 提供代码示例占位符（如果是技术文章）
-
-## 分类系统
-
-### 一级分类及其子分类
-
-1. **笔记 (note/)**
-   - 前端 (front-end/)
-     - React
-     - Vue
-     - TypeScript
-     - CSS
-     - 性能优化
-   - 后端 (back-end/) - 如果需要使用，确保已在 `_config.yml` 中添加映射
-   - 其他新增子分类 - 需要先在 `_config.yml` 添加映射
-
-2. **工具 (tools/)**
-   - 开发工具
-   - 效率工具
-   - 使用指南
-
-3. **随笔 (life/)**
-   - 生活随笔
-   - 年度总结
-   - 读书笔记
-
-4. **周刊 (weekly/)**
-   - 技术周刊
-   - 每周分享
-
-### 分类映射规则
-
-**YAML 格式（重要）**：
 ```yaml
-# 嵌套分类（推荐）- 使用数组包裹
+---
+title: "Your Post Title"
+slug: your-post-slug
+date: 2026-01-01 12:00:00
+description: "One-sentence summary (50-120 characters)."
+tags:
+  - tag1
+  - tag2
 categories:
-  - [笔记, 前端]
-
-# 单个分类 - 直接写分类名
-categories: 随笔
+  - [category, subcategory] # Use array for nested categories
+draft: false
+cover: /img/cover/example.webp    # optional
+---
 ```
 
-**URL 和路径映射**：
-- `categories: 随笔` → URL: `/categories/life` → 文件路径: `src/content/blog/life/`
-- `categories: - [笔记, 前端]` → URL: `/categories/note/front-end` → 文件路径: `src/content/blog/note/front-end/`
-- `categories: - [笔记, 前端, CSS]` → URL: `/categories/note/front-end` → 文件路径: `src/content/blog/note/front-end/`（三级分类作为标签）
+Notes:
+- `slug` should be lowercase, with words separated by hyphens.
+- For a single-level category use `categories: category-slug` or `categories: [category]`.
+- For nested categories use `categories: - [parent, child]` (example shown above).
+- Set `draft: true` to keep the post out of production builds.
 
-**注意**：
-- 嵌套分类必须使用 `- [一级, 二级]` 格式
-- 分类名称（中文）会映射到 URL slug（英文），映射关系见上方分类列表
+## File path rules
 
-### 新增分类
+- Base content directory: `src/content/blog/`
+- Map categories to directory slugs. Example mapping (project-specific):
+  - `notes` -> `note`
+  - `tools` -> `tools`
+  - `life` -> `life`
+  - `weekly` -> `weekly`
+- Derived path examples:
+  - Single-level: `src/content/blog/life/my-post.md`
+  - Nested: `src/content/blog/note/front-end/my-post.md`
+- File name: `{slug}.md` (append `.md`)
 
-如果用户需要创建上述分类之外的新分类，需要：
+## Naming conventions
 
-1. **更新 `_config.yml`**：
-   ```yaml
-   category_map:
-     # 一级分类
-     随笔: life
-     笔记: note
-     工具: tools
-     周刊: weekly
+- File names and slugs use lowercase ASCII letters, numbers, and hyphens.
+- Avoid spaces, punctuation, and non-ASCII characters in slugs.
+- Examples:
+  - Good: `react-hooks-best-practices.md`
+  - Bad: `React Hooks: Best Practices!.md`
 
-     # 二级分类
-     前端: front-end
-     后端: back-end  # 新增示例
+## Suggested post scaffold
 
-     # 添加新分类映射
-     新分类名: new-category-slug
-   ```
-
-2. **创建对应目录**：
-   - 在 `src/content/blog/` 下创建对应的目录结构
-   - 例如：新增"后端"分类需要创建 `src/content/blog/note/back-end/`
-
-3. **提醒用户**：
-   - 告知用户已添加新分类映射到 `_config.yml`
-   - 说明新分类的 URL 路径
-
-## 文件命名规范
-
-- 使用英文小写字母
-- 单词间用短横线 `-` 分隔
-- 避免特殊字符
-- 例如：`react-hooks-guide.md`, `astro-blog-setup.md`
-
-## 内容建议
-
-### 技术文章结构
+Below is a recommended Markdown structure you can generate for most posts.
 
 ```markdown
-## 背景/问题
+---
+title: "Example Post Title"
+slug: example-post-title
+date: 2026-01-01 12:00:00
+description: "A concise summary of this post."
+tags:
+  - javascript
+  - react
+categories:
+  - [note, front-end]
+draft: false
+cover: /img/cover/example.webp
+---
 
-[描述要解决的问题或技术背景]
+# Example Post Title
 
-## 解决方案
+> A short lead or summary sentence.
 
-[详细说明解决方法]
+## Background / Motivation
 
-### 关键技术点1
+Explain the problem or context that motivated this post.
 
-[技术细节和代码示例]
+## Solution / Approach
 
-### 关键技术点2
+Describe the approach, algorithm, or steps taken.
 
-[技术细节和代码示例]
+### Key Point 1
 
-## 实践效果
+Provide details, reasoning, and small code snippets:
 
-[实际应用效果、性能对比等]
-
-## 总结
-
-[总结要点和经验]
+```js
+// Example code block
+const greet = (name) => `Hello, ${name}`;
 ```
 
-### 工具/指南类文章结构
+### Key Point 2
 
-```markdown
-## 简介
+More details and examples.
 
-[工具/方法简介]
+## Practical Results / Examples
 
-## 安装/准备
+Show real outputs, screenshots, or performance notes.
 
-[安装步骤或前置条件]
+## Summary & Takeaways
 
-## 基本使用
+Summarize the main points and recommendations.
 
-[基础用法和示例]
+## References
 
-## 高级功能
+- Link 1
+- Link 2
+```plain
 
-[进阶功能和技巧]
+## Category guidance
 
-## 实用技巧
+- Prefer a small set of top-level categories (e.g., `note`, `tools`, `life`, `weekly`).
+- Map human-readable names to slugs in the project config if translations or display names differ.
+- If adding a new category:
+  1. Update the project's category map (configuration).
+  2. Create the matching folder under `src/content/blog/`.
+  3. Use the agreed slug in frontmatter and file path.
 
-[最佳实践和注意事项]
+## Tag suggestions
 
-## 总结
+- Pick 3–6 tags focused on topics covered by the post.
+- Tags should be short, lowercase, and hyphen-separated if multi-word (e.g., `performance-optimization`).
 
-[总结和资源链接]
-```
+## Infographic / diagrams suggestions
 
-### 随笔类文章结构
+If the user wants infographic or diagram help, recommend:
+- Use `@antv/infographic` components for structured visual lists or comparisons.
+- Use Mermaid for sequence diagrams or flowcharts.
+- Include caption and accessible alternative text for complex images.
 
-```markdown
-## 引言
+## Finalization checklist (before saving)
 
-[开场白，引出话题]
+- [ ] Frontmatter fields are complete and correct
+- [ ] Slug follows naming rules
+- [ ] Categories map to existing folder structure (or new folder created)
+- [ ] Draft flag set correctly
+- [ ] Code blocks have language hints (```js, ```ts, ```bash, etc.)
+- [ ] Images referenced exist under `public/` or `src/assets/`
+- [ ] Run linter / formatter: `pnpm lint:fix` (project command)
 
-## 正文
+## Example interactions
 
-[多个段落展开论述]
+### Example 1 — User supplies title and category
 
-## 感悟/总结
+User: "Write a blog post scaffold for 'Improving React Performance' under category 'note > front-end'."
 
-[个人思考和总结]
-```
+The skill should:
+- Generate a slug: `improving-react-performance`
+- Produce frontmatter with provided category
+- Provide the Markdown scaffold with suggested sections and a small React code example
 
-## Infographic 使用建议
+### Example 2 — User requests new category
 
-根据文章类型，建议使用信息图的场景：
+User: "Create a post about Docker deployment under a new category 'deploy'."
 
-- **列表信息**（技术栈、功能特性）→ `list-grid-badge-card`
-- **流程步骤**（安装步骤、开发流程）→ `sequence-zigzag-steps-underline-text`
-- **对比分析**（技术对比、优缺点）→ `compare-binary-horizontal-simple-fold`
-- **统计数据**（性能对比、用量统计）→ `chart-column-simple` 或 `chart-bar-plain-text`
-- **层级结构**（目录结构、知识体系）→ `hierarchy-tree-tech-style-capsule-item`
+The skill should:
+1. Ask for confirmation to add a new category slug (e.g., `deploy`).
+2. If confirmed:
+   - Suggest updating the category map configuration.
+   - Suggest creating `src/content/blog/deploy/`.
+   - Produce the post scaffold using `categories: deploy`.
 
-## 最后步骤
+## Notes for maintainers
 
-创建完博文后：
-
-1. **如果添加了新分类**：
-   - 确认已更新 `_config.yml` 中的 `category_map`
-   - 确认已创建对应的目录结构
-   - 告知用户新分类的 URL 路径
-
-2. **运行检查**：
-   - 运行 `pnpm dev` 在本地预览
-   - 运行 `pnpm lint:fix` 检查格式
-
-3. **后续建议**：
-   - 提醒用户可以使用 infographic skills 添加信息图
-   - 如果需要，提供相关文章推荐的建议（基于 tags）
-
-## 示例对话
-
-### 示例 1：使用现有分类
-
-**用户**：写一篇关于 React Hooks 使用技巧的文章
-
-**你应该**：
-
-1. 确认分类：笔记 > 前端 > React
-2. 生成文件路径：`src/content/blog/note/front-end/react-hooks-best-practices.md`
-3. 创建包含完整 frontmatter 的文件（使用 `- [笔记, 前端]` 分类格式）
-4. 提供文章结构框架
-5. 建议在"常用 Hooks 对比"部分使用 `list-grid-badge-card` 信息图
-6. 建议在"Hooks 使用流程"部分使用 `sequence-zigzag-steps-underline-text` 信息图
-
-### 示例 2：需要新增分类
-
-**用户**：写一篇关于 Node.js 后端开发的文章
-
-**你应该**：
-
-1. 发现"后端"分类不在现有分类列表中
-2. 询问用户是否要添加"后端"分类
-3. 如果用户同意：
-   - 更新 `_config.yml`，添加 `后端: back-end`
-   - 创建目录 `src/content/blog/note/back-end/`
-   - 生成文章文件 `src/content/blog/note/back-end/nodejs-development.md`
-   - frontmatter 使用 `- [笔记, 后端]` 分类格式
-4. 告知用户：
-   - 新分类已添加到 `_config.yml`
-   - URL 路径为 `/categories/note/back-end`
-   - 已创建对应目录结构
+- This skill produces English-only output.
+- It avoids referencing external template project names or upstream authors.
+- Always validate any new category slugs against your project's `config/site.yaml` and directory structure.

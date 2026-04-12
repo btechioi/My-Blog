@@ -7,7 +7,7 @@
 
 import { defaultLocale, isLocaleSupported } from './config';
 import { translations } from './translations';
-import { uiStrings as defaultStrings } from './translations/zh';
+import { uiStrings as defaultStrings } from './translations/en';
 import type { Locale, TranslationKey, TranslationParams } from './types';
 
 /** Replace `{param}` placeholders in a string with provided values. */
@@ -31,9 +31,6 @@ function interpolate(value: string, params?: TranslationParams): string {
  *
  * @example
  * ```ts
- * t('zh', 'post.totalPosts', { count: 5 })
- * // => '共 5 篇文章'
- *
  * t('en', 'post.totalPosts', { count: 5 })
  * // => '5 posts'
  * ```
@@ -73,18 +70,14 @@ function tryTranslate(locale: Locale, key: string, params?: TranslationParams): 
  * Strategy: check if the first path segment is a supported locale code.
  * If not (or for default locale URLs without prefix), return defaultLocale.
  *
- * Note: URLs with the default locale prefix (e.g., '/zh/post/hello') are treated
- * as defaultLocale — the prefix is ignored. This works with Astro's
- * `redirectToDefaultLocale: true` which redirects `/zh/` → `/`. No static pages
- * are generated for the default locale prefix, so such URLs would 404 anyway.
+ * Note: URLs with the default locale prefix are treated as defaultLocale —
+ * the prefix is ignored. This works with Astro's routing configuration.
  *
  * @example
  * ```ts
  * getLocaleFromUrl('/en/post/hello')  // => 'en'
- * getLocaleFromUrl('/post/hello')     // => 'zh' (default)
- * getLocaleFromUrl('/en/')            // => 'en'
- * getLocaleFromUrl('/')               // => 'zh' (default)
- * getLocaleFromUrl('/zh/post/hello')  // => 'zh' (default — prefix ignored)
+ * getLocaleFromUrl('/post/hello')     // => 'en' (default)
+ * getLocaleFromUrl('/')               // => 'en' (default)
  * ```
  */
 export function getLocaleFromUrl(pathname: string): Locale {
@@ -102,13 +95,13 @@ export function getLocaleFromUrl(pathname: string): Locale {
  * Generate a locale-aware path.
  *
  * - Default locale: no prefix (e.g., '/post/hello')
- * - Other locales: prefixed (e.g., '/en/post/hello')
+ * - Other locales: prefixed (e.g., '/fr/post/hello')
  *
  * @example
  * ```ts
- * localizedPath('/post/hello', 'zh')  // => '/post/hello'
- * localizedPath('/post/hello', 'en')  // => '/en/post/hello'
- * localizedPath('/', 'en')            // => '/en'
+ * localizedPath('/post/hello', 'en')  // => '/post/hello'
+ * localizedPath('/post/hello', 'fr')  // => '/fr/post/hello'
+ * localizedPath('/', 'fr')             // => '/fr'
  * ```
  */
 export function localizedPath(path: string, locale: Locale = defaultLocale): string {
@@ -127,9 +120,9 @@ export function localizedPath(path: string, locale: Locale = defaultLocale): str
  *
  * @example
  * ```ts
- * stripLocaleFromPath('/en/post/hello')  // => '/post/hello'
+ * stripLocaleFromPath('/fr/post/hello')  // => '/post/hello'
  * stripLocaleFromPath('/post/hello')     // => '/post/hello'
- * stripLocaleFromPath('/en')             // => '/'
+ * stripLocaleFromPath('/fr')             // => '/'
  * ```
  */
 export function stripLocaleFromPath(pathname: string): string {
@@ -150,8 +143,8 @@ export function stripLocaleFromPath(pathname: string): string {
  *
  * @example
  * ```ts
- * getAlternateUrl('/en/post/hello', 'zh')  // => '/post/hello'
- * getAlternateUrl('/post/hello', 'en')     // => '/en/post/hello'
+ * getAlternateUrl('/fr/post/hello', 'en')  // => '/post/hello'
+ * getAlternateUrl('/post/hello', 'fr')     // => '/fr/post/hello'
  * ```
  */
 export function getAlternateUrl(currentPathname: string, targetLocale: Locale): string {
@@ -162,22 +155,13 @@ export function getAlternateUrl(currentPathname: string, targetLocale: Locale): 
 /**
  * Map short locale codes to BCP 47 language tags for the HTML `lang` attribute.
  *
- * Short codes like `zh` are valid BCP 47 but less specific. This mapping
- * provides region-specific tags for better SEO and accessibility.
- *
  * @example
  * ```ts
- * getHtmlLang('zh')  // => 'zh-CN'
  * getHtmlLang('en')  // => 'en'
- * getHtmlLang('ja')  // => 'ja'
  * ```
  */
-const HTML_LANG_MAP: Record<string, string> = {
-  zh: 'zh-CN',
-};
-
 export function getHtmlLang(locale: Locale): string {
-  return HTML_LANG_MAP[locale] ?? locale;
+  return locale;
 }
 
 /**
@@ -188,8 +172,8 @@ export function getHtmlLang(locale: Locale): string {
  *
  * @example
  * ```ts
- * resolveNavName('nav.home', '首页', 'en')  // => 'Home'
- * resolveNavName(undefined, '首页', 'en')   // => '首页'
+ * resolveNavName('nav.home', 'Home', 'en')  // => 'Home'
+ * resolveNavName(undefined, 'Home', 'en')    // => 'Home'
  * ```
  */
 export function resolveNavName(nameKey: string | undefined, fallbackName: string | undefined, locale: Locale): string {
