@@ -50,5 +50,9 @@
   "life/hello-world": {
     "title": "Hello_World!",
     "summary": "BTech_IOI launches their blog"
+  },
+  "life/weekly-update-dronefirmware": {
+    "title": "Weekly Update: DroneFirmware, Skill Updates, and Blog Improvements",
+    "summary": "This week's update covers the new DroneFirmware open-source drone flight controller project, converting all blog skills to English, fixing lint warnings, and adding comprehensive usage guides for the firmware."
   }
 }

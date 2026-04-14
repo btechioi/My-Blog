@@ -2,7 +2,7 @@
 title: "Weekly Progress Update: Building the Weekly Blog Page"
 date: "2026-03-27"
 categories:
-  - Life
+  - Weekly
 tags:
   - Update
   - Feature
