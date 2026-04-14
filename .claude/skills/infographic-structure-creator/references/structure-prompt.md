@@ -1,54 +1,54 @@
-# 信息图结构组件生成规范
+# Infographic Structure Component Generation Specification
 
-本文件用于指导生成符合框架规范的 Structure 组件代码。
+This file guides the generation of Structure component code conforming to framework specifications.
 
-## 目录
-- 框架核心概念
-- 结构分类体系
-- 技术规范
-- 代码生成要求
-- 生成流程
-- 参考示例
-- 输出格式
+## Table of Contents
+- Framework Core Concepts
+- Structure Classification System
+- Technical Specifications
+- Code Generation Requirements
+- Generation Process
+- Reference Examples
+- Output Format
 
-## 框架核心概念
+## Framework Core Concepts
 
-信息图框架由三个核心部分组成：
+The infographic framework consists of three core parts:
 
-- **结构 (Structure)**: 负责整体布局和数据项的组织方式
-- **标题 (Title)**: 可选的标题组件
-- **数据项 (Item/Items)**: 单个或多个信息单元的展示组件
+- **Structure**: Responsible for overall layout and organization of data items
+- **Title**: Optional title component
+- **Item/Items**: Display component for single or multiple information units
 
-结构是入口组件，通过组合 Title 和 Item/Items，配合布局逻辑和交互按钮，形成完整的信息图。对于层级结构，可以使用 `Items` 数组传递多个组件（如根节点组件和子节点组件）。
+Structure is the entry component that forms a complete infographic by combining Title and Item/Items with layout logic and interactive buttons. For hierarchical structures, use `Items` array to pass multiple components (e.g., root node component and child node components).
 
-## 结构分类体系
+## Structure Classification System
 
-根据信息组织特点，结构分为以下类型：
+Based on information organization characteristics, structures are divided into the following types:
 
-1. **列表结构 (list-\*)**: 信息项并列排布，无明显方向性或层级关系
-   - 横向列表、纵向列表、网格列表、瀑布流等
+1. **List Structures (list-*)**: Information items arranged side by side without obvious direction or hierarchy
+   - Horizontal lists, vertical lists, grid lists, waterfall, etc.
 
-2. **对比结构 (compare-\*)**: 明确的二元或多元对比布局
-   - 左右对比、上下对比、多项对比、镜像对比等
+2. **Comparison Structures (compare-*)**: Clear binary or multi-way comparison layouts
+   - Left-right comparison, top-bottom comparison, multi-item comparison, mirrored comparison, etc.
 
-3. **顺序结构 (sequence-\*)**: 具有明确方向性和顺序性的信息流
-   - 时间轴、步骤流程、阶梯式、S 型流程等
+3. **Sequence Structures (sequence-*)**: Information flow with clear direction and order
+   - Timeline, step-by-step process, staircase, S-shaped process, etc.
 
-4. **层级结构 (hierarchy-\*)**: 树状、嵌套或明显的主次关系布局
-   - 树形、金字塔、放射状、嵌套圈等
+4. **Hierarchy Structures (hierarchy-*)**: Tree-like, nested, or obvious primary-secondary relationship layouts
+   - Tree, pyramid, radial, nested circles, etc.
 
-5. **关系结构 (relation-\*)**: 展示元素间的连接、依赖或相互作用关系
-   - 网络图、矩阵、循环图、维恩图等
+5. **Relation Structures (relation-*)**: Display connections, dependencies, or interactions between elements
+   - Network diagrams, matrices,循环 diagrams, Venn diagrams, etc.
 
-6. **地理结构 (geo-\*)**: 基于地理空间或物理位置的信息组织
-   - 地图标注、区域分布、路线图等
+6. **Geo Structures (geo-*)**: Information organization based on geographic space or physical location
+   - Map markers, area distribution, route maps, etc.
 
-7. **统计图 (chart-\*)**: 以图表形式展示定量数据关系
-   - 柱状图、饼图、折线图、雷达图等
+7. **Chart Structures (chart-*)**: Quantitative data relationships displayed as charts
+   - Bar charts, pie charts, line charts, radar charts, etc.
 
-## 技术规范
+## Technical Specifications
 
-### 1. 类型定义
+### 1. Type Definitions
 
 ```tsx
 export interface BaseStructureProps {
@@ -96,38 +96,38 @@ export interface BaseItemProps {
 }
 ```
 
-**重要说明**:
+**Important Notes**:
 
-- 对于简单结构，使用 `Item` 属性传递单个组件
-- 对于层级结构（如树形、金字塔等），使用 `Items` 数组传递多个组件，不同层级可以使用不同的组件样式
-- `options` 包含主题配置、调色板等信息，可通过工具函数访问
-- `themeColors` 在 `BaseItemProps` 中是可选的，部分组件会自定义传入
+- For simple structures, use `Item` prop to pass a single component
+- For hierarchical structures (like tree, pyramid, etc.), use `Items` array to pass multiple components; different levels can use different component styles
+- `options` contains theme configuration, palette information, etc., accessible via utility functions
+- `themeColors` is optional in `BaseItemProps`; some components pass it custom
 
-### 2. 可用组件清单
+### 2. Available Components
 
-**必须从以下组件中选择,不得使用未列出的组件:**
+**Must select from the following components, do not use unlisted components:**
 
-#### 原子组件 (从 ../../jsx 导入)
+#### Atomic Components (import from ../../jsx)
 
-所有原子组件统一使用 `x`, `y`, `width`, `height` 属性来定义位置和尺寸，不使用 SVG 原生属性如 cx/cy/r 等。
+All atomic components use `x`, `y`, `width`, `height` properties for positioning and sizing, do not use SVG native attributes like cx/cy/r.
 
-- **Defs**: 定义渐变、滤镜等 SVG 定义
+- **Defs**: SVG definitions for gradients, filters, etc.
 
   ```tsx
-  <Defs>{/* 渐变、滤镜等定义 */}</Defs>
+  <Defs>{/* Gradient, filter definitions */}</Defs>
   ```
 
-- **Ellipse**: 椭圆图形
+- **Ellipse**: Ellipse graphics
 
   ```tsx
   <Ellipse x={0} y={0} width={100} height={60} fill="blue" />
-  // 注意:
-  // 1. x/y 为左上角位置，非中心点
-  // 2. 使用 width/height,不使用 rx/ry
-  // 3. 绘制圆形时，width 和 height 相等
+  // Note:
+  // 1. x/y is top-left position, not center point
+  // 2. Use width/height, not rx/ry
+  // 3. When drawing circle, width equals height
   ```
 
-- **Group**: 分组容器
+- **Group**: Group container
 
   ```tsx
   <Group x={10} y={10}>
@@ -135,7 +135,7 @@ export interface BaseItemProps {
   </Group>
   ```
 
-- **Path**: 路径图形
+- **Path**: Path graphics
 
   ```tsx
   <Path
@@ -145,16 +145,16 @@ export interface BaseItemProps {
     width={100}
     height={100}
   />
-  // width/height 为 d 的预估尺寸
+  // width/height is estimated size for d
   ```
 
-- **Rect**: 矩形图形
+- **Rect**: Rectangle graphics
 
   ```tsx
   <Rect x={0} y={0} width={100} height={50} fill="red" />
   ```
 
-- **Text**: 文本元素(支持换行)
+- **Text**: Text element (supports wrapping)
 
   ```tsx
   <Text
@@ -163,17 +163,17 @@ export interface BaseItemProps {
     width={100}
     height={50}
     fontSize={14}
-    fontWeight="normal" // 或 'bold'
+    fontWeight="normal" // or 'bold'
     alignHorizontal="center" // 'left' | 'center' | 'right'
     alignVertical="middle" // 'top' | 'middle' | 'bottom'
     fill="#000000"
   >
     Text Content
   </Text>
-  // 注意: 文本内容作为 children 传入，不是 text 属性
+  // Note: Text content passed as children, not text attribute
   ```
 
-- **Polygon**: 多边形
+- **Polygon**: Polygon
   ```tsx
   <Polygon
     points={[
@@ -183,24 +183,24 @@ export interface BaseItemProps {
     ]}
     fill="green"
   />
-  // 注意: points 是对象数组 {x, y}[],不是字符串
+  // Note: points is object array {x, y}[], not string
   ```
 
-#### 封装组件 (从 ../components 导入)
+#### Encapsulated Components (import from ../components)
 
-- **BtnAdd**: 添加按钮,需要 indexes 属性
+- **BtnAdd**: Add button, needs indexes prop
 
   ```tsx
   <BtnAdd indexes={[0]} x={10} y={20} />
   ```
 
-- **BtnRemove**: 删除按钮,需要 indexes 属性
+- **BtnRemove**: Remove button, needs indexes prop
 
   ```tsx
   <BtnRemove indexes={[0]} x={10} y={20} />
   ```
 
-- **BtnsGroup**: 按钮组容器
+- **BtnsGroup**: Button group container
 
   ```tsx
   <BtnsGroup>{btnElements}</BtnsGroup>
@@ -208,70 +208,70 @@ export interface BaseItemProps {
 
 - **ShapesGroup**
 
-和 Group 属性和用法完全一致，但内部图形可以被进行风格化渲染
+  Same as Group in attributes and usage, but internal graphics can be stylized
 
-```tsx
-<ShapesGroup>
-  <Rect width={100} height={100} />
-  <Rect x={100} width={100} height={100} />
-  <Rect x={200} width={100} height={100} />
-</ShapesGroup>
-```
+  ```tsx
+  <ShapesGroup>
+    <Rect width={100} height={100} />
+    <Rect x={100} width={100} height={100} />
+    <Rect x={200} width={100} height={100} />
+  </ShapesGroup>
+  ```
 
-- **ItemsGroup**: 数据项组容器
+- **ItemsGroup**: Items group container
 
   ```tsx
   <ItemsGroup>{itemElements}</ItemsGroup>
   ```
 
-- **Illus**: 插图组件(会被替换为图片或 SVG)
+- **Illus**: Illustration component (will be replaced with image or SVG)
 
   ```tsx
   <Illus x={0} y={0} width={200} height={150} />
   ```
 
-- **Title**: 默认标题组件
+- **Title**: Default title component
 
   ```tsx
-  <Title title="标题" desc="描述" alignHorizontal="center" />
+  <Title title="Title" desc="Description" alignHorizontal="center" />
   ```
 
-- **ItemLabel**: 数据项标签
+- **ItemLabel**: Item label
 
   ```tsx
   <ItemLabel indexes={[0]} x={0} y={0}>
-    标签
+    Label
   </ItemLabel>
   ```
 
-- **ItemDesc**: 数据项描述
+- **ItemDesc**: Item description
 
   ```tsx
   <ItemDesc indexes={[0]} x={0} y={0}>
-    描述
+    Description
   </ItemDesc>
   ```
 
-- **ItemIcon**: 数据项图标
+- **ItemIcon**: Item icon
 
   ```tsx
   <ItemIcon indexes={[0]} x={0} y={0} size={40} />
   ```
 
-- **ItemValue**: 数据项数值
+- **ItemValue**: Item value
 
   ```tsx
   <ItemValue indexes={[0]} value={100} x={0} y={0} />
   ```
 
-- **ItemIconCircle**: 圆形图标组件
+- **ItemIconCircle**: Circular icon component
   ```tsx
   <ItemIconCircle indexes={[0]} x={0} y={0} size={50} fill="#000000" />
   ```
 
-#### 装饰组件 (从 ../decorations 导入)
+#### Decoration Components (import from ../decorations)
 
-- **SimpleArrow**: 简单箭头装饰
+- **SimpleArrow**: Simple arrow decoration
 
   ```tsx
   <SimpleArrow
@@ -280,11 +280,11 @@ export interface BaseItemProps {
     width={25}
     height={25}
     colorPrimary="#000000"
-    rotation={0} // 可选，旋转角度：0, 90, 180, 270
+    rotation={0} // Optional, rotation angle: 0, 90, 180, 270
   />
   ```
 
-- **Triangle**: 三角形装饰
+- **Triangle**: Triangle decoration
   ```tsx
   <Triangle
     x={0}
@@ -296,9 +296,9 @@ export interface BaseItemProps {
   />
   ```
 
-#### 定义组件 (从 ../defs 导入)
+#### Definition Components (import from ../defs)
 
-- **LinearGradient**: 线性渐变定义
+- **LinearGradient**: Linear gradient definition
   ```tsx
   <Defs>
     <LinearGradient
@@ -311,8 +311,8 @@ export interface BaseItemProps {
   <Rect fill="url(#my-gradient)" />
   ```
 
-**原生 SVG 元素在 Defs 中的使用**:
-在 `<Defs>` 标签内可以使用原生 SVG 元素：
+**Native SVG Elements in Defs**:
+Native SVG elements can be used inside `<Defs>`:
 
 ```tsx
 <Defs>
@@ -330,9 +330,9 @@ export interface BaseItemProps {
 </Defs>
 ```
 
-#### 布局组件 (从 ../layouts 导入)
+#### Layout Components (import from ../layouts)
 
-- **FlexLayout**: 弹性盒子布局
+- **FlexLayout**: Flexbox layout
   ```tsx
   <FlexLayout
     flexDirection="row" // 'row' | 'column' | 'row-reverse' | 'column-reverse'
@@ -346,64 +346,61 @@ export interface BaseItemProps {
   </FlexLayout>
   ```
 
-#### 风格化渲染
+#### Stylized Rendering
 
-风格化渲染是指将图形在渲染阶段转换为风格化图形，例如手绘风格。
+Stylized rendering refers to transforming graphics into stylized graphics during rendering, such as hand-drawn style.
 
-通过以下方式标识的图形可以被进行风格化渲染（由渲染器实现）
+Graphics identified in the following ways can be stylized (implemented by renderer):
 
-1. 添加 `data-element-type="shape"` 属性
+1. Add `data-element-type="shape"` attribute
 
 ```tsx
 <Rect data-element-type="shape" width="100" height="100" />
 ```
 
-2. 使用 ShapesGroup 包裹
+2. Use ShapesGroup wrapper
 
 ```tsx
 <ShapesGroup>
-  <Rect width="100" height="100" />
-  <Rect x="100" width="100" height="100" />
-  <Rect x="200" width="100" height="100" />
+  <Rect width={100} height={100} />
+  <Rect x={100} width={100} height={100} />
+  <Rect x={200} width={100} height={100} />
 </ShapesGroup>
 ```
 
-> 风格化渲染只支持图形元素（如 Path、Ellipse、Rect、Polygon 等），不支持文本元素和分组
+> Stylized rendering only supports shape elements (like Path, Ellipse, Rect, Polygon, etc.), not text elements and groups
 
-#### 工具函数
+#### Utility Functions
 
-**布局计算函数** (从 ../../jsx 导入):
+**Layout Calculation Functions** (import from ../../jsx):
 
-- **getElementBounds**: 获取元素边界信息
+- **getElementBounds**: Get element bounds
   ```tsx
   const bounds = getElementBounds(<Rect width={100} height={50} />);
-  // 返回: { x: number, y: number, width: number, height: number }
+  // Returns: { x: number, y: number, width: number, height: number }
   ```
 
-**主题与颜色函数** (从 ../utils 导入):
+**Theme and Color Functions** (import from ../utils):
 
-- **getPaletteColor**: 获取调色板中指定索引的颜色
-
+- **getPaletteColor**: Get color at specified index from palette
   ```tsx
-  const color = getPaletteColor(options, [index]); // 返回颜色字符串
+  const color = getPaletteColor(options, [index]); // Returns color string
   ```
 
-- **getPaletteColors**: 获取完整调色板颜色数组
-
+- **getPaletteColors**: Get complete palette color array
   ```tsx
-  const palette = getPaletteColors(options); // 返回颜色数组
+  const palette = getPaletteColors(options); // Returns color array
   ```
 
-- **getColorPrimary**: 获取主题色
-
+- **getColorPrimary**: Get primary theme color
   ```tsx
-  const colorPrimary = getColorPrimary(options); // 返回主题色字符串
+  const colorPrimary = getColorPrimary(options); // Returns theme color string
   ```
 
-- **getThemeColors**: 获取主题配置
+- **getThemeColors**: Get theme configuration
   ```tsx
   const themeColors = getThemeColors(options.themeConfig);
-  // 或自定义配置
+  // Or custom configuration
   const themeColors = getThemeColors(
     {
       colorPrimary: '#FF356A',
@@ -411,26 +408,26 @@ export interface BaseItemProps {
     },
     options,
   );
-  // 返回包含 colorText, colorPrimaryBg 等的主题对象
+  // Returns theme object containing colorText, colorPrimaryBg, etc.
   ```
 
-**数据处理函数** (从 ../../utils 导入):
+**Data Processing Functions** (import from ../../utils):
 
-- **getDatumByIndexes**: 根据索引获取数据项
+- **getDatumByIndexes**: Get data item by indexes
   ```tsx
-  const datum = getDatumByIndexes(items, [0, 1]); // 获取嵌套数据
+  const datum = getDatumByIndexes(items, [0, 1]); // Get nested data
   ```
 
-**组件选择函数** (从 ../utils 导入):
+**Component Selection Functions** (import from ../utils):
 
-- **getItemComponent**: 获取指定层级的 Item 组件（用于 Items 数组）
+- **getItemComponent**: Get Item component for specified level (for Items array)
   ```tsx
   const ItemComponent = getItemComponent(Items, level);
-  // Items 为组件数组，level 为层级索引
-  // 如果 level 超出数组长度，返回最后一个组件
+  // Items is component array, level is level index
+  // Returns last component if level exceeds array length
   ```
 
-### 3. 按需导入
+### 3. Import on Demand
 
 ```tsx
 import type { ComponentType, JSXElement } from '../../jsx';
@@ -472,94 +469,94 @@ import { registerStructure } from './registry';
 import type { BaseStructureProps } from './types';
 ```
 
-**注意事项**:
+**Notes**:
 
-- 只导入实际使用的组件和函数
-- 对于层级结构，记得导入 `BaseItemProps` 类型（如果需要）
-- 装饰组件和定义组件按需导入
+- Only import components and functions actually used
+- For hierarchical structures, remember to import `BaseItemProps` type if needed
+- Import decoration and definition components on demand
 
-支持的第三方库：
+Supported third-party libraries:
 
-- **d3**: 用于力导向布局、层次布局等复杂布局计算
-- **lodash-es**: 通用工具函数
-- **tinycolor2**: 颜色处理
+- **d3**: For force-directed layouts, hierarchical layouts, and complex layout calculations
+- **lodash-es**: General utility functions
+- **tinycolor2**: Color processing
 
-> 可以按实际需求引入其他库
+> Can import other libraries as needed
 
-### 4. 组件结构模板
+### 4. Component Structure Templates
 
-**简单结构模板** (使用 Item):
+**Simple Structure Template** (using Item):
 
 ```tsx
 export interface [StructureName]Props extends BaseStructureProps {
   gap?: number;
-  // 其他自定义参数
+  // Other custom parameters
 }
 
 export const [StructureName]: ComponentType<[StructureName]Props> = (props) => {
   const { Title, Item, data, gap = 20, options } = props;
   const { title, desc, items = [] } = data;
 
-  // 1. 处理标题
+  // 1. Handle title
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
 
-  // 2. 获取元素尺寸
+  // 2. Get element sizes
   const btnBounds = getElementBounds(<BtnAdd indexes={[0]} />);
   const itemBounds = getElementBounds(
     <Item indexes={[0]} data={data} datum={items[0]} />
   );
 
-  // 3. 准备元素数组
+  // 3. Prepare element arrays
   const btnElements: JSXElement[] = [];
   const itemElements: JSXElement[] = [];
-  const decorElements: JSXElement[] = []; // 装饰元素（如箭头、连线等）
+  const decorElements: JSXElement[] = []; // Decor elements (arrows, lines, etc.)
 
-  // 4. 遍历数据项生成元素
+  // 4. Iterate through data items to generate elements
   items.forEach((item, index) => {
     const indexes = [index];
 
-    // 计算位置并添加 Item
+    // Calculate position and add Item
     itemElements.push(
       <Item
         indexes={indexes}
         datum={item}
         data={data}
-        x={/* 计算 x */}
-        y={/* 计算 y */}
+        x={/* calculate x */}
+        y={/* calculate y */}
       />
     );
 
-    // 添加删除按钮
+    // Add remove button
     btnElements.push(
       <BtnRemove
         indexes={indexes}
-        x={/* 计算 x */}
-        y={/* 计算 y */}
+        x={/* calculate x */}
+        y={/* calculate y */}
       />
     );
 
-    // 添加插入按钮
+    // Add add button
     btnElements.push(
       <BtnAdd
         indexes={indexes}
-        x={/* 计算 x */}
-        y={/* 计算 y */}
+        x={/* calculate x */}
+        y={/* calculate y */}
       />
     );
   });
 
-  // 5. 添加末尾的添加按钮
+  // 5. Add trailing add button
   if (items.length > 0) {
     btnElements.push(
       <BtnAdd
         indexes={[items.length]}
-        x={/* 计算 x */}
-        y={/* 计算 y */}
+        x={/* calculate x */}
+        y={/* calculate y */}
       />
     );
   }
 
-  // 6. 返回布局
+  // 6. Return layout
   return (
     <FlexLayout
       id="infographic-container"
@@ -579,21 +576,21 @@ export const [StructureName]: ComponentType<[StructureName]Props> = (props) => {
 
 registerStructure('[structure-name]', {
   component: [StructureName],
-  composites: ['title', 'item'], // 根据实际使用的组件填写
+  composites: ['title', 'item'], // Fill based on components actually used
 });
 ```
 
-**层级结构模板** (使用 Items 数组):
+**Hierarchical Structure Template** (using Items array):
 
 ```tsx
 export interface [StructureName]Props extends BaseStructureProps {
   gap?: number;
-  // 其他自定义参数
+  // Other custom parameters
 }
 
 export const [StructureName]: ComponentType<[StructureName]Props> = (props) => {
   const { Title, Items, data, gap = 20, options } = props;
-  const [RootItem, ChildItem] = Items; // 解构获取不同层级的组件
+  const [RootItem, ChildItem] = Items; // Destructure to get different level components
   const { title, desc, items = [] } = data;
 
   const titleContent = Title ? <Title title={title} desc={desc} /> : null;
@@ -601,7 +598,7 @@ export const [StructureName]: ComponentType<[StructureName]Props> = (props) => {
   const btnElements: JSXElement[] = [];
   const itemElements: JSXElement[] = [];
 
-  // 获取根节点和子节点的尺寸
+  // Get root and child item sizes
   const rootItemBounds = getElementBounds(
     <RootItem indexes={[0]} data={data} datum={items[0]} />
   );
@@ -609,30 +606,30 @@ export const [StructureName]: ComponentType<[StructureName]Props> = (props) => {
     <ChildItem indexes={[0, 0]} data={data} datum={items[0]?.children?.[0] || {}} />
   );
 
-  // 遍历根节点
+  // Iterate through root items
   items.forEach((rootItem, rootIndex) => {
     const { children = [] } = rootItem;
 
-    // 渲染根节点
+    // Render root item
     itemElements.push(
       <RootItem
         indexes={[rootIndex]}
         datum={rootItem}
         data={data}
-        x={/* 计算 x */}
-        y={/* 计算 y */}
+        x={/* calculate x */}
+        y={/* calculate y */}
       />
     );
 
-    // 遍历子节点
+    // Iterate through child items
     children.forEach((child, childIndex) => {
       itemElements.push(
         <ChildItem
           indexes={[rootIndex, childIndex]}
           datum={child}
           data={data}
-          x={/* 计算 x */}
-          y={/* 计算 y */}
+          x={/* calculate x */}
+          y={/* calculate y */}
         />
       );
     });
@@ -656,249 +653,248 @@ export const [StructureName]: ComponentType<[StructureName]Props> = (props) => {
 
 registerStructure('[structure-name]', {
   component: [StructureName],
-  composites: ['title', 'item'], // 根据实际使用的组件填写
+  composites: ['title', 'item'], // Note: 'item' not 'items'
 });
 ```
 
-### 5. 组件声明 (composites)
+### 5. Component Declaration (composites)
 
-**composites 字段说明**：
+**composites Field Description**:
 
-在调用 `registerStructure` 时，必须提供 `composites` 数组，用于声明该结构使用了哪些核心组件。这有助于系统了解结构的组成和依赖关系。
+When calling `registerStructure`, must provide `composites` array to declare which core components the structure uses. This helps the system understand the structure's composition and dependencies.
 
-**composites 的取值规则**：
+**composites Value Rules**:
 
-composites 数组中的值应该是小写字符串，包括以下几种：
+Values in composites array should be lowercase strings:
 
-1. **'title'** - 当满足以下任一条件时包含：
-   - 使用了 `Title` prop 组件（来自 `props.Title`）
-   - 直接访问并渲染了 `data.title`（例如使用 `<Text>{title}</Text>` 或 `<Text>{data.title}</Text>`）
-   - 在代码中以任何方式将 title 数据渲染为 UI 元素
+1. **'title'** - Include when:
+   - Uses `Title` prop component (from `props.Title`)
+   - Directly accesses and renders `data.title` (e.g., using `<Text>{title}</Text>` or `<Text>{data.title}</Text>`)
+   - Renders title data as UI element in any way
 
-2. **'item'** - 当满足以下任一条件时包含：
-   - 使用了 `Item` prop 组件（来自 `props.Item`）
-   - 使用了 `Items` prop 组件数组（来自 `props.Items`）
-   - 注意：即使使用的是 `Items`（复数），在 composites 中也应该填写 `'item'`（单数）
+2. **'item'** - Include when:
+   - Uses `Item` prop component (from `props.Item`)
+   - Uses `Items` prop component array (from `props.Items`)
+   - Note: Even when using `Items` (plural), should write `'item'` (singular) in composites
 
-3. **'illus'** - 当满足以下任一条件时包含：
-   - 使用了 `Illus` 组件（从 `../components` 导入）
-   - 直接访问并渲染了 `data.illus`（例如通过图片或 SVG 元素）
-   - 访问了 `data.illus.xxx` 并渲染为 UI
+3. **'illus'** - Include when:
+   - Uses `Illus` component (imported from `../components`)
+   - Directly accesses and renders `data.illus` (e.g., via image or SVG elements)
+   - Accesses `data.illus.xxx` and renders as UI
 
-**示例**：
+**Examples**:
 
 ```tsx
-// 示例 1: 使用了 Title 和 Item props
+// Example 1: Using Title and Item props
 registerStructure('list-row', {
   component: ListRow,
   composites: ['title', 'item'],
 });
 
-// 示例 2: 直接在代码中渲染 title，使用 Item prop
+// Example 2: Rendering title in code, using Item prop
 registerStructure('list-sector', {
   component: ListSector,
-  composites: ['title', 'item'], // 虽然没有使用 Title prop，但渲染了 data.title
+  composites: ['title', 'item'], // Although not using Title prop, renders data.title
 });
 
-// 示例 3: 使用了 Items 数组（层级结构）
+// Example 3: Using Items array (hierarchical structure)
 registerStructure('hierarchy-tree', {
   component: HierarchyTree,
-  composites: ['title', 'item'], // 注意是 'item' 不是 'items'
+  composites: ['title', 'item'], // Note: 'item' not 'items'
 });
 
-// 示例 4: 使用了 Title, Item 和 Illus
+// Example 4: Using Title, Item, and Illus
 registerStructure('some-structure', {
   component: SomeStructure,
   composites: ['title', 'item', 'illus'],
 });
 ```
 
-**重要提示**：
+**Important Notes**:
 
-- composites 数组中的值必须是小写
-- 即使使用 `Items`（复数），也要填写 `'item'`（单数）
-- 如果结构直接渲染了某个数据字段（如 `data.title`），即使没有使用对应的 prop 组件，也应该在 composites 中声明
-- composites 数组不能为空，至少要包含 `['item']`
+- Values in composites array must be lowercase
+- Even when using `Items` (plural), write `'item'` (singular)
+- If structure directly renders a data field (like `data.title`), should declare it in composites even without using corresponding prop component
+- composites array cannot be empty, must contain at least `['item']`
 
-### 6. 关键约束
+### 6. Key Constraints
 
-**严格遵守以下规则:**
+**Strictly follow these rules:**
 
-1. **仅使用上述列出的组件**,不得导入或使用未列出的组件(如 Circle, Line 等)
-2. **所有图形组件必须使用 x/y/width/height 定位**,不使用 cx/cy/r/rx/ry 等 SVG 原生属性
-3. **Polygon 的 points 必须是对象数组** `{x: number, y: number}[]`,不是字符串
-4. **Text 组件的文本内容作为 children 传入**,不使用 text 属性
-5. **所有按钮组件必须传入 indexes 数组**
-6. **坐标计算必须基于 getElementBounds 的返回值**
-7. **基于 Item 的位置和尺寸来确定整体布局，不要出现坐标值为负的情况**
-8. **装饰元素（连线、箭头等）应放在独立的 Group 中，并置于 ItemsGroup 之前**，确保装饰层在数据项层之下
-9. **使用 Items 数组时，通过解构获取不同层级的组件**，如 `const [RootItem, ChildItem] = Items`
-10. **某些特殊结构可以不使用按钮**（如关系网络、四象限等），根据实际需求决定
-11. **使用主题和调色板**：
-    - 优先使用 `getPaletteColor(options, indexes)` 获取数据项颜色
-    - 使用 `getColorPrimary(options)` 获取主题色用于装饰元素
-    - 使用 `getThemeColors` 获取完整主题配置
-12. **Group 支持 transform 属性**用于变换，但要谨慎使用
-13. **在 Defs 内可以使用原生 SVG 元素**（如 `<linearGradient>`, `<stop>`）创建渐变等效果
-14. **对于复杂布局计算**，可以使用 d3 的布局算法（如 `d3.hierarchy`, `d3.tree`, `d3.forceSimulation`）
-15. **空数据处理**：当 `items.length === 0` 时，应该提供友好的空状态（如单个添加按钮）
+1. **Only use listed components**, do not import or use unlisted components (like Circle, Line, etc.)
+2. **All shape components must use x/y/width/height for positioning**, do not use cx/cy/r/rx/ry etc. SVG native attributes
+3. **Polygon's points must be object array** `{x: number, y: number}[]`, not string
+4. **Text component's text content passed as children**, not using text attribute
+5. **All button components must pass indexes array**
+6. **Coordinate calculation must be based on getElementBounds return value**
+7. **Based on Item's position and size to determine overall layout, avoid negative coordinate values**
+8. **Decor elements (lines, arrows, etc.) should be in independent Group, placed before ItemsGroup**, ensure decor layer is below item layer
+9. **When using Items array, get different level components via destructuring**, e.g., `const [RootItem, ChildItem] = Items`
+10. **Some special structures can skip buttons** (like relation networks, quadrants, etc.), decide based on actual needs
+11. **Use themes and palettes**:
+    - Prefer using `getPaletteColor(options, indexes)` to get data item colors
+    - Use `getColorPrimary(options)` to get primary color for decor elements
+    - Use `getThemeColors` to get complete theme configuration
+12. **Group supports transform attribute** for transformations, but use carefully
+13. **Can use native SVG elements in Defs** (like `<linearGradient>`, `<stop>`) to create gradient effects
+14. **For complex layout calculations**, can use d3's layout algorithms (like `d3.hierarchy`, `d3.tree`, `d3.forceSimulation`)
+15. **Empty data handling**: When `items.length === 0`, should provide friendly empty state (like single add button)
 
-### 7. 按钮布局原则
+### 7. Button Layout Principles
 
-**BtnAdd (添加按钮)**:
+**BtnAdd (Add Button)**:
 
-- 放置在两个数据项之间，表示可在此插入新项
-- 第一个 BtnAdd 在首个数据项之前
-- 最后一个 BtnAdd 在末尾数据项之后
-- indexes 值为插入位置的索引（如在第 0 项前插入，indexes=[0]）
+- Placed between two data items, indicating new item can be inserted here
+- First BtnAdd is before first data item
+- Last BtnAdd is after last data item
+- indexes value is insertion position (e.g., insert before item 0, indexes=[0])
 
-**BtnRemove (删除按钮)**:
+**BtnRemove (Remove Button)**:
 
-- 放置在每个数据项附近，表示可删除该项
-- indexes 值为对应数据项的索引
+- Placed near each data item, indicating item can be deleted
+- indexes value is corresponding data item's index
 
-**位置计算示例**:
+**Position Calculation Examples**:
 
-- **横向布局**: BtnAdd 在数据项下方水平居中，BtnRemove 在数据项正下方
-- **纵向布局**: BtnAdd 在数据项上方或下方水平居中，BtnRemove 在数据项左侧或右侧
-- **其他布局**: 根据视觉平衡和交互便利性灵活调整
+- **Horizontal layout**: BtnAdd horizontally centered below data item, BtnRemove directly below data item
+- **Vertical layout**: BtnAdd above or below data item horizontally centered, BtnRemove on left or right side of data item
+- **Other layouts**: Flexibly adjust based on visual balance and interaction convenience
 
-### 8. 布局计算要点
+### 8. Layout Calculation Points
 
-- **元素尺寸获取**: 使用 `getElementBounds()` 获取元素尺寸用于计算
-- **坐标系统**: x 向右为正，y 向下为正
-- **Item 对齐方式**: `positionH` 和 `positionV` 用于控制元素内部内容的对齐方式
-  - `positionH`: 'normal'(默认设计) | 'center'(水平居中) | 'flipped'(翻转布局)
-  - `positionV`: 'normal'(默认设计) | 'middle'(垂直居中) | 'flipped'(翻转布局)
-  - 示例：圆形分布时，右侧 Item 使用 'normal'，左侧使用 'flipped'
-- **Item 尺寸约束**: 某些结构需要限制 Item 的尺寸，通过 `width` 和 `height` 属性传递
-- **布局方式**:
-  - 简单布局使用 `FlexLayout` 可自动居中和排列
-  - 复杂布局手动计算每个元素的精确坐标
-- **装饰元素层级**: 装饰元素（连线、箭头）应在独立 Group 中，置于 ItemsGroup 之前
-- **优先使用 d3 进行复杂布局**:
-  - 树形布局: `d3.tree()` 或 `d3.cluster()`
-  - 力导向布局: `d3.forceSimulation()`
-  - 层次数据: `d3.hierarchy()`
+- **Element size acquisition**: Use `getElementBounds()` to get element sizes for calculation
+- **Coordinate system**: Positive to right, positive down
+- **Item alignment**: `positionH` and `positionV` control internal element alignment
+  - `positionH`: 'normal'(default design) | 'center'(horizontal center) | 'flipped'(flip layout)
+  - `positionV`: 'normal'(default design) | 'middle'(vertical center) | 'flipped'(flip layout)
+  - Example: For circular distribution, right side Item uses 'normal', left side uses 'flipped'
+- **Item size constraints**: Some structures need to limit Item size, pass via `width` and `height` attributes
+- **Layout methods**:
+  - Simple layouts use `FlexLayout` for automatic centering and arrangement
+  - Complex layouts manually calculate exact coordinates for each element
+- **Decor element layer**: Decor elements (lines, arrows) should be in independent Group, placed before ItemsGroup
+- **Prefer using d3 for complex layouts**:
+  - Tree layout: `d3.tree()` or `d3.cluster()`
+  - Force layout: `d3.forceSimulation()`
+  - Hierarchical data: `d3.hierarchy()`
 
-### 9. 命名规范
+### 9. Naming Conventions
 
-> 支持的类型：List, Compare, Sequence, hierarchy, relation, geo, chart
+> Supported types: List, Compare, Sequence, hierarchy, relation, geo, chart
 
-- **组件名**: 大驼峰，如 `ListRow`, `CompareLeftRight`
-- **注册名**: 小写-连字符，与分类前缀一致，如 `list-row`, `list-column`
-- **Props 接口**: 组件名 + `Props`，如 `ListRowProps`
-- **变量命名**: 使用有意义的名称，如 `itemElements`, `btnElements`, `decorElements`
+- **Component name**: PascalCase, e.g., `ListRow`, `CompareLeftRight`
+- **Registration name**: lowercase-hyphen, consistent with classification prefix, e.g., `list-row`, `list-column`
+- **Props interface**: Component name + `Props`, e.g., `ListRowProps`
+- **Variable naming**: Use meaningful names, e.g., `itemElements`, `btnElements`, `decorElements`
 
-### 10. 参数设计指导
+### 10. Parameter Design Guidelines
 
-**常用参数及其默认值**:
+**Common parameters and their defaults**:
 
-- `gap`: 数据项间距，默认 20-40（适用于列表、顺序结构）
-- `rowGap` / `columnGap`: 行/列间距
-- `spacing`: 整体间距，默认 20-30
-- `radius`: 圆形布局半径，默认 150-250
-- `outerRadius` / `innerRadius`: 外/内半径（环形布局）
-- `angle` / `startAngle` / `endAngle`: 角度相关参数
-- `columns` / `rows`: 网格布局的列/行数，默认 3-4
-- `itemsPerRow`: 每行项数，默认 3
-- `levelGap`: 层级间距，默认 60-80
-- `showAxis` / `showConnections`: 是否显示轴线/连接线，默认 true
+- `gap`: Data item spacing, default 20-40 (for list, sequence structures)
+- `rowGap` / `columnGap`: Row/column spacing
+- `spacing`: Overall spacing, default 20-30
+- `radius`: Circular layout radius, default 150-250
+- `outerRadius` / `innerRadius`: Outer/inner radius (for ring layouts)
+- `angle` / `startAngle` / `endAngle`: Angle related parameters
+- `columns` / `rows`: Grid layout columns/rows, default 3-4
+- `itemsPerRow`: Items per row, default 3
+- `levelGap`: Level spacing, default 60-80
+- `showAxis` / `showConnections`: Whether to show axis/connection lines, default true
 
-**参数设计原则**:
+**Parameter design principles**:
 
-- 所有参数应有合理的默认值
-- 使用可选参数 `?` 标记
-- 参数名应清晰表达含义
-- 布尔参数使用 `show*` / `enable*` 前缀
+- All parameters should have reasonable default values
+- Use optional parameter `?` to mark
+- Parameter names should clearly express meaning
+- Boolean parameters use `show*` / `enable*` prefix
 
-## 代码生成要求
+## Code Generation Requirements
 
-1. **完整性**:
-   - 生成完整可运行的代码，包含所有必需的导入、类型定义和注册语句
-   - 只导入实际使用的组件和函数
-   - **必须在 registerStructure 调用中包含 composites 数组**，正确声明使用的组件
+1. **Completeness**:
+   - Generate complete runnable code, including all required imports, type definitions, and registration statements
+   - Only import components and functions actually used
+   - **Must include composites array in registerStructure call**, correctly declare used components
 
-2. **正确性**:
-   - 确保 indexes 数组正确传递给所有需要的组件
-   - 坐标计算准确，避免元素重叠或错位
-   - 边界情况处理（如 items 为空数组时提供友好的空状态）
-   - 使用 `getElementBounds` 获取准确的元素尺寸
-   - Text 组件的文本通过 children 传递，不是 text 属性
-   - **composites 数组必须准确反映实际使用的组件**（参见"组件声明 (composites)"部分）
+2. **Correctness**:
+   - Ensure indexes array correctly passed to all required components
+   - Accurate coordinate calculation, avoid element overlap or misalignment
+   - Edge case handling (like empty items array provides friendly empty state)
+   - Use `getElementBounds` to get accurate element sizes
+   - Text component's text passed through children, not text attribute
+   - **composites array must accurately reflect components actually used** (see "Component Declaration (composites)" section)
 
-3. **简洁性**:
-   - 使用有意义但简洁的变量名
-   - 避免冗余计算，合理复用计算结果
-   - 提取常量和配置项
+3. **Conciseness**:
+   - Use meaningful but concise variable names
+   - Avoid redundant calculations, reasonably reuse calculation results
+   - Extract constants and configuration items
 
-4. **一致性**:
-   - 遵循示例代码的风格和模式
-   - 按钮布局逻辑与结构类型匹配
-   - 主题颜色使用工具函数获取
+4. **Consistency**:
+   - Follow example code style and patterns
+   - Button layout logic matches structure type
+   - Use utility functions for theme colors
 
-5. **扩展性**:
-   - 预留自定义参数的空间，所有参数都有合理默认值
-   - 支持嵌套结构（当需要时，通过 datum.children 访问子项）
-   - Props 接口继承 `BaseStructureProps`
+5. **Extensibility**:
+   - Reserve space for custom parameters, all parameters have reasonable default values
+   - Support nested structures (when needed, access child items via datum.children)
+   - Props interface inherits `BaseStructureProps`
 
-6. **性能优化**:
-   - 使用 `forEach` 遍历数据项，不使用 `map`
-   - 将元素收集到数组中，统一渲染
+6. **Performance optimization**:
+   - Use `forEach` to iterate through data items, not `map`
+   - Collect elements into arrays, render together
 
-7. **其他要求**:
-   - 不需要代码注释（除非逻辑特别复杂）
-   - 不使用 React 特性（如 key, useEffect 等）
-   - 数组元素可以直接作为 children 传递，无需 key
+7. **Other requirements**:
+   - No code comments (unless logic is particularly complex)
+   - Don't use React features (like key, useEffect, etc.)
+   - Array elements can be passed directly as children without key
 
-## 生成流程
+## Generation Process
 
-当用户请求生成结构时，请按以下步骤进行:
+When user requests to generate a structure, follow these steps:
 
-1. **理解需求**:
-   - 明确用户想要的布局类型、特点和用途
-   - 了解数据组织方式（平铺、嵌套、层级等）
-   - 确认是否需要按钮交互
+1. **Understand Requirements**:
+   - Clarify layout type, characteristics, and purpose user wants
+   - Understand data organization (flat, nested, hierarchical, etc.)
+   - Confirm whether button interaction is needed
 
-2. **确定分类**:
-   - 根据信息组织特点，归入合适的结构分类
-   - 选择合适的命名（遵循命名规范）
+2. **Determine Classification**:
+   - Based on information organization characteristics, classify into appropriate structure type
+   - Select appropriate naming (follow naming conventions)
 
-3. **设计布局**:
-   - 确定使用 Item 还是 Items
-   - 确定数据项的排列方式和对齐方式
-   - 计算各元素的位置关系
-   - 设计装饰元素（连线、箭头等）
-   - 设计按钮的合理位置（如果需要）
+3. **Design Layout**:
+   - Determine using Item or Items
+   - Determine data item arrangement and alignment
+   - Calculate position relationships of each element
+   - Design decor elements (lines, arrows, etc.)
+   - Design reasonable button positions (if needed)
 
-4. **编写代码**:
-   - 添加 JSX 导入指令
-   - 导入所需的组件和函数
-   - 定义 Props 接口
-   - 实现组件逻辑
-   - **注册结构（包含 composites 数组）**
+4. **Write Code**:
+   - Add JSX import directive
+   - Import required components and functions
+   - Define Props interface
+   - Implement component logic
+   - **Register structure (including composites array)**
 
-5. **验证输出**:
-   - 检查代码完整性和正确性
-   - 确认所有导入都正确
-   - 确认 indexes 正确传递
-   - 确认坐标计算无误
-   - **确认 composites 数组准确反映使用的组件**
+5. **Verify Output**:
+   - Check code completeness and correctness
+   - Confirm all imports are correct
+   - Confirm indexes passed correctly
+   - Confirm coordinate calculation correct
+   - **Confirm composites array accurately reflects used components**
 
-## 参考示例
+## Reference Examples
 
-### 示例 1: 简单横向列表
+### Example 1: Simple Horizontal List
 
-**需求**: 数据项水平排列，等间距
+**Requirements**: Data items arranged horizontally, equal spacing
 
-**实现要点**:
+**Implementation Points**:
+- Use single Item component
+- Each item's x coordinate = index × (itemWidth + gap)
+- Use `positionH="center"` to center content
+- BtnAdd between adjacent items, BtnRemove below each item
 
-- 使用单个 Item 组件
-- 每项的 x 坐标 = index × (itemWidth + gap)
-- 使用 `positionH="center"` 使内容居中
-- BtnAdd 在相邻项之间，BtnRemove 在每项下方
-
-**关键代码片段**:
+**Key Code Snippet**:
 
 ```tsx
 items.forEach((item, index) => {
@@ -915,17 +911,16 @@ items.forEach((item, index) => {
 });
 ```
 
-### 示例 2: 层级对比结构
+### Example 2: Hierarchical Comparison Structure
 
-**需求**: 左右两列，每列有根节点和多个子节点
+**Requirements**: Two columns, each with root node and multiple child nodes
 
-**实现要点**:
+**Implementation Points**:
+- Use Items array: `[RootItem, ChildItem]`
+- Root nodes at fixed positions, child nodes arranged below
+- Child nodes use different positionH (left column 'normal', right column 'flipped')
 
-- 使用 Items 数组：`[RootItem, ChildItem]`
-- 根节点固定位置，子节点在其下方排列
-- 子节点使用不同的 positionH（左列 'normal'，右列 'flipped'）
-
-**关键代码片段**:
+**Key Code Snippet**:
 
 ```tsx
 const [RootItem, ChildItem] = Items;
@@ -943,17 +938,16 @@ items.forEach((rootItem, rootIndex) => {
 });
 ```
 
-### 示例 3: 带装饰的顺序结构
+### Example 3: Sequence Structure with Decors
 
-**需求**: 横向流程，数据项之间有箭头连接
+**Requirements**: Horizontal process, arrows connecting between data items
 
-**实现要点**:
+**Implementation Points**:
+- Use decor elements (SimpleArrow) to connect adjacent items
+- Decor elements in independent Group, before ItemsGroup
+- Use theme color for arrows
 
-- 使用装饰元素（SimpleArrow）连接相邻项
-- 装饰元素置于独立 Group，在 ItemsGroup 之前
-- 使用主题色绘制箭头
-
-**关键代码片段**:
+**Key Code Snippet**:
 
 ```tsx
 const colorPrimary = getColorPrimary(options);
@@ -980,17 +974,16 @@ return (
 );
 ```
 
-### 示例 4: 使用调色板的圆形布局
+### Example 4: Circular Layout Using Palette
 
-**需求**: 数据项环形分布，每项使用不同颜色
+**Requirements**: Data items distributed in ring, each item uses different color
 
-**实现要点**:
+**Implementation Points**:
+- Use trigonometric functions to calculate circular positions
+- Use `getPaletteColor` to get each item's color
+- Pass color through themeColors to Item
 
-- 使用三角函数计算圆周位置
-- 使用 `getPaletteColor` 获取每项的颜色
-- 将颜色通过 themeColors 传递给 Item
-
-**关键代码片段**:
+**Key Code Snippet**:
 
 ```tsx
 items.forEach((item, index) => {
@@ -1012,28 +1005,28 @@ items.forEach((item, index) => {
 });
 ```
 
-你可以基于这些模式创造性地设计新的布局结构。
+You can creatively design new layouts based on these patterns.
 
-## 输出格式
+## Output Format
 
-生成的代码应该是完整的 TypeScript 文件，包含:
+Generated code should be complete TypeScript file containing:
 
-- **类型导入**: 导入 `ComponentType`, `JSXElement` 等必要类型
-- **组件导入**: 按需导入使用的原子组件、封装组件、装饰组件等
-- **工具函数导入**: 导入使用的布局、主题、数据处理等工具函数
-- **Props 接口**: 继承 `BaseStructureProps`，定义自定义参数
-- **组件实现**: 完整的组件逻辑
-- **结构注册**: 使用 `registerStructure` 注册组件
+- **Type imports**: Import necessary types like `ComponentType`, `JSXElement`
+- **Component imports**: Import atomic components, encapsulated components, decor components as needed
+- **Utility function imports**: Import layout, theme, data processing utility functions
+- **Props interface**: Inherit `BaseStructureProps`, define custom parameters
+- **Component implementation**: Complete component logic
+- **Structure registration**: Register component using `registerStructure`
 
-**代码风格要求**:
+**Code Style Requirements**:
 
-- 使用 2 空格缩进
-- 导入语句按类型分组
-- 变量声明使用 `const`
-- 箭头函数使用简洁语法
-- 适当的空行分隔逻辑块
+- Use 2-space indentation
+- Import statements grouped by type
+- Variable declarations use `const`
+- Arrow functions use concise syntax
+- Appropriate blank lines to separate logic blocks
 
-**示例输出**:
+**Example Output**:
 
 ```tsx
 import type { ComponentType, JSXElement } from '../../jsx';
@@ -1048,12 +1041,12 @@ export interface ExampleProps extends BaseStructureProps {
 }
 
 export const Example: ComponentType<ExampleProps> = (props) => {
-  // 组件实现
+  // Component implementation
 };
 
 registerStructure('example', {
   component: Example,
-  composites: ['title', 'item'], // 根据实际使用的组件填写
+  composites: ['title', 'item'], // Fill based on components actually used
 });
 ```
 

@@ -49,7 +49,8 @@ function processQueue() {
   }
 
   while (requestQueue.length > 0 && requestCount < RATE_LIMIT) {
-    const resolve = requestQueue.shift()!;
+    const resolve = requestQueue.shift();
+    if (!resolve) break;
     requestCount++;
     resolve();
   }

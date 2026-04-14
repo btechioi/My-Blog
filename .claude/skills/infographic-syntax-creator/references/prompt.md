@@ -1,56 +1,56 @@
-# 信息图语法生成规范
+# Infographic Syntax Generation Specification
 
-本文件用于指导生成符合 AntV Infographic 语法规范的纯文本输出。
+This file guides the generation of plain text output conforming to AntV Infographic syntax specifications.
 
-## 目录
-- 目标与输入输出
-- 语法结构
-- 语法规范
-- 模板选择
-- 生成流程
-- 输出格式
-- 常见问题与最佳实践
+## Table of Contents
+- Goals and Input/Output
+- Syntax Structure
+- Syntax Rules
+- Template Selection
+- Generation Process
+- Output Format
+- Common Issues and Best Practices
 
-## 目标与输入输出
+## Goals and Input/Output
 
-- **输入**：用户的文字内容或需求描述
-- **输出**：仅包含 Infographic 语法的 `plain` 代码块
+- **Input**: User's text content or requirement description
+- **Output**: A `plain` code block containing only Infographic syntax
 
-## 语法结构
+## Syntax Structure
 
-信息图语法由入口与块结构组成：
+Infographic syntax consists of entry and block structure:
 
-- **入口**：`infographic <template-name>`
-- **块**：`data` / `theme`
-  - 块内层级使用两个空格缩进
+- **Entry**: `infographic <template-name>`
+- **Blocks**: `data` / `theme`
+  - Block hierarchy uses two-space indentation
 
-## 语法规范
+## Syntax Rules
 
-- 第一行必须是 `infographic <template-name>`，模板从下方列表中选择
-- 键值对使用「键 空格 值」
-- 数组使用 `-` 作为条目前缀（行内写法仅在用户明确要求时使用）
-- `data` 常见字段：
+- First line must be `infographic <template-name>`, template selected from the list below
+- Key-value pairs use "key value" (key, space, value)
+- Arrays use "-" as item prefix (inline format only when explicitly requested by user)
+- Common `data` fields:
   - `title`(string) / `desc`(string) / `items`(array)
-- `data.items` 常见字段：
+- Common `data.items` fields:
   - `label`(string) / `value`(number) / `desc`(string) / `icon`(string) / `children`(array)
-- 对比类模板（名称以 `compare-` 开头）必须构建两个根节点，所有对比项作为这两个根节点的 children
-- `hierarchy-structure` 模板最多支持 3 层（根层 → 分组 → 子项），且 `data.items` 顺序即从上到下的层级顺序（第 1 个在最上）
-- `theme` 可用 `theme <theme-name>`，或使用 block 自定义 `palette` 等；不写即默认主题，可选主题名：`dark`、`hand-drawn`
-- icon 直接使用图标名（如 `mdi/chart-line`）
-- 禁止输出 JSON、Markdown 或解释性文字
+- Comparison templates (names starting with `compare-`) must construct exactly two root nodes, with all comparison items as children of these nodes
+- `hierarchy-structure` template supports max 3 levels (root → group → item), and `data.items` order is top-to-bottom hierarchy order (first item at top)
+- `theme` can use `theme <theme-name>`, or use block to customize `palette` etc; default theme if not specified, available theme names: `dark`, `hand-drawn`
+- Icons use icon name directly (e.g., `mdi/chart-line`)
+- Forbidden to output JSON, Markdown, or explanatory text
 
-## 模板选择
+## Template Selection
 
-**选择原则**：
-- 列表类信息 → `list-*`
-- 顺序/流程/阶段 → `sequence-*`
-- 二元或多元对比 → `compare-*`
-- 层级关系 → `hierarchy-*`
-- 数据统计 → `chart-*`
-- 象限 → `quadrant-*`
-- 关系 → `relation-*`
+**Selection Principles**:
+- List-type information → `list-*`
+- Sequential/process/phases → `sequence-*`
+- Binary or multi-way comparison → `compare-*`
+- Hierarchical relationships → `hierarchy-*`
+- Data statistics → `chart-*`
+- Quadrant → `quadrant-*`
+- Relationships → `relation-*`
 
-**可用模板**：
+**Available Templates**:
 
 - sequence-zigzag-steps-underline-text
 - sequence-horizontal-zigzag-underline-text
@@ -111,27 +111,27 @@
 - list-zigzag-up-compact-card
 - list-zigzag-up-simple
 
-## 生成流程
+## Generation Process
 
-1. 提取用户内容中的标题、描述、条目与层级关系
-2. 匹配结构类型并选择模板
-3. 组织 `data`：为每个条目提供 `label/desc/value/icon` 中的必要字段
-4. 用户指定风格或色彩时，补充 `theme`
-5. 输出纯语法文本的 `plain` 代码块
+1. Extract title, description, items, and hierarchy relationships from user content
+2. Match structure type and select template
+3. Organize `data`: provide necessary fields from `label/desc/value/icon` for each item
+4. When user specifies style or color, add `theme`
+5. Output pure syntax text in `plain` code block
 
-## 输出格式
+## Output Format
 
-只输出一个 `plain` 代码块，不添加任何解释性文字：
+Output only one `plain` code block, without any explanatory text:
 
 ```plain
 infographic list-row-horizontal-icon-arrow
 data
-  title 标题
-  desc 描述
+  title Title
+  desc Description
   items
-    - label 条目
+    - label Item
       value 12.5
-      desc 说明
+      desc Explanation
       icon mdi/rocket-launch
 theme
   palette
@@ -140,9 +140,9 @@ theme
     - #f97316
 ```
 
-## 常见问题与最佳实践
+## Common Issues and Best Practices
 
-- 信息不足时，可合理补全，但避免编造与主题无关内容
-- `value` 为数值类型，若无明确数值可省略
-- `children` 用于层级结构，避免层级与模板类型不匹配
-- 输出必须严格遵守缩进规则，便于流式渲染
+- When information is insufficient, reasonable additions are acceptable, but avoid fabricating content unrelated to the topic
+- `value` is numeric type; omit if no explicit value
+- `children` is for hierarchical structure; avoid mismatching hierarchy and template type
+- Output must strictly follow indentation rules for smooth rendering
