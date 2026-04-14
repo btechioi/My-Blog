@@ -1,6 +1,6 @@
 ---
 title: "Weekly Projects Roundup: Embedded Systems Edition"
-date: "2026-07-15"
+date: "2026-04-12"
 categories:
   - Weekly
 tags:
