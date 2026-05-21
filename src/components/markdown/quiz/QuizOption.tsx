@@ -25,7 +25,7 @@ export function QuizOption({ index, html, isCorrect, isSelected, revealed, disab
       )}
       onClick={onClick}
       disabled={disabled}
-      aria-label={`选项 ${String.fromCharCode(65 + index)}`}
+      aria-label={`Option ${String.fromCharCode(65 + index)}`}
       aria-pressed={isSelected}
     >
       <span

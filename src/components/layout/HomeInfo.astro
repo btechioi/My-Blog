@@ -27,7 +27,7 @@ const tags = getAllTags(posts);
 
 const allTags = Object.entries(tags).map(([tag, count]) => ({ tag, count }));
 
-// 生成唯一 ID 前缀
+// Generate unique ID prefix
 const uniqueId = `home-info-${Math.random().toString(36).substring(2, 11)}`;
 const { className } = Astro.props;
 
@@ -147,7 +147,7 @@ const strippedPath = stripLocaleFromPath(Astro.url.pathname);
 </div>
 
 <style>
-  /* 折叠动画使用 CSS Grid 技巧实现平滑的高度过渡 */
+  /* Collapse animation uses CSS Grid technique for smooth height transition */
   [data-collapse-content] {
     display: grid;
     grid-template-rows: 1fr;
@@ -162,7 +162,7 @@ const strippedPath = stripLocaleFromPath(Astro.url.pathname);
     grid-template-rows: 0fr;
   }
 
-  /* 只在用户未设置 reduce-motion 时应用动画 */
+  /* Only apply animation when user hasn't set reduce-motion */
   @media (prefers-reduced-motion: no-preference) {
     [data-collapse-content] {
       transition: grid-template-rows 0.3s ease;
@@ -173,7 +173,7 @@ const strippedPath = stripLocaleFromPath(Astro.url.pathname);
   let collapseMutationObserver: MutationObserver | null = null;
 
   function initCollapsible() {
-    // 找到所有 HomeInfo 容器
+    // Find all HomeInfo containers
     const containers = document.querySelectorAll('[data-home-info-container]');
 
     containers.forEach((container) => {
@@ -183,11 +183,11 @@ const strippedPath = stripLocaleFromPath(Astro.url.pathname);
         const targetId = trigger.getAttribute('data-collapse-trigger');
         if (!targetId) return;
 
-        // 检查是否已经初始化过
+        // Check if already initialized
         if (trigger.hasAttribute('data-initialized')) return;
         trigger.setAttribute('data-initialized', 'true');
 
-        // 在当前容器内查找对应的元素
+        // Find corresponding elements within the current container
         const content = container.querySelector(`[data-collapse-content="${targetId}"]`) as HTMLElement;
         const icon = trigger.querySelector(`[data-collapse-icon="${targetId}"]`) as HTMLElement;
 
@@ -200,12 +200,12 @@ const strippedPath = stripLocaleFromPath(Astro.url.pathname);
           const isExpanded = trigger.getAttribute('aria-expanded') === 'true';
 
           if (isExpanded) {
-            // 折叠
+            // Collapse
             content.classList.add('collapse-hidden');
             icon.style.transform = 'rotate(0deg)';
             trigger.setAttribute('aria-expanded', 'false');
           } else {
-            // 展开
+            // Expand
             content.classList.remove('collapse-hidden');
             icon.style.transform = 'rotate(180deg)';
             trigger.setAttribute('aria-expanded', 'true');
@@ -223,10 +223,10 @@ const strippedPath = stripLocaleFromPath(Astro.url.pathname);
   }
 
   function setupObserver() {
-    // 先清理旧的观察器
+    // Clean up old observer first
     cleanupObserver();
 
-    // 支持 MobileDrawer 延迟加载
+    // Support MobileDrawer lazy loading
     collapseMutationObserver = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         if (mutation.addedNodes.length) {
@@ -241,7 +241,7 @@ const strippedPath = stripLocaleFromPath(Astro.url.pathname);
     });
   }
 
-  // 初始化
+  // Initialize
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
       initCollapsible();
@@ -252,12 +252,12 @@ const strippedPath = stripLocaleFromPath(Astro.url.pathname);
     setupObserver();
   }
 
-  // 支持 Astro 的视图过渡
+  // Support Astro view transitions
   document.addEventListener('astro:page-load', () => {
     initCollapsible();
     setupObserver();
   });
 
-  // 页面切换前清理观察器
+  // Clean up observer before page navigation
   document.addEventListener('astro:before-swap', cleanupObserver);
 </script>

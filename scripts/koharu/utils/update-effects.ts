@@ -16,44 +16,44 @@ import {
   tagExists,
 } from './update-operations';
 
-/** Effect 函数类型：接收当前状态和 dispatch，可返回 cleanup 函数 */
+/** Effect function type: receives current state and dispatch, can return cleanup function */
 type EffectFn = (state: UpdateState, dispatch: Dispatch<UpdateAction>) => (() => void) | undefined;
 
 /**
- * 状态副作用映射表
- * 每个需要执行副作用的状态对应一个 effect 函数
+ * Status side-effect mapping table
+ * Each state that needs side effects corresponds to an effect function
  */
 export const statusEffects: Partial<Record<UpdateStatus, EffectFn>> = {
   checking: (state, dispatch) => {
     try {
-      // --clean 和 --rebase 互斥
+      // --clean and --rebase are mutually exclusive
       if (state.options.clean && state.options.rebase) {
-        dispatch({ type: 'ERROR', error: '--clean 和 --rebase 不能同时使用' });
+        dispatch({ type: 'ERROR', error: '--clean and --rebase cannot be used together' });
         return undefined;
       }
 
       const gitStatus = checkGitStatus();
       const { checkOnly } = state.options;
 
-      // 确保 upstream remote 存在
+      // Ensure upstream remote exists
       const upstream = ensureUpstreamRemote({ allowAdd: !checkOnly });
       if (!upstream.success) {
         if (upstream.reason === 'mismatch') {
           const currentUrl = upstream.currentUrl ?? 'unknown';
           dispatch({
             type: 'ERROR',
-            error: `upstream 已存在但指向 ${currentUrl}，请手动调整为 ${UPSTREAM_URL}`,
+            error: `upstream exists but points to ${currentUrl}, please manually change it to ${UPSTREAM_URL}`,
           });
           return undefined;
         }
         if (upstream.reason === 'missing' && checkOnly) {
           dispatch({
             type: 'ERROR',
-            error: '检查模式不会修改仓库，请先手动添加 upstream 或使用非 --check 模式',
+            error: 'Check mode will not modify the repository, please manually add upstream first or use non --check mode',
           });
           return undefined;
         }
-        dispatch({ type: 'ERROR', error: '无法添加 upstream remote' });
+        dispatch({ type: 'ERROR', error: 'Cannot add upstream remote' });
         return undefined;
       }
 
@@ -70,32 +70,32 @@ export const statusEffects: Partial<Record<UpdateStatus, EffectFn>> = {
         if (!hasUpstreamTrackingRef()) {
           dispatch({
             type: 'ERROR',
-            error: '检查模式不会执行 git fetch，请先手动执行 git fetch upstream',
+            error: 'Check mode will not execute git fetch, please manually run git fetch upstream',
           });
           return undefined;
         }
       } else {
         const success = fetchUpstream();
         if (!success) {
-          dispatch({ type: 'ERROR', error: '无法获取 upstream 更新，请检查网络连接' });
+          dispatch({ type: 'ERROR', error: 'Cannot fetch upstream updates, please check network connection' });
           return undefined;
         }
       }
 
-      // 如果指定了 targetTag，验证其存在性
+      // If targetTag is specified, verify its existence
       if (state.options.targetTag && !tagExists(state.options.targetTag)) {
         const recentTags = listRecentTags(5);
-        const tagsHint = recentTags.length > 0 ? `\n可用的版本: ${recentTags.join(', ')}` : '';
+        const tagsHint = recentTags.length > 0 ? `\nAvailable versions: ${recentTags.join(', ')}` : '';
         dispatch({
           type: 'ERROR',
-          error: `Tag "${state.options.targetTag}" 不存在${tagsHint}`,
+          error: `Tag "${state.options.targetTag}" does not exist${tagsHint}`,
         });
         return undefined;
       }
 
       const info = getUpdateInfo(state.options.targetTag);
 
-      // 检测是否需要首次迁移提示（rebase/clean 模式不需要）
+      // Detect if first migration prompt is needed (rebase/clean mode does not need it)
       const needsMigration = !state.options.clean && !state.options.rebase && !hasUpstreamMergeHistory();
 
       dispatch({ type: 'FETCHED', payload: info, needsMigration });
@@ -108,7 +108,7 @@ export const statusEffects: Partial<Record<UpdateStatus, EffectFn>> = {
   merging: (state, dispatch) => {
     let cancelled = false;
 
-    // 延迟到微任务让 Ink 先渲染一帧 Spinner（execSync 仍会阻塞后续帧）
+    // Delay to microtask so Ink renders a Spinner frame first (execSync will still block subsequent frames)
     Promise.resolve()
       .then(() => {
         if (cancelled) return;
@@ -133,22 +133,22 @@ export const statusEffects: Partial<Record<UpdateStatus, EffectFn>> = {
   'clean-restoring': (state, dispatch) => {
     let cancelled = false;
 
-    // 延迟到微任务让 Ink 先渲染一帧 Spinner（execSync 仍会阻塞后续帧）
+    // Delay to microtask so Ink renders a Spinner frame first (execSync will still block subsequent frames)
     Promise.resolve()
       .then(() => {
         if (cancelled) return;
         if (!state.backupFile) {
-          dispatch({ type: 'ERROR', error: 'Clean 模式需要备份文件，但未找到备份' });
+          dispatch({ type: 'ERROR', error: 'Clean mode requires a backup file, but none was found' });
           return;
         }
-        // backupFile 存储的是 basename，需要构造完整路径
+        // backupFile stores the basename, need to construct full path
         const fullPath = path.join(BACKUP_DIR, state.backupFile);
         const restoredFiles = cleanRestore(fullPath, state.mergeResult?.preCleanSha);
         dispatch({ type: 'CLEAN_RESTORED', restoredFiles });
       })
       .catch((err) => {
         if (cancelled) return;
-        dispatch({ type: 'ERROR', error: `还原用户内容失败: ${err instanceof Error ? err.message : String(err)}` });
+        dispatch({ type: 'ERROR', error: `Restore user content failed: ${err instanceof Error ? err.message : String(err)}` });
       });
 
     return () => {
@@ -163,7 +163,7 @@ export const statusEffects: Partial<Record<UpdateStatus, EffectFn>> = {
       .then((result) => {
         if (cancelled) return;
         if (!result.success) {
-          dispatch({ type: 'ERROR', error: `依赖安装失败: ${result.error}` });
+          dispatch({ type: 'ERROR', error: `Dependency installation failed: ${result.error}` });
           return;
         }
         dispatch({ type: 'INSTALLED' });
@@ -173,7 +173,7 @@ export const statusEffects: Partial<Record<UpdateStatus, EffectFn>> = {
         dispatch({ type: 'ERROR', error: err instanceof Error ? err.message : String(err) });
       });
 
-    // 返回 cleanup 函数，防止组件卸载后更新状态
+    // Return cleanup function to prevent state update after component unmounts
     return () => {
       cancelled = true;
     };

@@ -1,9 +1,9 @@
 /**
  * Summary Panel Component
  *
- * 显示文章摘要面板，支持打字机动画展示
- * 可展示手写描述、AI 生成摘要或自动提取的内容
- * 支持 prefers-reduced-motion 可访问性
+ * Display article summary panel with typewriter animation
+ * Shows handwritten description, AI-generated summary, or auto-extracted content
+ * Supports prefers-reduced-motion accessibility
  */
 
 import { ErrorBoundary, InlineErrorFallback } from '@components/common';
@@ -37,10 +37,10 @@ const SummaryPanelContent = memo(
       >
         <div className="overflow-hidden">
           <div className="rounded-b-lg bg-foreground/5 px-4 py-4 text-muted-foreground text-sm leading-relaxed">
-            {/* 屏幕阅读器专用 */}
+            {/* Screen reader only */}
             <span className="sr-only">{summary}</span>
 
-            {/* 视觉展示 - 通过 ref 直接更新 DOM，避免频繁重渲染 */}
+            {/* Visual display - update DOM via ref to avoid frequent re-renders */}
             <p aria-hidden="true">
               <span ref={textRef} />
               {isTyping && <span className="typewriter-cursor" />}
@@ -53,13 +53,13 @@ const SummaryPanelContent = memo(
 );
 
 export interface SummaryPanelProps {
-  /** 摘要文本 */
+  /** Summary text */
   summary: string;
-  /** 摘要来源类型 */
+  /** Summary source type */
   source?: SummarySource;
-  /** 打字机每个字符的间隔时间（毫秒），默认 25 */
+  /** Typewriter interval per character (ms), default 25 */
   typingSpeed?: number;
-  /** 自定义类名 */
+  /** Custom class name */
   className?: string;
 }
 
@@ -97,10 +97,10 @@ function SummaryPanel({ summary, source = 'ai', typingSpeed = 25, className }: S
   const icon = SOURCE_ICONS[source];
   const label = t(SOURCE_LABEL_KEYS[source]);
 
-  // 检测用户是否偏好减少动画 (响应式，用户切换系统偏好后会自动更新)
+  // Detect user preference for reduced motion (reactive, updates automatically on system preference change)
   const prefersReducedMotion = usePrefersReducedMotion();
 
-  // 清理动画
+  // Clear animation
   const clearAnimation = useCallback(() => {
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
@@ -108,11 +108,11 @@ function SummaryPanel({ summary, source = 'ai', typingSpeed = 25, className }: S
     }
   }, []);
 
-  // 使用 requestAnimationFrame 的打字机效果 - 直接操作 DOM
+  // Typewriter effect using requestAnimationFrame - directly manipulate DOM
   const startTyping = useCallback(() => {
     if (!textRef.current) return;
 
-    // 如果用户偏好减少动画，或已经播放过动画，直接显示全部
+    // If user prefers reduced motion or animation has already played, show all text at once
     if (prefersReducedMotion || hasAnimated) {
       textRef.current.textContent = summary;
       setIsTyping(false);
@@ -143,7 +143,7 @@ function SummaryPanel({ summary, source = 'ai', typingSpeed = 25, className }: S
     animationRef.current = requestAnimationFrame(animate);
   }, [summary, typingSpeed, prefersReducedMotion, hasAnimated]);
 
-  // 展开/收起
+  // Toggle expand/collapse
   const handleToggle = useCallback(() => {
     if (isExpanded) {
       clearAnimation();
@@ -155,7 +155,7 @@ function SummaryPanel({ summary, source = 'ai', typingSpeed = 25, className }: S
     }
   }, [isExpanded, clearAnimation, startTyping]);
 
-  // 组件卸载时清理
+  // Clean up on component unmount
   useEffect(() => {
     return () => clearAnimation();
   }, [clearAnimation]);
@@ -163,7 +163,7 @@ function SummaryPanel({ summary, source = 'ai', typingSpeed = 25, className }: S
   return (
     <ErrorBoundary FallbackComponent={InlineErrorFallback}>
       <div className={cn('overflow-hidden rounded-lg', className)}>
-        {/* 触发按钮 */}
+        {/* Trigger button */}
         <button
           type="button"
           onClick={handleToggle}

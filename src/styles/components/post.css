@@ -1,16 +1,16 @@
 /* ============================================
-   CSS 计数器:标题编号系统
-   支持 H1-H6 所有级别,处理混合使用场景
+   CSS counter: heading numbering system
+   Supports all levels H1-H6, handles mixed usage scenarios
    ============================================ */
 
-/* 1. 初始化计数器:在 TOC 根容器重置根级别计数器 */
+/* 1. Initialize counter: reset root-level counter in TOC root container */
 .toc-container {
   counter-reset: heading-h2;
 }
 
-/* 2. 每个标题链接在递增自己的计数器时,重置所有子级计数器 */
+/* 2. Each heading link resets all child counters when incrementing its own counter */
 
-/* H1: 不编号 (通常是文章标题，不需要编号) */
+/* H1: no numbering (usually article title, doesn't need numbering) */
 .heading-link[data-level="1"] {
   counter-reset: heading-h2;
 }
@@ -19,7 +19,7 @@
   content: none;
 }
 
-/* H2: "1. " (作为根级别) */
+/* H2: "1. " (as root level) */
 .heading-link[data-level="2"] {
   counter-increment: heading-h2;
   counter-reset: heading-h3;
@@ -69,26 +69,26 @@
     ". ";
 }
 
-/* 4. 编号样式:等宽数字,右侧间距,柔和颜色 */
+/* 4. Numbering style: monospaced numbers, right margin, soft color */
 .heading-link::before {
   display: inline-block;
-  margin-right: 0.25rem; /* 4px 间距 */
-  font-variant-numeric: tabular-nums; /* 等宽数字对齐 */
+  margin-right: 0.25rem; /* 4px spacing */
+  font-variant-numeric: tabular-nums; /* Monospaced number alignment */
   color: hsl(var(--muted-foreground));
   transition: color 200ms;
 }
 
-/* 5. 激活状态:编号也变为主题色 */
+/* 5. Active state: numbering also turns theme color */
 .heading-link.text-primary::before {
   color: hsl(var(--primary));
 }
 
-/* 6. 禁用编号:通过 .toc-no-numbering 类隐藏所有编号 */
+/* 6. Disable numbering: hide all numbering via .toc-no-numbering class */
 .toc-no-numbering .heading-link::before {
   display: none;
 }
 
-/* 目录项的平滑过渡动画 */
+/* Smooth transition animation for TOC items */
 .toc-item {
   position: relative;
   overflow: hidden;

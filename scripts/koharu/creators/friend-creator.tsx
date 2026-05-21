@@ -67,7 +67,7 @@ export function FriendCreator({ onComplete, showReturnHint = false }: CreatorPro
         case 'image':
           return image;
         case 'color':
-          return color || '(无)';
+          return color || '(None)';
         default:
           return '';
       }

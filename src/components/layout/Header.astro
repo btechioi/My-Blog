@@ -54,7 +54,7 @@ const locale = getLocaleFromUrl(Astro.url.pathname);
   {christmasConfig.enabled && <ChristmasOrnamentToggle client:only="react" />}
 </div>
 
-<!-- 移动端菜单按钮 -->
+<!-- Mobile menu button -->
 <MenuIcon
   client:only="react"
   className="tablet:flex fixed top-0 left-3 z-52 hidden h-14 transition-transform"

@@ -50,7 +50,7 @@ This repository is a personal Astro-based blog project. It uses React for intera
 
 ## Development Commands
 
-Package manager: **pnpm** (`pnpm@9.15.1`)
+Package manager: **pnpm** (`pnpm@11.1.3`)
 
 ```bash
 # Development
@@ -64,6 +64,11 @@ pnpm lint             # Run linter and formatter
 pnpm lint:fix         # Auto-fix linting issues
 pnpm knip             # Find unused files/dependencies
 
+# Data Generation
+pnpm generate:lqips   # Generate LQIP placeholders for images
+pnpm generate:summaries # Generate AI summaries via Google GenAI
+pnpm generate:all     # Run all generation scripts
+
 # Note: Any project-specific interactive CLI tools have been removed or are not included
 # in this sanitized copy. Use the npm/pnpm scripts above for development and maintenance tasks.
 ```
@@ -73,12 +78,12 @@ pnpm knip             # Find unused files/dependencies
 ## Architecture
 
 ### Tech Stack
-- **Framework**: Astro 5.x with React integration
+- **Framework**: Astro 6.x with React integration
 - **Styling**: Tailwind CSS 4.x with plugins
-- **Content**: Astro Content Collections (`src/content/blog/`)
-- **i18n**: Custom translation system (`src/i18n/`) with Astro i18n routing
-- **Animations**: Motion (Framer Motion successor)
-- **State**: Nanostores
+- **Content**: Astro Content Collections (`src/content/blog/`) with `glob()` loader
+- **i18n**: Custom translation system (`src/i18n/`) with Astro i18n routing (English source-of-truth)
+- **Animations**: Motion 12.x
+- **State**: Nanostores 1.x
 - **Search**: Pagefind (static)
 - **Utilities**: es-toolkit, date-fns, sanitize-html
 
@@ -128,14 +133,25 @@ pages/ → components/ → hooks/ → lib/ → constants/
 
 ### Key Concepts
 
-**Content System**: Blog posts in `src/content/blog/` using Astro Content Collections. Hierarchical categories supporting `'工具'` or `['笔记', '前端', 'React']`.
+**Content System**: Blog posts in `src/content/blog/` using Astro Content Collections. Content config at `src/content.config.ts` (not `src/content/config.ts`). Hierarchical categories supporting `'Tools'` or `['Notes', 'Frontend', 'React']`. Uses `glob({ pattern: '**/*.{md,mdx}', base: './src/content/blog' })` loader.
+
+**Astro 6 Migration Notes**:
+- **Content config**: Moved from `src/content/config.ts` to `src/content.config.ts` (root-level)
+- **Loader API**: Uses `import { glob } from 'astro/loaders'` with `glob({ pattern, base })`
+- **`slug` → `id`**: Astro 6 removed `slug` from `CollectionEntry`; use `post.id` instead
+- **`render()`**: Use `import { render } from 'astro:content'` then `render(post)` instead of `post.render()`
+- **`z` import**: Import `z` from `astro/zod`, not `astro:content`
+- **Zod 4**: `ZodTypeDef` removed — use `satisfies z.ZodType<Schema, Input>` (2-arg, not 3-arg)
+- **`post.body`**: Can be `undefined` — add `?? ''` fallback when passing to `extractTextFromMarkdown`
+
+**Vite 7 Environment API**: Use `vite.resolve.noExternal` instead of `vite.ssr.noExternal` for packages needing SSR resolution (e.g., `react-tweet`).
 
 **Featured Series**: Special category-based content series with dedicated pages and homepage highlights. Configured via `featuredSeries` in `config/site.yaml`. Each series requires a unique `slug` (must not conflict with reserved routes) and `categoryName`. Supports multiple series, individual enable/disable, and homepage highlight control. Dynamic routes generated at `[seriesSlug].astro`.
 
 **Theme System**: Dark/light toggle with localStorage, inline check in `<head>` prevents FOUC.
 
 **i18n System**: Two-layer translation architecture with locale-aware routing.
-- **UI strings** (`src/i18n/translations/`): TypeScript dictionaries with `t(locale, key, params?)` function. Keys defined in `zh.ts` (source-of-truth), other locales are partial overrides. ~170 keys.
+- **UI strings** (`src/i18n/translations/`): TypeScript dictionaries with `t(locale, key, params?)` function. English (`en.ts`) is the source-of-truth dictionary (~170 keys). No `zh.ts` — non-default locales provide partial overrides.
 - **Content strings** (`config/i18n-content.yaml`): YAML-based translations for category names, series fields, featured category labels. Accessed via `getContentCategoryName()` / `getContentSeriesField()` / `getContentFeaturedCategoryField()` (internal to `src/lib/content/categories.ts`).
 - **Routing**: Default locale has no URL prefix; other locales use `/<locale>/` prefix. Static pages in `src/pages/[lang]/` are thin wrappers using `getLocaleStaticPaths()`. Dynamic pages (post, tags, categories, series) have per-locale `getStaticPaths`. Root pages derive locale from URL via `getLocaleFromUrl()`.
 - **React hook**: `useTranslation()` reads from `$locale` nanostore (synced via `astro:page-load` event). Returns `{ t, locale }`.
@@ -203,7 +219,7 @@ Biome (line width: 128, single quotes, trailing commas). Tailwind classes must b
 ### Error Handling Strategy
 **Layered and context-appropriate:**
 1. **Data Layer** (`src/lib/`): Return `null` or throw typed errors
-2. **React Components**: Use `ErrorBoundary` for component errors
+2. **React Components**: Use `ErrorBoundary` for component errors. `onError` handler receives `(error: unknown, info: { componentStack: string })` (react-error-boundary v6+)
 3. **Async Operations**: Explicit try-catch or `.catch()`
 4. **Validation**: At system boundaries only
 
@@ -228,7 +244,7 @@ Biome (line width: 128, single quotes, trailing commas). Tailwind classes must b
 
 **Immutability**: Always use immutable updates: `setUser(prev => ({ ...prev, name: 'Alice' }))`.
 
-**URL State Management**: Use **nuqs** (https://nuqs.dev/) for shareable state (search, pagination, filters, tabs). Benefits: shareable URLs, bookmarkable, browser navigation, SEO-friendly.
+**URL State Management**: Use nuqs (https://nuqs.dev/) for shareable state (search, pagination, filters, tabs). Benefits: shareable URLs, bookmarkable, browser navigation, SEO-friendly.
 
 ```typescript
 // ✅ Good: URL state for filters
@@ -281,10 +297,10 @@ const isEnabled = useStore(christmasEnabled);
 describe("getCategoryLinks", () => {
   it("returns all links recursively", () => {
     const category = {
-      name: "笔记",
+      name: "Notes",
       link: "/category/notes",
       children: [
-        { name: "前端", link: "/category/notes/front-end", children: [] }
+        { name: "Frontend", link: "/category/notes/front-end", children: [] }
       ]
     };
     expect(getCategoryLinks(category)).toEqual(["/category/notes/front-end"]);

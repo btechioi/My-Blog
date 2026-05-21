@@ -12,24 +12,24 @@ import { extractTextFromMarkdown } from '../sanitize';
 import { buildCategoryPath } from './categories';
 import { filterPostsByLocale, getPostSlug } from './locale';
 
-/** AI 摘要数据类型 */
+/** AI summary data type */
 type SummariesData = Record<string, { title: string; summary: string }>;
 
 /**
- * 获取文章描述
- * 优先使用 frontmatter 中的 description，如果不存在则从 Markdown 内容中智能提取
- * @param post 文章对象
- * @param maxLength 最大长度，默认 150 字符
- * @returns 文章描述文本
+ * Get post description
+ * Priority to frontmatter description, falls back to intelligent extraction from Markdown content
+ * @param post post object
+ * @param maxLength maximum length, default 150 characters
+ * @returns post description text
  */
 export function getPostDescription(post: BlogPost, maxLength: number = 150): string {
-  return post.data.description || extractTextFromMarkdown(post.body, maxLength);
+  return post.data.description || extractTextFromMarkdown(post.body ?? '', maxLength);
 }
 
 /**
- * 获取文章的 AI 摘要
- * @param slug 文章 slug（通常是 post.data.link 或 post.slug）
- * @returns AI 摘要文本，如果不存在则返回 null
+ * Get AI summary for a post
+ * @param slug post slug (usually post.data.link or post.slug)
+ * @returns AI summary text, returns null if absent
  */
 export function getPostSummary(slug: string): string | null {
   const data = summaries as SummariesData;
@@ -52,14 +52,14 @@ export function getPostSummary(slug: string): string | null {
 }
 
 /**
- * 获取文章描述，带 AI 摘要 fallback
- * 优先级：frontmatter description > AI 摘要 > markdown 提取
- * @param post 文章对象
- * @param maxLength 最大长度，默认 150 字符
- * @returns 文章描述文本
+ * Get post description with AI summary fallback
+ * Priority: frontmatter description > AI summary > markdown extraction
+ * @param post post object
+ * @param maxLength maximum length, default 150 characters
+ * @returns post description text
  */
 export function getPostDescriptionWithSummary(post: BlogPost, maxLength: number = 150): string {
-  return post.data.description || getPostSummary(getPostSlug(post)) || extractTextFromMarkdown(post.body, maxLength);
+  return post.data.description || getPostSummary(getPostSlug(post)) || extractTextFromMarkdown(post.body ?? '', maxLength);
 }
 
 /**
@@ -69,11 +69,11 @@ export function getPostDescriptionWithSummary(post: BlogPost, maxLength: number 
  */
 export async function getSortedPosts(locale?: string): Promise<CollectionEntry<'blog'>[]> {
   const posts = await getCollection('blog', ({ data }) => {
-    // 在生产环境中，过滤掉草稿
+    // In production, filter out drafts
     return import.meta.env.PROD ? data.draft !== true : true;
   });
 
-  // 按日期排序
+  // Sort by date
   const sortedPosts = posts.sort((a: BlogPost, b: BlogPost) => {
     return new Date(b.data.date).getTime() - new Date(a.data.date).getTime();
   });
@@ -190,9 +190,9 @@ export async function getThisWeeksPostsByDay(locale?: string): Promise<{
 }
 
 /**
- * 获取分类下的所有文章
- * @param categoryName 分类名
- * @returns 文章列表
+ * Get all posts under a category
+ * @param categoryName category name
+ * @returns post list
  */
 export async function getPostsByCategory(categoryName: string, locale?: string): Promise<BlogPost[]> {
   const posts = await getSortedPosts(locale);
@@ -201,12 +201,12 @@ export async function getPostsByCategory(categoryName: string, locale?: string):
     if (!categories?.length) return false;
 
     const firstCategory = categories[0];
-    // 处理两种分类格式
+    // Handle two category formats
     if (Array.isArray(firstCategory)) {
-      // ['笔记', '算法']
+      // ['Notes', 'Algorithms']
       return firstCategory.includes(categoryName);
     } else if (typeof firstCategory === 'string') {
-      // '工具'
+      // 'Tools'
       return firstCategory === categoryName;
     }
     return false;
@@ -238,8 +238,8 @@ export function getPostLastCategory(post: BlogPost): { link: string; name: strin
 }
 
 /**
- * Fisher-Yates 洗牌算法
- * 相比 sort(() => Math.random() - 0.5)，能产生均匀分布的随机排列
+ * Fisher-Yates shuffle algorithm
+ * Produces uniformly distributed random permutations compared to sort(() => Math.random() - 0.5)
  */
 function shuffleArray<T>(array: T[]): T[] {
   const result = [...array];
@@ -251,9 +251,9 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 /**
- * 获取随机文章
- * @param count 文章数量
- * @returns 随机文章列表
+ * Get random posts
+ * @param count number of posts
+ * @returns random post list
  */
 export async function getRandomPosts(count: number = 10, locale?: string): Promise<BlogPost[]> {
   const posts = await getSortedPosts(locale);
@@ -262,10 +262,10 @@ export async function getRandomPosts(count: number = 10, locale?: string): Promi
 }
 
 /**
- * 获取文章所属系列的所有文章（基于最深层分类）
- * @param post 当前文章
- * @param locale 可选 locale 过滤
- * @returns 系列文章列表（按日期排序，最新的在前）
+ * Get all posts in a post's series (based on deepest category)
+ * @param post current post
+ * @param locale optional locale filter
+ * @returns series post list (sorted by date, newest first)
  */
 export async function getSeriesPosts(post: BlogPost, locale?: string): Promise<BlogPost[]> {
   const lastCategory = getPostLastCategory(post);
@@ -275,10 +275,10 @@ export async function getSeriesPosts(post: BlogPost, locale?: string): Promise<B
 }
 
 /**
- * 获取文章的上一篇和下一篇（在同一系列中）
- * @param currentPost 当前文章
- * @param locale 可选 locale 过滤
- * @returns 上一篇和下一篇文章
+ * Get previous and next posts in the same series
+ * @param currentPost current post
+ * @param locale optional locale filter
+ * @returns previous and next posts
  */
 export async function getAdjacentSeriesPosts(
   currentPost: BlogPost,
@@ -300,9 +300,9 @@ export async function getAdjacentSeriesPosts(
     return { prevPost: null, nextPost: null };
   }
 
-  // 因为文章是按日期降序排列的（最新的在前）
-  // prevPost 是更新的文章（索引 - 1）
-  // nextPost 是更旧的文章（索引 + 1）
+  // Because posts are sorted by date descending (newest first)
+  // prevPost is the newer post (index - 1)
+  // nextPost is the older post (index + 1)
   const prevPost = currentIndex > 0 ? seriesPosts[currentIndex - 1] : null;
   const nextPost = currentIndex < seriesPosts.length - 1 ? seriesPosts[currentIndex + 1] : null;
 
@@ -310,10 +310,10 @@ export async function getAdjacentSeriesPosts(
 }
 
 /**
- * 检查文章是否属于特定分类
- * @param post 文章
- * @param categoryName 分类名
- * @returns 是否属于该分类
+ * Check if a post belongs to a specific category
+ * @param post post
+ * @param categoryName category name
+ * @returns whether it belongs to the category
  */
 function isPostInCategory(post: BlogPost, categoryName: string): boolean {
   const { categories } = post.data;
@@ -333,17 +333,17 @@ function isPostInCategory(post: BlogPost, categoryName: string): boolean {
 // =============================================================================
 
 /**
- * 获取所有启用的 Featured Series
- * @returns 启用的系列列表
+ * Get all enabled Featured Series
+ * @returns list of enabled series
  */
 export function getEnabledSeries(): FeaturedSeriesItem[] {
   return siteConfig.featuredSeries.filter((series) => series.enabled !== false);
 }
 
 /**
- * 根据 slug 查找 Featured Series
- * @param slug 系列 slug
- * @returns 系列配置或 undefined
+ * Find Featured Series by slug
+ * @param slug series slug
+ * @returns series config or undefined
  */
 export function getSeriesBySlug(slug: string): FeaturedSeriesItem | undefined {
   const normalizedSlug = slug.trim().toLowerCase();
@@ -351,9 +351,9 @@ export function getSeriesBySlug(slug: string): FeaturedSeriesItem | undefined {
 }
 
 /**
- * 获取某个 Featured Series 的所有文章
- * @param slug 系列 slug
- * @returns 文章列表（按日期排序，最新的在前）
+ * Get all posts in a Featured Series
+ * @param slug series slug
+ * @returns post list (sorted by date, newest first)
  */
 export async function getPostsBySeriesSlug(slug: string, locale?: string): Promise<BlogPost[]> {
   const series = getSeriesBySlug(slug);
@@ -363,16 +363,16 @@ export async function getPostsBySeriesSlug(slug: string, locale?: string): Promi
 }
 
 /**
- * 获取所有 Featured Series 的分类名
- * @returns 分类名列表
+ * Get all Featured Series category names
+ * @returns list of category names
  */
 export function getFeaturedCategoryNames(): string[] {
   return getEnabledSeries().map((series) => series.categoryName);
 }
 
 /**
- * 获取所有非 Featured Series 的文章（已排序）
- * @returns 非系列文章列表（按日期排序，最新的在前）
+ * Get all non-Featured Series posts (sorted)
+ * @returns non-series post list (sorted by date, newest first)
  */
 export async function getNonFeaturedPosts(locale?: string): Promise<BlogPost[]> {
   const categoryNames = getFeaturedCategoryNames();
@@ -385,8 +385,8 @@ export async function getNonFeaturedPosts(locale?: string): Promise<BlogPost[]> 
 }
 
 /**
- * 获取非 Featured Series 文章，按置顶状态分组
- * @returns 置顶文章和非置顶的普通文章（互斥，不重叠）
+ * Get non-Featured Series posts grouped by sticky status
+ * @returns sticky posts and non-sticky regular posts (mutually exclusive, non-overlapping)
  */
 export async function getNonFeaturedPostsBySticky(locale?: string): Promise<{
   stickyPosts: BlogPost[];
@@ -409,8 +409,8 @@ export async function getNonFeaturedPostsBySticky(locale?: string): Promise<{
 }
 
 /**
- * 获取所有 highlightOnHome=true 系列的最新文章
- * @returns 最新文章列表（每个系列一篇）
+ * Get latest posts for all highlightOnHome=true series
+ * @returns latest post list (one per series)
  */
 export async function getHomeHighlightedPosts(locale?: string): Promise<BlogPost[]> {
   const highlightedSeries = getEnabledSeries().filter((series) => series.highlightOnHome !== false);
@@ -427,8 +427,8 @@ export async function getHomeHighlightedPosts(locale?: string): Promise<BlogPost
 }
 
 /**
- * 优化的首页数据获取 - 单次遍历获取所有需要的数据
- * @returns 包含高亮文章、置顶文章和普通文章的对象
+ * Optimized homepage data fetching - single pass for all needed data
+ * @returns object containing highlighted, sticky, and regular posts
  */
 export async function getHomePagePosts(locale?: string): Promise<{
   highlightedPosts: BlogPost[];
@@ -439,19 +439,19 @@ export async function getHomePagePosts(locale?: string): Promise<{
   const highlightedSeries = getEnabledSeries().filter((series) => series.highlightOnHome !== false);
   const categoryNames = getFeaturedCategoryNames();
 
-  // 用于追踪每个高亮系列的最新文章
+  // Track latest post for each highlighted series
   const seriesLatestMap = new Map<string, BlogPost>();
 
   const stickyPosts: BlogPost[] = [];
   const regularPosts: BlogPost[] = [];
 
-  // 单次遍历所有文章
+  // Single pass through all posts
   for (const post of allPosts) {
-    // 检查是否属于任何 featured 系列
+    // Check if it belongs to any featured series
     const isFeatured = categoryNames.some((catName) => isPostInCategory(post, catName));
 
     if (isFeatured) {
-      // 检查是否属于高亮系列，并记录最新文章
+      // Check if it belongs to a highlighted series and record latest post
       for (const series of highlightedSeries) {
         if (isPostInCategory(post, series.categoryName)) {
           if (!seriesLatestMap.has(series.categoryName)) {
@@ -460,7 +460,7 @@ export async function getHomePagePosts(locale?: string): Promise<{
           break;
         }
       }
-      // 跳过所有 featured 系列文章，不加入普通列表
+      // Skip all featured series posts, don't add to regular list
       continue;
     }
 
@@ -471,7 +471,7 @@ export async function getHomePagePosts(locale?: string): Promise<{
     }
   }
 
-  // 提取高亮文章（保持系列定义的顺序）
+  // Extract highlighted posts (preserving series definition order)
   const highlightedPosts: BlogPost[] = [];
   for (const series of highlightedSeries) {
     const post = seriesLatestMap.get(series.categoryName);

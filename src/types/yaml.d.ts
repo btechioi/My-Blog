@@ -6,18 +6,21 @@
 // Specific type declarations for each config file
 declare module '*/config/site.yaml' {
   import type { SiteYamlConfig } from '@lib/config/types';
+
   const value: SiteYamlConfig;
   export default value;
 }
 
 declare module '*/config/cms.yaml' {
   import type { CMSConfig } from '@/types/cms';
+
   const value: CMSConfig;
   export default value;
 }
 
 declare module '*/config/i18n-content.yaml' {
   import type { I18nContentConfig } from '@/i18n/content-types';
+
   const value: I18nContentConfig;
   export default value;
 }

@@ -76,7 +76,7 @@ const MenuIcon = ({ className, id }: MenuIconProps) => {
       <button
         className="size-10 flex-center cursor-pointer select-none rounded-full bg-white/20 text-shoka"
         onClick={handleToggle}
-        aria-label={isOpen ? '关闭菜单' : '打开菜单'}
+        aria-label={isOpen ? 'Close menu' : 'Open menu'}
         aria-expanded={isOpen}
         type="button"
         style={{
@@ -93,7 +93,7 @@ const MenuIcon = ({ className, id }: MenuIconProps) => {
           strokeLinecap="round"
           strokeLinejoin="round"
           role="img"
-          aria-label={isOpen ? '关闭菜单' : '打开菜单'}
+          aria-label={isOpen ? 'Close menu' : 'Open menu'}
         >
           <motion.g
             variants={lineVariants}

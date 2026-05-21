@@ -4,10 +4,10 @@ import path from 'node:path';
 import { BACKUP_DIR, BACKUP_FILE_EXTENSION } from '../constants';
 
 /**
- * 验证路径是否在指定目录内（防止路径遍历攻击）
- * @param targetPath 目标路径
- * @param allowedDir 允许的目录
- * @returns 是否在允许目录内
+ * Verify path is within the specified directory (prevent path traversal attacks)
+ * @param targetPath Target path
+ * @param allowedDir Allowed directory
+ * @returns Whether it is within the allowed directory
  */
 export function isPathWithinDir(targetPath: string, allowedDir: string): boolean {
   const resolvedTarget = path.resolve(targetPath);
@@ -16,29 +16,29 @@ export function isPathWithinDir(targetPath: string, allowedDir: string): boolean
 }
 
 /**
- * 验证路径是否在备份目录内
+ * Verify path is within backup directory
  */
 export function isPathWithinBackupDir(targetPath: string): boolean {
   return isPathWithinDir(targetPath, BACKUP_DIR);
 }
 
 /**
- * 验证是否为有效的备份文件
- * @param filePath 文件路径
- * @returns 是否有效
+ * Verify if it is a valid backup file
+ * @param filePath File path
+ * @returns Whether valid
  */
 export function isValidBackupFile(filePath: string): boolean {
-  // 检查扩展名
+  // Check extension
   if (!filePath.endsWith(BACKUP_FILE_EXTENSION)) {
     return false;
   }
 
-  // 检查文件是否存在
+  // Check if file exists
   if (!fs.existsSync(filePath)) {
     return false;
   }
 
-  // 检查是否为文件（不是目录）
+  // Check if it is a file (not a directory)
   try {
     const stats = fs.statSync(filePath);
     return stats.isFile();
@@ -48,36 +48,36 @@ export function isValidBackupFile(filePath: string): boolean {
 }
 
 /**
- * 验证并规范化备份文件路径
- * @param filePath 文件路径
- * @throws Error 如果路径无效
- * @returns 规范化后的路径
+ * Validate and normalize backup file path
+ * @param filePath File path
+ * @throws Error If path is invalid
+ * @returns Normalized path
  */
 export function validateBackupFilePath(filePath: string): string {
   const resolved = path.resolve(filePath);
 
   if (!isPathWithinBackupDir(resolved)) {
-    throw new Error(`备份文件不在备份目录内: ${filePath}`);
+    throw new Error(`Backup file is not in backup directory: ${filePath}`);
   }
 
   if (!isValidBackupFile(resolved)) {
-    throw new Error(`无效的备份文件: ${filePath}`);
+    throw new Error(`Invalid backup file: ${filePath}`);
   }
 
   return resolved;
 }
 
 /**
- * 验证路径是否在备份目录内，并返回规范化路径
- * @param filePath 文件路径
- * @throws Error 如果路径不在备份目录内
- * @returns 规范化后的路径
+ * Verify path is within backup directory and return normalized path
+ * @param filePath File path
+ * @throws Error If path is not in backup directory
+ * @returns Normalized path
  */
 export function validatePathInBackupDir(filePath: string): string {
   const resolved = path.resolve(filePath);
 
   if (!isPathWithinBackupDir(resolved)) {
-    throw new Error(`路径不在备份目录内: ${filePath}`);
+    throw new Error(`Path is not in backup directory: ${filePath}`);
   }
 
   return resolved;

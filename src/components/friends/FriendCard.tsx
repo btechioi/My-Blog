@@ -12,7 +12,7 @@ interface FriendCardProps {
   index: number;
 }
 
-/** CSS 自定义属性类型扩展 */
+/** CSS custom properties type extension */
 interface CSSCustomProperties extends React.CSSProperties {
   '--card-color'?: string;
 }
@@ -92,6 +92,7 @@ export default function FriendCard({ friend, index }: FriendCardProps) {
       }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      rel="noopener"
     >
       <motion.div
         className="relative h-full w-full rounded-2xl bg-white p-3 shadow-xl ring-1 ring-gray-900/5 dark:bg-gray-800 dark:ring-white/10"

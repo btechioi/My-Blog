@@ -185,7 +185,7 @@ navigation:
   - name: About
     nameKey: nav.about
     path: /about
-    icon: fa6-regular:circle-user
+    icon: ri:user-line
 
 # =============================================================================
 # Comment System

@@ -59,5 +59,5 @@ export function isReservedSlug(slug: string): boolean {
 
 export const routers: Router[] = yamlConfig.navigation ?? [
   { name: 'Home', path: Routes.Home, icon: 'fa6-solid:house-chimney' },
-  { name: 'About', path: Routes.About, icon: 'fa6-regular:circle-user' },
+  { name: 'About', path: Routes.About, icon: 'ri:user-line' },
 ];

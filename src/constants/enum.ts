@@ -1,6 +1,6 @@
 export enum HomeSiderType {
   HOME = 'home',
-  POST = 'post', //有目录
+  POST = 'post', // has table of contents
   NONE = 'none',
 }
 

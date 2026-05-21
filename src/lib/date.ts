@@ -87,7 +87,7 @@ export function formatForSeo(date: Date | string): string {
  * @throws {Error} If dateString is empty or results in invalid date
  */
 export function parseDateInSiteTimezone(dateString: string): Date {
-  if (!dateString || !dateString.trim()) {
+  if (!dateString?.trim()) {
     throw new Error('Date string cannot be empty');
   }
 

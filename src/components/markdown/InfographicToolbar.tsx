@@ -16,10 +16,10 @@ const FONT_CONFIG = `
 theme
   base
     text
-      font-family 寒蝉全圆体
+      font-family Chill Round
   item
     label
-      font-family 寒蝉全圆体
+      font-family Chill Round
 `;
 
 interface InfographicToolbarProps {

@@ -51,7 +51,7 @@ export function getSlugLocaleInfo(slug: string): SlugLocaleInfo {
  * Get the locale of a blog post.
  */
 export function getPostLocale(post: BlogPost): string {
-  return getSlugLocaleInfo(post.slug).locale;
+  return getSlugLocaleInfo(post.id).locale;
 }
 
 /**
@@ -59,7 +59,7 @@ export function getPostLocale(post: BlogPost): string {
  * Prefers `post.data.link` (custom permalink) over the computed locale-free slug.
  */
 export function getPostSlug(post: BlogPost): string {
-  return post.data.link ?? getSlugLocaleInfo(post.slug).localeFreeSlug;
+  return post.data.link ?? getSlugLocaleInfo(post.id).localeFreeSlug;
 }
 
 /**

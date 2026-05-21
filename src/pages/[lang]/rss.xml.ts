@@ -31,7 +31,7 @@ export async function GET(context: APIContext) {
         const categoryArr = getCategoryArr(post.data.categories?.[0]);
         const categories = [
           ...(categoryArr || []).map((cat) => `category:${cat}`),
-          ...(post.data.tags || []).map((tag) => `tag:${tag}`),
+          ...(post.data.tags || []).map((tag: string) => `tag:${tag}`),
         ];
 
         const postSlug = getPostSlug(post);

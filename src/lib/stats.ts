@@ -10,7 +10,7 @@ import readingTime from 'reading-time';
  */
 export async function getSiteStats() {
   const posts = await getCollection('blog', ({ data }) => {
-    // 在生产环境中，过滤掉草稿
+    // In production, filter out drafts
     return import.meta.env.PROD ? data.draft !== true : true;
   });
 

@@ -212,13 +212,13 @@ export function ChristmasOrnamentToggle() {
         >
           <TopDecoration />
 
-          {/* 绳子 - 顶部固定，高度随拖拽变化 */}
+          {/* String - top fixed, height changes with drag */}
           <motion.div
             className="pointer-events-none absolute top-0 z-99 w-[2px] origin-top bg-linear-to-b from-yellow-700 via-yellow-500 to-yellow-400 will-change-[height]"
             style={{ height: stringHeight }}
           />
 
-          {/* 球体 - 位置跟随绳子底部 */}
+          {/* Ornament - position follows string bottom */}
           <motion.button
             className={cn(
               'absolute cursor-grab touch-none select-none will-change-transform active:cursor-grabbing',
@@ -242,7 +242,7 @@ export function ChristmasOrnamentToggle() {
             onKeyDown={handleKeyDown}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            aria-label={isEnabled ? '关闭圣诞模式' : '开启圣诞模式'}
+            aria-label={isEnabled ? 'Disable Christmas mode' : 'Enable Christmas mode'}
             aria-pressed={isEnabled}
             type="button"
           >
@@ -250,7 +250,7 @@ export function ChristmasOrnamentToggle() {
               <OrnamentSvg isEnabled={isEnabled} />
             </div>
 
-            {/* 提示文字 */}
+            {/* Tooltip */}
             <AnimatePresence>
               {(isPulling || isHovered) && (
                 <motion.div
@@ -260,7 +260,7 @@ export function ChristmasOrnamentToggle() {
                   className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2"
                 >
                   <div className="whitespace-nowrap rounded-full border border-white/10 bg-red-950/90 px-3 py-1 font-medium text-[10px] text-white shadow-md">
-                    {isEnabled ? '下拉关闭' : '下拉开启'}
+                    {isEnabled ? 'Pull to disable' : 'Pull to enable'}
                   </div>
                 </motion.div>
               )}

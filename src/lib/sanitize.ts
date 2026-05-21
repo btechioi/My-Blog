@@ -14,10 +14,10 @@ export const getSanitizeHtml = (html: string) => {
 };
 
 /**
- * 从Markdown内容中提取纯文本，用于生成OG描述
- * @param content Markdown内容字符串
- * @param maxLength 最大长度，默认150字符
- * @returns 提取的纯文本
+ * Extract plain text from Markdown content for OG description generation
+ * @param content Markdown content string
+ * @param maxLength maximum length, default 150 characters
+ * @returns extracted plain text
  */
 export const extractTextFromMarkdown = (content: string, maxLength: number = 150): string => {
   if (!content) return '';
@@ -25,11 +25,11 @@ export const extractTextFromMarkdown = (content: string, maxLength: number = 150
   let idx = 0;
   const len = content.length;
 
-  // 跳过YAML front matter (避免startsWith和多次indexOf)
+  // Skip YAML front matter (avoid startsWith and multiple indexOf)
   if (content.charCodeAt(0) === 45 && content.charCodeAt(1) === 45 && content.charCodeAt(2) === 45) {
     // '---'
-    idx = 4; // 跳过第一个 '---\n'
-    // 查找结束的 '---'
+    idx = 4; // Skip the first '---\n'
+    // Find closing '---'
     while (idx < len - 3) {
       if (
         content.charCodeAt(idx) === 10 && // '\n'
@@ -45,7 +45,7 @@ export const extractTextFromMarkdown = (content: string, maxLength: number = 150
     }
   }
 
-  // 提前计算搜索边界 (避免处理整个文档)
+  // Pre-compute search boundary (avoid processing entire document)
   const searchEnd = Math.min(idx + maxLength * 5, len);
 
   let result = '';
@@ -55,23 +55,23 @@ export const extractTextFromMarkdown = (content: string, maxLength: number = 150
   let lineStart = idx;
   let inCodeBlock = false;
 
-  // 逐字符扫描 (避免split产生数组)
+  // Scan character by character (avoid split creating arrays)
   while (idx < searchEnd && resultLen < targetLen) {
     const char = content.charCodeAt(idx);
 
-    // 检测换行
+    // Detect newline
     if (char === 10) {
       // '\n'
       if (idx > lineStart) {
         const line = content.slice(lineStart, idx).trim();
 
         if (line.length > 0) {
-          // 检测代码块开关 (避免startsWith)
+          // Detect code block toggle (avoid startsWith)
           if (line.charCodeAt(0) === 96 && line.charCodeAt(1) === 96 && line.charCodeAt(2) === 96) {
             // '```'
             inCodeBlock = !inCodeBlock;
           } else if (!inCodeBlock) {
-            // 跳过表格和容器 (字符码比较比字符串快)
+            // Skip tables and containers (char code comparison is faster than string)
             const firstChar = line.charCodeAt(0);
             if (firstChar !== 124 && firstChar !== 58) {
               // '|' ':' (:::)
@@ -90,7 +90,7 @@ export const extractTextFromMarkdown = (content: string, maxLength: number = 150
     idx++;
   }
 
-  // 处理最后一行
+  // Process the last line
   if (lineStart < searchEnd && resultLen < targetLen && !inCodeBlock) {
     const line = content.slice(lineStart, Math.min(lineStart + 200, searchEnd)).trim();
     if (line.length >= 3) {
@@ -102,11 +102,11 @@ export const extractTextFromMarkdown = (content: string, maxLength: number = 150
     }
   }
 
-  // 智能截断 (避免lastIndexOf)
+  // Smart truncation (avoid lastIndexOf)
   if (result.length > maxLength) {
     let cutIdx = maxLength;
     const minCut = Math.floor(maxLength * 0.8);
-    // 向前找空格
+    // Look forward for space
     while (cutIdx > minCut && result.charCodeAt(cutIdx) !== 32) cutIdx--;
     result = `${result.slice(0, cutIdx)}...`;
   }
@@ -115,31 +115,31 @@ export const extractTextFromMarkdown = (content: string, maxLength: number = 150
 };
 
 /**
- * 处理单行markdown文本
+ * Process a single line of markdown text
  */
 function processLine(line: string): string {
   let start = 0;
   const len = line.length;
 
-  // 跳过行首标记
+  // Skip line start markers
   const firstChar = line.charCodeAt(0);
 
-  // '#' 标题
+  // '#' heading
   if (firstChar === 35) {
     while (start < len && line.charCodeAt(start) === 35) start++;
-    while (start < len && line.charCodeAt(start) === 32) start++; // 空格
+    while (start < len && line.charCodeAt(start) === 32) start++; // space
   }
-  // '- * +' 列表
+  // '- * +' list
   else if (firstChar === 45 || firstChar === 42 || firstChar === 43) {
     start = 1;
     while (start < len && line.charCodeAt(start) === 32) start++;
   }
-  // '>' 引用
+  // '>' blockquote
   else if (firstChar === 62) {
     start = 1;
     while (start < len && line.charCodeAt(start) === 32) start++;
   }
-  // 数字列表 '1. 2. '
+  // Numbered list '1. 2. '
   else if (firstChar >= 48 && firstChar <= 57) {
     while (start < len && line.charCodeAt(start) >= 48 && line.charCodeAt(start) <= 57) start++;
     if (start < len && line.charCodeAt(start) === 46) start++; // '.'
@@ -148,11 +148,11 @@ function processLine(line: string): string {
 
   if (start > 0) line = line.slice(start);
 
-  // 只在需要时才使用正则 - 使用indexOf避免全文扫描
+  // Only use regex when needed - use indexOf to avoid full scan
   let hasSpecialChars = false;
   for (let i = 0; i < line.length; i++) {
     const code = line.charCodeAt(i);
-    // 检查 [ ` * _ ~ <
+    // Check for [ ` * _ ~ <
     if (code === 91 || code === 96 || code === 42 || code === 95 || code === 126 || code === 60) {
       hasSpecialChars = true;
       break;
@@ -160,22 +160,22 @@ function processLine(line: string): string {
   }
 
   if (hasSpecialChars) {
-    // 移除链接/图片 ![text](url) 或 [text](url)
+    // Remove links/images ![text](url) or [text](url)
     if (line.indexOf('[') >= 0) {
       line = line.replace(/!?\[([^\]]*)\]\([^)]*\)/g, '$1');
     }
 
-    // 移除内联代码 `code`
+    // Remove inline code `code`
     if (line.indexOf('`') >= 0) {
       line = line.replace(/`[^`]*`/g, '');
     }
 
-    // 移除格式化 **bold** *italic* __bold__ _italic_
+    // Remove formatting **bold** *italic* __bold__ _italic_
     if (line.indexOf('*') >= 0 || line.indexOf('_') >= 0) {
       line = line.replace(/[*_]{1,2}([^*_]+)[*_]{1,2}/g, '$1');
     }
 
-    // 移除HTML <tag>
+    // Remove HTML <tag>
     if (line.indexOf('<') >= 0) {
       line = line.replace(/<[^>]*>/g, '');
     }

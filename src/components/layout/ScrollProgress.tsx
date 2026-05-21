@@ -7,17 +7,17 @@ interface ScrollProgressProps {
 export function ScrollProgress({ className }: ScrollProgressProps) {
   const shouldReduceMotion = useReducedMotion();
 
-  // 监听页面滚动进度
+  // Track page scroll progress
   const { scrollYProgress } = useScroll();
 
-  // 使用 spring 动画使滚动更平滑，提升性能
+  // Use spring animation for smoother scrolling, improves performance
   const springProgress = useSpring(scrollYProgress, {
     stiffness: 100,
     damping: 30,
     restDelta: 0.001,
   });
 
-  // 如果用户偏好减少动画，则直接使用滚动进度值，不使用 spring
+  // If user prefers reduced motion, use raw scroll progress without spring
   const scaleX = shouldReduceMotion ? scrollYProgress : springProgress;
 
   return (

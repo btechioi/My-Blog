@@ -13,7 +13,7 @@ import Layout from '../layouts/Layout.astro';
 const locale = getLocaleFromUrl(Astro.url.pathname);
 const posts = await getSortedPosts(locale);
 
-// 按年份对文章进行分组
+// Group posts by year
 const postsByYear = posts.reduce(
   (acc, post) => {
     const year = new Date(post.data.date).getFullYear();

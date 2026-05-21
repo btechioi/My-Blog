@@ -1,8 +1,8 @@
 /**
  * useHeadingClickHandler Hook
  *
- * 处理 TOC 中标题点击的可复用 hook。
- * 滚动到对应标题并管理手风琴展开状态。
+ * A reusable hook for handling heading clicks in TOC.
+ * Scroll to the corresponding heading and manage accordion expand state.
  *
  * @example
  * ```tsx
@@ -24,17 +24,17 @@ import { useCallback } from 'react';
 import { findHeadingById, getParentIds, getSiblingIds, type Heading } from './useHeadingTree';
 
 export interface UseHeadingClickHandlerOptions {
-  /** 层级化的标题树 */
+  /** Hierarchical heading tree */
   headings: Heading[];
-  /** 展开状态的 setter */
+  /** Expanded state setter */
   setExpandedIds: React.Dispatch<React.SetStateAction<Set<string>>>;
 }
 
 /**
- * 处理标题点击，滚动到对应位置并更新手风琴展开状态
+ * Handle heading click, scroll to the position and update accordion expand state
  *
- * @param options - 配置选项
- * @returns 标题点击处理函数
+ * @param options - configuration options
+ * @returns heading click handler function
  *
  * Note: The `headings` dependency is intentional. The headings array comes from useState
  * in useHeadingTree, which provides a stable reference that only changes when the heading
@@ -49,13 +49,13 @@ export function useHeadingClickHandler({ headings, setExpandedIds }: UseHeadingC
 
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
-      // 获取点击的标题节点
+      // Get the clicked heading node
       const clickedHeading = findHeadingById(headings, id);
       if (!clickedHeading) return;
 
-      // 收集需要展开的父级 ID
+      // Collect parent IDs that need to be expanded
       const parentIds = getParentIds(clickedHeading);
-      // 如果点击的标题本身有子节点，也将其加入展开列表
+      // If the clicked heading has children, also add it to the expand list
       if (clickedHeading.children.length > 0) {
         parentIds.unshift(id);
       }
@@ -65,7 +65,7 @@ export function useHeadingClickHandler({ headings, setExpandedIds }: UseHeadingC
       setExpandedIds((prev) => {
         const newSet = new Set(prev);
 
-        // 按层级分组父节点，实现手风琴效果
+        // Group parent nodes by level for accordion effect
         const parentsByLevel: { [level: number]: string[] } = {};
 
         parentIds.forEach((parentId) => {
@@ -78,7 +78,7 @@ export function useHeadingClickHandler({ headings, setExpandedIds }: UseHeadingC
           }
         });
 
-        // 对每个层级，关闭同级兄弟节点，展开当前路径上的节点
+        // For each level, close sibling nodes, expand current path nodes
         Object.keys(parentsByLevel).forEach((levelStr) => {
           const level = parseInt(levelStr, 10);
           const parentsAtLevel = parentsByLevel[level];
@@ -86,13 +86,13 @@ export function useHeadingClickHandler({ headings, setExpandedIds }: UseHeadingC
           parentsAtLevel.forEach((parentId) => {
             const parentHeading = findHeadingById(headings, parentId);
             if (parentHeading) {
-              // 关闭同级兄弟节点
+              // Close sibling nodes
               const siblingIds = getSiblingIds(parentHeading, headings);
               siblingIds.forEach((siblingId) => {
                 newSet.delete(siblingId);
               });
 
-              // 展开当前节点
+              // Expand current node
               newSet.add(parentId);
             }
           });

@@ -8,12 +8,12 @@ import { RiArticleLine, RiDashboard3Line, RiListOrdered2 } from 'react-icons/ri'
 import { cn } from '@/lib/utils';
 
 type HomeSiderSegmentedProps = {
-  defaultValue?: HomeSiderSegmentType; // 默认值
+  defaultValue?: HomeSiderSegmentType; // Default value
   className?: string;
   indicateClass?: string;
   itemClass?: string;
   id?: string;
-  value?: HomeSiderSegmentType; // 受控
+  value?: HomeSiderSegmentType; // Controlled
 };
 
 export const HomeSiderSegmented = ({ className, ...props }: HomeSiderSegmentedProps) => {

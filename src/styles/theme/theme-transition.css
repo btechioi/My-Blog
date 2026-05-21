@@ -1,6 +1,6 @@
-/* 主题过渡动画样式 - 渐变扫过效果 */
+/* Theme transition animation styles - gradient sweep effect */
 
-/* 渐变遮罩从左向右扫过 */
+/* Gradient mask sweeps from left to right */
 @keyframes gradient-sweep {
   from {
     mask-position: 100% 0;
@@ -10,7 +10,7 @@
   }
 }
 
-/* 过渡组高度为视口高度，否则高度巨大的时候会特别耗费性能 */
+/* Transition group height is viewport height, otherwise huge heights cause performance issues */
 html.theme-transition::view-transition-group(root) {
   height: 100dvh;
   overflow: clip;
@@ -21,7 +21,7 @@ html.theme-transition::view-transition-image-pair(root) {
   height: 100dvh;
 }
 
-/* 旧主题保持不动 */
+/* Old theme stays static */
 html.theme-transition::view-transition-old(root) {
   animation: none;
   z-index: 0;
@@ -30,7 +30,7 @@ html.theme-transition::view-transition-old(root) {
   object-position: left top;
 }
 
-/* 新主题通过渐变遮罩从左到右揭示 */
+/* New theme revealed via gradient mask from left to right */
 html.theme-transition::view-transition-new(root) {
   mask-image: linear-gradient(to right, black 40%, transparent 60%);
   mask-size: 300% 100%;
@@ -46,7 +46,7 @@ html.theme-transition #site-header {
   view-transition-name: none;
 }
 
-/* 尊重用户的减少动画偏好 */
+/* Respect user's reduced motion preference */
 @media (prefers-reduced-motion: reduce) {
   html.theme-transition::view-transition-new(root),
   html.theme-transition::view-transition-old(root) {
@@ -54,7 +54,7 @@ html.theme-transition #site-header {
   }
 }
 
-/* 保留原始的视图过渡，但不应用特殊效果，除非有theme-transition类 */
+/* Keep original view transition without special effects unless theme-transition class is present */
 ::view-transition-new(root) {
   z-index: 1;
 }

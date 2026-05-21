@@ -124,8 +124,8 @@ export default {
         '5.5xl': '3.5rem',
       },
       fontFamily: {
-        sans: ['寒蝉全圆体', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
-        'chill-round': ['寒蝉全圆体', 'sans-serif'],
+        sans: ['Chill Round', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', 'sans-serif'],
+        'chill-round': ['Chill Round', 'sans-serif'],
       },
       clipPath: {
         'post-img-left': 'polygon(0 0,92% 0%,100% 100%,0% 100%)',

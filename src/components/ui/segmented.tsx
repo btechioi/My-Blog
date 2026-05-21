@@ -10,14 +10,14 @@ export type OptionType<T extends string | number = string | number> = {
 } | null;
 
 type SegmentedProps<T extends string | number = string | number> = {
-  options: OptionType<T>[]; // 选项
-  defaultValue?: T; // 默认值
+  options: OptionType<T>[]; // Options
+  defaultValue?: T; // Default value
   onChange?: (value: T) => void;
   className?: string;
   indicateClass?: string;
   itemClass?: string;
   id?: string;
-  value?: T; // 受控
+  value?: T; // Controlled
 };
 
 export const Segmented = <T extends string | number = string | number>({
@@ -61,10 +61,10 @@ export const Segmented = <T extends string | number = string | number>({
             layout={!shouldReduceMotion}
             transition={shouldReduceMotion ? { duration: 0 } : { type: 'spring', stiffness: 400, damping: 30 }}
           >
-            {/* 图标 */}
+            {/* Icon */}
             {icon && <span className="flex-center shrink-0">{React.createElement(icon, { className: 'w-4 h-4' })}</span>}
 
-            {/* 文字标签 - 只在选中时显示 */}
+            {/* Label - only show when selected */}
             <AnimatePresence initial={false} mode="wait">
               {selected && label && (
                 <motion.span
@@ -86,7 +86,7 @@ export const Segmented = <T extends string | number = string | number>({
               )}
             </AnimatePresence>
 
-            {/* 选中背景 */}
+            {/* Selected background */}
             {selected && (
               <motion.div
                 layoutId={`segmented_selected_bg_${id ?? 'default'}`}

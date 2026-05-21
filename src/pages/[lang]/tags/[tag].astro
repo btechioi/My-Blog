@@ -22,7 +22,7 @@ export async function getStaticPaths() {
       paths.push({
         params: { lang, tag: normalizeTag(tag).replace(/\//g, '-') },
         props: {
-          posts: posts.filter((post) => post.data.tags?.some((tg) => normalizeTag(tg) === tag)),
+          posts: posts.filter((post) => post.data.tags?.some((tg: string) => normalizeTag(tg) === tag)),
           tag,
         },
       });

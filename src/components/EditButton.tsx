@@ -60,7 +60,7 @@ export default function EditButton({ postId }: EditButtonProps) {
       const filePath = getFullFilePath(localProjectPath, contentRelativePath, postId);
       openInEditor(editor, filePath);
     },
-    [localProjectPath, contentRelativePath, postId],
+    [postId],
   );
 
   // Don't render if not mounted or no editors configured

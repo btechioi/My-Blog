@@ -11,19 +11,19 @@ interface SnowfallCanvasProps {
   speed?: number;
   intensity?: number;
   mobileIntensity?: number;
-  /** 视差强度，鼠标移动时的偏移量 (0-1)，默认 0.15 */
+  /** Parallax strength, mouse movement offset (0-1), default 0.15 */
   parallaxStrength?: number;
-  /** z-index，默认 50 */
+  /** z-index, default 50 */
   zIndex?: number;
-  /** 层位置：'background' 渲染前半层，'foreground' 渲染后半层，会自动根据 maxLayers 计算 layerRange */
+  /** Layer position: 'background' renders first half, 'foreground' renders second half, automatically calculates layerRange based on maxLayers */
   layerPosition?: 'background' | 'foreground';
-  /** 桌面端最大层数 */
+  /** Desktop maximum layers */
   maxLayers?: number;
-  /** 桌面端每层最大迭代次数 */
+  /** Desktop max iterations per layer */
   maxIterations?: number;
-  /** 移动端最大层数 */
+  /** Mobile maximum layers */
   mobileMaxLayers?: number;
-  /** 移动端每层最大迭代次数 */
+  /** Mobile max iterations per layer */
   mobileMaxIterations?: number;
 }
 
@@ -53,11 +53,11 @@ export function SnowfallCanvas({
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
-  // 鼠标位置 motion values (标准化到 -0.5 ~ 0.5)
+  // Mouse position motion values (normalized to -0.5 ~ 0.5)
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // 使用 spring 平滑鼠标移动
+  // Smooth mouse movement with spring
   const smoothMouseX = useSpring(mouseX, { stiffness: 50, damping: 20 });
   const smoothMouseY = useSpring(mouseY, { stiffness: 50, damping: 20 });
 
@@ -73,13 +73,13 @@ export function SnowfallCanvas({
     [mouseX, mouseY],
   );
 
-  // 鼠标追踪 - 仅在桌面端启用
+  // Mouse tracking - desktop only
   useEffect(() => {
-    // 移动端或减少动画时不需要鼠标视差
+    // No parallax needed on mobile or with reduced motion
     if (isMobile || shouldReduceMotion) return;
 
     const handleMouseLeave = () => {
-      // 鼠标离开窗口时缓慢回到中心
+      // Slowly return to center when mouse leaves window
       mouseX.set(0);
       mouseY.set(0);
     };
@@ -95,7 +95,7 @@ export function SnowfallCanvas({
   }, [
     isMobile,
     shouldReduceMotion,
-    throttledMouseMove, // 鼠标离开窗口时缓慢回到中心
+    throttledMouseMove, // Slowly return to center when mouse leaves window
     mouseX.set,
     mouseY.set,
   ]);
@@ -103,16 +103,16 @@ export function SnowfallCanvas({
   const finalIntensity = isMobile ? mobileIntensity : intensity;
   const finalParallaxStrength = isMobile ? 0 : parallaxStrength;
 
-  // 性能优化：根据设备类型调整迭代次数（可在 site-config.ts 中配置）
+  // Performance: adjust iterations based on device type (configurable in site-config.ts)
   const maxLayers = isMobile ? mobileMaxLayers : desktopMaxLayers;
   const maxIterations = isMobile ? mobileMaxIterations : desktopMaxIterations;
 
-  // 根据 layerPosition 和 maxLayers 自动计算 layerRange
-  // 背景层渲染前半部分，前景层渲染后半部分
+  // Automatically calculate layerRange from layerPosition and maxLayers
+  // Background renders first half, foreground renders second half
   const halfLayers = Math.floor(maxLayers / 2);
   const layerRange: [number, number] = layerPosition === 'background' ? [0, halfLayers - 1] : [halfLayers, maxLayers - 1];
 
-  // 如果用户偏好减少动画、圣诞特效被关闭、或标签页不可见，不渲染雪花
+  // Don't render snow if user prefers reduced motion, Christmas is disabled, or tab is not visible
   if (shouldReduceMotion || !isChristmasEnabled || !isVisible) {
     return null;
   }
@@ -130,7 +130,7 @@ export function SnowfallCanvas({
       }}
     >
       <Canvas
-        // 全屏着色器不需要透视相机，使用正交投影
+        // Full-screen shader doesn't need perspective camera, use orthographic
         orthographic
         camera={{ zoom: 1, position: [0, 0, 1] }}
         gl={{
@@ -138,7 +138,7 @@ export function SnowfallCanvas({
           alpha: true,
           powerPreference: 'low-power',
         }}
-        // 性能优化：移动端用稍高 DPR 避免模糊，桌面端用低 DPR
+        // Performance: higher DPR on mobile to avoid blur, lower DPR on desktop
         dpr={isMobile ? 1 : 0.7}
         style={{
           background: 'transparent',
@@ -162,7 +162,7 @@ export function SnowfallCanvas({
   );
 }
 
-/** 内部组件：桥接 Motion spring 值和 R3F useFrame */
+/** Internal component: bridge Motion spring values with R3F useFrame */
 function SnowParticlesWithParallax({
   speed,
   intensity,
@@ -184,7 +184,7 @@ function SnowParticlesWithParallax({
 }) {
   const parallaxRef = useRef({ x: 0, y: 0 });
 
-  // 订阅 spring 值的变化，存到 ref 中供 useFrame 使用
+  // Subscribe to spring value changes, store in ref for useFrame
   useEffect(() => {
     const unsubX = smoothMouseX.on('change', (v) => {
       parallaxRef.current.x = v * parallaxStrength;

@@ -1,13 +1,13 @@
 import { MAIN_BRANCH, type UpdateAction, type UpdateOptions, type UpdateState } from '../constants/update';
 
 /**
- * 更新流程状态机 Reducer
- * 所有状态转换逻辑集中在此处，易于理解和测试
+ * Update flow state machine Reducer
+ * All state transition logic is centralized here, easy to understand and test
  */
 export function updateReducer(state: UpdateState, action: UpdateAction): UpdateState {
   const { status, options } = state;
 
-  // 通用错误处理：任何状态都可以转换到 error
+  // Generic error handling: any state can transition to error
   if (action.type === 'ERROR') {
     return { ...state, status: 'error', error: action.error };
   }
@@ -17,13 +17,13 @@ export function updateReducer(state: UpdateState, action: UpdateAction): UpdateS
       if (action.type !== 'GIT_CHECKED') return state;
       const { payload: gitStatus } = action;
 
-      // 分支检查 - 非 main 分支仅警告，不阻止更新
+      // Branch check - non-main branch only warns, does not prevent update
       const branchWarning =
         gitStatus.currentBranch !== MAIN_BRANCH
-          ? `当前在 ${gitStatus.currentBranch} 分支，建议在 ${MAIN_BRANCH} 分支执行更新`
+          ? `Currently on ${gitStatus.currentBranch} branch, it is recommended to run update on ${MAIN_BRANCH} branch`
           : '';
 
-      // 工作区脏检查
+      // Working directory dirty check
       if (!gitStatus.isClean && !options.force) {
         return { ...state, status: 'dirty-warning', gitStatus, branchWarning };
       }
@@ -35,11 +35,11 @@ export function updateReducer(state: UpdateState, action: UpdateAction): UpdateS
       if (action.type !== 'FETCHED') return state;
       const { payload: updateInfo, needsMigration } = action;
 
-      // 版本号相同时不需要更新
+      // No update needed when version numbers are the same
       const versionsMatch = updateInfo.currentVersion === updateInfo.latestVersion && updateInfo.latestVersion !== 'unknown';
 
-      // 升级：behindCount > 0
-      // 降级：isDowngrade && aheadCount > 0
+      // Upgrade: behindCount > 0
+      // Downgrade: isDowngrade && aheadCount > 0
       const hasChanges =
         !versionsMatch && (updateInfo.behindCount > 0 || (updateInfo.isDowngrade && updateInfo.aheadCount > 0));
 
@@ -47,7 +47,7 @@ export function updateReducer(state: UpdateState, action: UpdateAction): UpdateS
         return { ...state, status: 'up-to-date', updateInfo };
       }
 
-      // Rebase 和 clean 模式强制备份（忽略 skipBackup 和 force）
+      // Rebase and clean modes force backup (ignore skipBackup and force)
       const forceBackup = options.rebase || options.clean;
       const nextStatus = forceBackup ? 'backup-confirm' : options.skipBackup || options.force ? 'preview' : 'backup-confirm';
       return { ...state, status: nextStatus, updateInfo, needsMigration: needsMigration ?? false };
@@ -57,7 +57,7 @@ export function updateReducer(state: UpdateState, action: UpdateAction): UpdateS
       if (action.type === 'BACKUP_CONFIRM') {
         return { ...state, status: 'backing-up' };
       }
-      // Rebase 和 clean 模式下不允许跳过备份（防御性检查）
+      // Rebase and clean modes do not allow skipping backup (defensive check)
       if (action.type === 'BACKUP_SKIP' && !options.rebase && !options.clean) {
         return { ...state, status: 'preview' };
       }
@@ -75,7 +75,7 @@ export function updateReducer(state: UpdateState, action: UpdateAction): UpdateS
       if (action.type === 'UPDATE_CONFIRM') {
         return { ...state, status: 'merging' };
       }
-      // UPDATE_CANCEL 由组件直接调用 onComplete，不经过 reducer
+      // UPDATE_CANCEL is called directly by the component via onComplete, not through the reducer
       return state;
     }
 
@@ -87,9 +87,9 @@ export function updateReducer(state: UpdateState, action: UpdateAction): UpdateS
         return { ...state, status: 'conflict', mergeResult: result };
       }
       if (!result.success) {
-        return { ...state, status: 'error', error: result.error || '合并失败' };
+        return { ...state, status: 'error', error: result.error || 'Merge failed' };
       }
-      // Clean 模式：合并成功后需要还原用户内容
+      // Clean mode: need to restore user content after successful merge
       if (options.clean) {
         return { ...state, status: 'clean-restoring', mergeResult: result };
       }
@@ -110,7 +110,7 @@ export function updateReducer(state: UpdateState, action: UpdateAction): UpdateS
       return state;
     }
 
-    // 终态：不处理任何 action
+    // Terminal state: no action is processed
     case 'dirty-warning':
     case 'done':
     case 'conflict':
@@ -123,7 +123,7 @@ export function updateReducer(state: UpdateState, action: UpdateAction): UpdateS
   }
 }
 
-/** 创建初始状态 */
+/** Create initial state */
 export function createInitialState(options: UpdateOptions): UpdateState {
   return {
     status: 'checking',

@@ -1,4 +1,8 @@
+overrides:
+  re2: 1.24.1
+
 allowBuilds:
+  '@google/genai': set this to true or false
   '@parcel/watcher': true
   esbuild: true
   nice-napi: true

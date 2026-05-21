@@ -109,7 +109,7 @@ const websiteJsonLd = {
     <ClientRouter />
     <LoadingIndicator color="#e9536a" />
     <Tooltips />
-    <!-- SEO 元数据由 astro-seo 管理 -->
+    <!-- SEO metadata managed by astro-seo -->
     <SEO
       title={title}
       description={description}
@@ -149,14 +149,14 @@ const websiteJsonLd = {
     {isI18nEnabled && <link rel="alternate" hreflang="x-default" href={xDefaultHref} />}
 
     <script is:inline>
-      // 主题系统 - 立即执行以防止 FOUC（无样式内容闪烁）
-      // 优先级：1. 用户手动选择 > 2. 系统偏好
+      // Theme system - execute immediately to prevent FOUC (Flash of Unstyled Content)
+      // Priority: 1. User manual selection > 2. System preference
       (function() {
         function getTheme() {
-          // 用户明确选择了主题
+          // User explicitly selected a theme
           if (localStorage.theme === 'dark') return 'dark';
           if (localStorage.theme === 'light') return 'light';
-          // 未设置，跟随系统偏好
+          // Not set, follow system preference
           return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
         }
 
@@ -166,39 +166,39 @@ const websiteJsonLd = {
           root.dataset.theme = theme; // For astro-mermaid autoTheme
         }
 
-        // 立即应用主题
+        // Apply theme immediately
         applyTheme(getTheme());
 
-        // 监听系统主题偏好变化
+        // Listen for system theme preference changes
         window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function() {
-          // 仅当用户未明确选择主题时自动切换
+          // Only auto-switch if user hasn't explicitly chosen a theme
           if (!('theme' in localStorage)) {
             applyTheme(getTheme());
           }
         });
 
-        // View Transition 切换页面后重新应用主题（在 DOM 渲染前）
+        // Re-apply theme after View Transition page swap (before DOM render)
         document.addEventListener('astro:after-swap', function() {
           applyTheme(getTheme());
         });
       })();
     </script>
     <script is:inline define:vars={{ christmasFeatureEnabled: christmasConfig.enabled }}>
-      // 立即执行圣诞状态检查 否则彩灯等会闪烁
+      // Execute Christmas state check immediately, otherwise fairy lights may flash
       (function () {
-        // 如果构建时配置关闭，则始终不启用
+        // If build-time config is disabled, never enable
         if (!christmasFeatureEnabled) {
           document.documentElement.classList.remove('christmas');
           return;
         }
-        // 否则使用用户偏好
+        // Otherwise use user preference
         var stored = localStorage.getItem('christmas-enabled');
-        var enabled = stored !== 'false'; // 默认启用
+        var enabled = stored !== 'false'; // Enabled by default
         document.documentElement.classList.toggle('christmas', enabled);
       })();
     </script>
 
-    <!-- 子页面可通过 slot="head" 注入额外的 head 内容（如 JSON-LD） -->
+    <!-- Sub-pages can inject extra head content via slot="head" (e.g., JSON-LD) -->
     <slot name="head" />
 
     <script>
@@ -264,10 +264,10 @@ const websiteJsonLd = {
     <script>
       /**
        * Mermaid Navigation Fix
-       * 修复从无 mermaid 页面导航到有 mermaid 页面时的渲染问题
+       * Fix rendering issue when navigating from non-mermaid page to mermaid page
        *
-       * 问题根源：astro-mermaid 的 astro:after-swap 监听器被注册在 import().then() 内部
-       * 当首页没有 mermaid 图表时，监听器不会被注册，导致客户端导航时无法渲染
+       * Root cause: astro-mermaid's astro:after-swap listener is registered inside import().then()
+       * When the homepage has no mermaid diagrams, the listener isn't registered, breaking client-side navigation
        */
       let mermaidModule: typeof import('mermaid').default | null = null;
       let themeObserverSetup = false;
@@ -340,8 +340,8 @@ const websiteJsonLd = {
         }
       }
 
-      // 关键：始终注册监听器，不依赖当前页面内容
-      // 只处理客户端导航场景，直接访问时由 astro-mermaid 处理
+      // Key: always register listener, don't depend on current page content
+      // Only handle client-side navigation; direct visits are handled by astro-mermaid
       document.addEventListener('astro:after-swap', () => {
         requestAnimationFrame(() => {
           if (hasUnprocessedDiagrams()) {

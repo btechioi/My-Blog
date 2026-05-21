@@ -184,7 +184,7 @@ export function generatePostFrontmatter(data: PostData): string {
   // Categories can be single string or array (for nested)
   lines.push('categories:');
   if (Array.isArray(data.categories) && data.categories.length > 1) {
-    // Nested category: [笔记, 前端]
+    // Nested category: [Notes, Frontend]
     lines.push(`  - [${data.categories.join(', ')}]`);
   } else {
     // Single category
@@ -213,7 +213,7 @@ export async function createPost(data: PostData): Promise<string> {
 
   for (const cat of categories) {
     if (!categoryMap[cat]) {
-      throw new Error(`分类不存在: ${cat}`);
+      throw new Error(`Category does not exist: ${cat}`);
     }
   }
 

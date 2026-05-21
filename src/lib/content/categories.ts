@@ -16,14 +16,14 @@ import type { Category, CategoryListResult } from './types';
  */
 export async function getCategoryList(locale?: string): Promise<CategoryListResult> {
   const rawPosts = await getCollection('blog', ({ data }) => {
-    // 在生产环境中，过滤掉草稿
+    // In production, filter out drafts
     return import.meta.env.PROD ? data.draft !== true : true;
   });
   const allBlogPosts = filterPostsByLocale(rawPosts as BlogPost[], locale);
-  const countMap: { [key: string]: number } = {}; // TODO: 需要优化，应该以分类路径为键名而不是 name 如数据结构既是根分类也是笔记-后端-数据结构。
+  const countMap: { [key: string]: number } = {}; // TODO: needs optimization - should use category path as key instead of name. For example, Data Structures is both a root category and Notes-Backend-Data Structures.
   const resCategories: Category[] = [];
 
-  // 统计每个分类的直接文章数量
+  // Count direct posts for each category
   for (let i = 0; i < allBlogPosts.length; ++i) {
     const post = allBlogPosts[i];
     const { catalog, categories } = post.data;
@@ -33,7 +33,7 @@ export async function getCategoryList(locale?: string): Promise<CategoryListResu
 
     const firstCategory = categories[0];
     if (Array.isArray(firstCategory)) {
-      // categories[0] = ['笔记', '算法']
+      // categories[0] = ['Notes', 'Algorithms']
       if (!firstCategory.length) continue;
 
       for (let j = 0; j < firstCategory.length; ++j) {
@@ -47,7 +47,7 @@ export async function getCategoryList(locale?: string): Promise<CategoryListResu
         }
       }
     } else if (typeof firstCategory === 'string') {
-      // categories[0] = '工具'
+      // categories[0] = 'Tools'
       countMap[firstCategory] = (countMap[firstCategory] || 0) + 1;
       addCategoryRecursively(resCategories, [], firstCategory);
     }
@@ -57,26 +57,26 @@ export async function getCategoryList(locale?: string): Promise<CategoryListResu
 }
 
 /**
- * 递归添加子分类 有副作用的函数 如 ['分类1', '分类2', '分类3'] 创建一级分类 '分类1'、二级分类 '分类2'、三级分类 '分类3'
- * @param rootCategories 根分类
- * @param parentNames 父分类名 ['分类1', '分类2']
- * @param name 子分类名 '分类3'
+ * Recursively add subcategories (has side effects). E.g., ['Cat1', 'Cat2', 'Cat3'] creates first-level 'Cat1', second-level 'Cat2', third-level 'Cat3'
+ * @param rootCategories root categories
+ * @param parentNames parent category names ['Cat1', 'Cat2']
+ * @param name subcategory name 'Cat3'
  */
 export function addCategoryRecursively(rootCategories: Category[], parentNames: string[], name: string) {
   if (parentNames.length === 0) {
-    const index = rootCategories.findIndex((c) => c.name === name); // 如果当前分类已存在，则直接返回
+    const index = rootCategories.findIndex((c) => c.name === name); // If the category already exists, return directly
     if (index === -1) rootCategories.push({ name });
     return;
   } else {
     const rootParentName = parentNames[0];
     const index = rootCategories.findIndex((c) => c.name === rootParentName);
     if (index === -1) {
-      // 如果父级分类不存在，则创建
+      // If parent category doesn't exist, create it
       const rootParentCategory = { name: rootParentName, children: [] };
       rootCategories.push(rootParentCategory);
       addCategoryRecursively(rootParentCategory.children, parentNames.slice(1), name);
     } else {
-      // 如果父级分类存在,找到这个分类
+      // If parent category exists, find it
       const rootParentCategory = rootCategories[index];
       if (!rootParentCategory?.children) rootParentCategory.children = [];
       addCategoryRecursively(rootParentCategory.children, parentNames.slice(1), name);
@@ -85,10 +85,10 @@ export function addCategoryRecursively(rootCategories: Category[], parentNames: 
 }
 
 /**
- * 获取分类完整链接
- * @param categories 分类
- * @param parentLink 父分类链接
- * @returns 分类链接
+ * Get category full link
+ * @param categories categories
+ * @param parentLink parent category link
+ * @returns category link
  */
 export function getCategoryLinks(categories?: Category[], parentLink?: string): string[] {
   if (!categories?.length) return [];
@@ -108,7 +108,7 @@ export function getCategoryLinks(categories?: Category[], parentLink?: string): 
 /**
  * Get category name by link
  * @param link categories/xxx/front-end
- * @returns 前端
+ * @returns category name (e.g., 'Frontend')
  */
 export function getCategoryNameByLink(link: string): string {
   if (!link) return '';
@@ -145,7 +145,7 @@ export function getCategoryByLink(categories: Category[], link?: string): Catego
 }
 
 /**
- * 获取分类的父分类（递归查找）
+ * Get parent category (recursive search)
  */
 export function getParentCategory(category: Category | null, categories: Category[]): Category | null {
   if (!categories?.length || !category) return null;
@@ -153,12 +153,12 @@ export function getParentCategory(category: Category | null, categories: Categor
   for (const c of categories) {
     if (!c.children?.length) continue;
 
-    // 直接检查当前层级
+    // Check current level directly
     if (c.children.some((child) => child.name === category.name)) {
       return c;
     }
 
-    // 递归检查子分类
+    // Recursively check subcategories
     for (const child of c.children) {
       if (child.children?.length) {
         const result = getParentCategory(category, [child]);
@@ -185,7 +185,7 @@ export function buildCategoryPath(categoryNames: string | string[]): string {
 }
 
 /**
- * 统一 ['分类1', '分类2'] 和 '分类'
+ * Unify ['Cat1', 'Cat2'] and 'Cat' format
  */
 export function getCategoryArr(categories?: string[] | string) {
   if (!categories) return [];

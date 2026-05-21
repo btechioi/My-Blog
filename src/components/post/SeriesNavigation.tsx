@@ -1,5 +1,5 @@
 /**
- * SeriesNavigation - 系列文章上一篇/下一篇导航
+ * SeriesNavigation - Series navigation for previous/next posts
  */
 import { Routes } from '@constants/router';
 import { useIsMounted } from '@hooks/useIsMounted';
@@ -29,9 +29,9 @@ export function SeriesNavigation({ prevPost, nextPost, className, locale }: Seri
 
   return (
     <div className={cn('mt-4 flex flex-col gap-3 border-border border-t pt-4 md:mt-0 md:pt-2', className)}>
-      {/* 文章导航 */}
+      {/* Post navigation */}
       <div className="flex items-center justify-between gap-2">
-        {/* 上一篇 */}
+        {/* Previous post */}
         {prevPost ? (
           isMounted && (
             <a
@@ -51,7 +51,7 @@ export function SeriesNavigation({ prevPost, nextPost, className, locale }: Seri
           <div className="max-w-[45%] flex-1" />
         )}
 
-        {/* 下一篇 */}
+        {/* Next post */}
         {nextPost ? (
           isMounted && (
             <a
@@ -72,7 +72,7 @@ export function SeriesNavigation({ prevPost, nextPost, className, locale }: Seri
         )}
       </div>
 
-      {/* 回到顶部和滚到底部 */}
+      {/* Back to top and scroll to bottom */}
       {isMounted && (
         <div className="flex justify-center gap-2">
           <button

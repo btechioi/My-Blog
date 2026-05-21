@@ -188,12 +188,10 @@ export default defineConfig({
     },
   },
   integrations: [
-    react(),
+    react({ include: ['**/*.tsx', '**/*.ts'] }),
     sitemap(),
     icon({
       include: {
-        gg: ['*'],
-        'fa6-regular': ['*'],
         'fa6-solid': ['*'],
         ri: ['*'],
       },
@@ -235,7 +233,7 @@ export default defineConfig({
       },
     },
     plugins: [yaml(), conditionalSnowfall(), svgr(), tailwindcss()],
-    ssr: {
+    resolve: {
       noExternal: ['react-tweet'],
     },
     optimizeDeps: {

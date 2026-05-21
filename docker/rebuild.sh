@@ -14,9 +14,9 @@ set -euo pipefail
 
 # Reminder for content generation
 echo "================================================"
-echo "  Reminder: 如果添加了新内容，建议先运行："
+echo "  Reminder: If you added new content, it is recommended to run:"
 echo "    pnpm generate:all"
-echo "  或单独运行生成脚本以更新 LQIP、相似度和 AI 摘要数据"
+echo "  Or run the generation script separately to update LQIP, similarity, and AI summary data"
 echo "================================================"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

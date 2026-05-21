@@ -9,7 +9,7 @@ const { snowfall } = christmasConfig;
 {
   christmasConfig.enabled && christmasConfig.features.snowfall && (
     <>
-      {/* 背景雪 - 在内容后面 */}
+      {/* Background snow - behind content */}
       <SnowfallCanvas
         client:only="react"
         speed={snowfall.speed}
@@ -22,7 +22,7 @@ const { snowfall } = christmasConfig;
         zIndex={1}
         layerPosition="background"
       />
-      {/* 前景雪 - 在内容前面 */}
+      {/* Foreground snow - in front of content */}
       <SnowfallCanvas
         client:only="react"
         speed={snowfall.speed}

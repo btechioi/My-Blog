@@ -1,14 +1,9 @@
-.shoka-decoration-circle:hover {
-  &::before {
-    @apply border-blue;
-  }
-}
 .shoka-decoration-circle {
   a {
     transition: all 0.2s ease-in-out 0s;
   }
   &::before {
-    /* 所有圆点 */
+    /* All dots */
     content: "";
     display: block;
     z-index: 1;
@@ -16,7 +11,7 @@
     @apply border-primary bg-gradient-start group-hover:border-blue absolute top-1/2 left-0 size-3.5 -translate-y-1/2 rounded-full border-2 transition-colors duration-300;
   }
   &::after {
-    /* 竖线 */
+    /* Vertical line */
     content: "";
     display: block;
     z-index: 1;
@@ -81,6 +76,12 @@ p.shoka-decoration-circle {
 p.shoka-decoration-circle:last-child {
   &::after {
     @apply hidden;
+  }
+}
+
+.shoka-decoration-circle:hover {
+  &::before {
+    @apply border-blue;
   }
 }
 

@@ -2,22 +2,22 @@
 export interface Props {
   className?: string;
   /**
-   * 翻转方向
+   * Flip direction
    * @default 'horizontal'
    */
   direction?: 'horizontal' | 'vertical';
   /**
-   * 翻转动画时长(ms)
+   * Flip animation duration (ms)
    * @default 600
    */
   duration?: number;
   /**
-   * 防误触延迟(ms)，hover 后等待一段时间再翻转
+   * Anti-accidental-trigger delay (ms), wait before flipping on hover
    * @default 100
    */
   delay?: number;
   /**
-   * 是否禁用翻转
+   * Whether to disable flipping
    * @default false
    */
   disabled?: boolean;
@@ -44,7 +44,7 @@ const { className, direction = 'horizontal', duration = 600, delay = 100, disabl
     perspective: 1000px;
   }
 
-  /* 透明覆盖层，确保 hover 检测区域稳定，不受 3D 变换影响 */
+  /* Transparent overlay to ensure stable hover detection, unaffected by 3D transforms */
   .flip-card::before {
     content: '';
     position: absolute;
@@ -94,13 +94,13 @@ const { className, direction = 'horizontal', duration = 600, delay = 100, disabl
     opacity: 0.6;
   }
 
-  /* 添加一些过渡效果 */
+  /* Add some transition effects */
   .flip-card-front,
   .flip-card-back {
     transition: all calc(var(--duration) * 1ms) ease-in-out;
   }
 
-  /* 添加阴影效果 */
+  /* Add shadow effects */
   .flip-card:not(.flip-card-disabled):hover .flip-card-front {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }

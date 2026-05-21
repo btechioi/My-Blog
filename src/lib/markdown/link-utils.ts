@@ -12,7 +12,7 @@ export interface LinkInfo {
   };
 }
 
-/** 通用 Markdown AST 节点类型 */
+/** General Markdown AST node type */
 export interface MarkdownNode {
   type: string;
   children?: Array<{ type: string; url?: string; value?: string; children?: Array<{ type: string; value?: string }> }>;

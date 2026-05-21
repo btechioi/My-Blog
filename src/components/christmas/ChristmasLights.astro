@@ -1,16 +1,16 @@
 ---
 /**
- * 圣诞彩灯装饰组件
- * 悬挂在 Header 底部的装饰性彩灯，随 Header 一起移动
+ * Christmas lights decoration component
+ * Decorative lights hanging at the bottom of the Header, moving with the Header
  *
- * 性能优化：
- * - 使用 opacity 动画代替 box-shadow 动画（避免 paint 操作）
- * - 静态 box-shadow 保持发光效果
- * - Tab 不可见时暂停动画
- * - Christmas 禁用时暂停动画
+ * Performance optimizations:
+ * - Use opacity animation instead of box-shadow animation (avoids paint operations)
+ * - Static box-shadow maintains glow effect
+ * - Pause animation when tab is not visible
+ * - Pause animation when Christmas is disabled
  */
 
-// 灯泡数量：覆盖最大屏幕宽度 (灯泡间距约 52px，50 个足够覆盖 2600px+)
+// Number of bulbs: covers max screen width (bulb spacing ~52px, 50 is enough for 2600px+)
 const lightCount = 50;
 ---
 
@@ -20,18 +20,18 @@ const lightCount = 50;
 
 <script>
   function initLightsVisibility() {
-    // Tab 可见性检测 - 不可见时暂停动画以节省资源
+    // Tab visibility check - pause animation when not visible to save resources
     const handleVisibility = () => {
       document.documentElement.classList.toggle('lights-paused', document.hidden);
     };
 
-    // 初始化时检查状态
+    // Check state on initialization
     handleVisibility();
 
     document.addEventListener('visibilitychange', handleVisibility);
   }
 
-  // 初始化
+  // Initialize
   if (document.readyState !== 'loading') {
     initLightsVisibility();
   }
@@ -46,7 +46,7 @@ const lightCount = 50;
     --globe-spread: 6px;
     --light-dim-opacity: 0.4;
 
-    /* 更鲜艳的圣诞配色 */
+    /* More vibrant Christmas color scheme */
     --light-red: 255, 40, 40;
     --light-green: 50, 205, 50;
     --light-gold: 255, 200, 50;
@@ -74,16 +74,16 @@ const lightCount = 50;
     padding: 0;
     list-style: none;
     border-radius: 50%;
-    /* 鲜艳的背景色和强烈的发光效果 */
+    /* Vibrant background color and strong glow effect */
     background: rgb(var(--light-red));
     box-shadow:
       0px 4px 24px var(--globe-spread) rgba(var(--light-red), 1),
       0px 2px 8px 2px rgba(var(--light-red), 0.6);
-    /* opacity + scale 动画 - 都是 GPU 合成 */
+    /* opacity + scale animations - both GPU composited */
     animation: flash-bulb 1.2s ease-in-out infinite;
   }
 
-  /* 绿色灯泡 */
+  /* Green bulbs */
   .lightrope li:nth-child(2n + 1) {
     background: rgb(var(--light-green));
     box-shadow:
@@ -91,7 +91,7 @@ const lightCount = 50;
       0px 2px 8px 2px rgba(var(--light-green), 0.6);
   }
 
-  /* 金色灯泡 */
+  /* Gold bulbs */
   .lightrope li:nth-child(4n + 2) {
     background: rgb(var(--light-gold));
     box-shadow:
@@ -99,7 +99,7 @@ const lightCount = 50;
       0px 2px 10px 2px rgba(var(--light-gold), 0.7);
   }
 
-  /* 蓝色灯泡 - 增加色彩丰富度 */
+  /* Blue bulbs - increase color variety */
   .lightrope li:nth-child(6n + 4) {
     background: rgb(var(--light-blue));
     box-shadow:
@@ -107,7 +107,7 @@ const lightCount = 50;
       0px 2px 8px 2px rgba(var(--light-blue), 0.6);
   }
 
-  /* 动画延迟 - 创造流水灯效果 */
+  /* Animation delay - creates cascading light effect */
   .lightrope li:nth-child(1) {
     animation-delay: 0s;
   }
@@ -145,7 +145,7 @@ const lightCount = 50;
     animation-delay: 0.75s;
   }
 
-  /* 时长变化 - 增加随机感 */
+  /* Duration variation - add randomness */
   .lightrope li:nth-child(odd) {
     animation-duration: 1.4s;
   }
@@ -154,7 +154,7 @@ const lightCount = 50;
     animation-duration: 1s;
   }
 
-  /* 灯座 */
+  /* Bulb base */
   .lightrope li::before {
     content: '';
     position: absolute;
@@ -166,7 +166,7 @@ const lightCount = 50;
     border-radius: 3px;
   }
 
-  /* 连接电线 */
+  /* Connecting wire */
   .lightrope li::after {
     content: '';
     position: absolute;
@@ -178,17 +178,17 @@ const lightCount = 50;
     border-radius: 50%;
   }
 
-  /* 最后一个灯泡不需要连接线 */
+  /* Last bulb doesn't need a connecting wire */
   .lightrope li:last-child::after {
     content: none;
   }
 
-  /* 第一个灯泡左移，隐藏左边缘 */
+  /* First bulb shifted left, hiding left edge */
   .lightrope li:first-child {
     margin-left: calc(0px - var(--globe-spacing));
   }
 
-  /* opacity + scale 动画 - GPU 合成，无 paint 开销 */
+  /* opacity + scale animation - GPU composited, no paint overhead */
   @keyframes flash-bulb {
     0%,
     100% {
@@ -201,24 +201,24 @@ const lightCount = 50;
     }
   }
 
-  /* 暂停动画：Tab 不可见时 */
+  /* Pause animation: when tab is not visible */
   :global(html.lights-paused) .lightrope li {
     animation-play-state: paused;
   }
 
-  /* 暂停动画：Christmas 禁用时 */
+  /* Pause animation: when Christmas is disabled */
   :global(html:not(.christmas)) .lightrope li {
     animation-play-state: paused;
   }
 
-  /* 无障碍：减少动画 */
+  /* Accessibility: reduce animation */
   @media (prefers-reduced-motion: reduce) {
     .lightrope li {
       animation: none;
     }
   }
 
-  /* 根据 christmas 状态控制显示/隐藏 */
+  /* Control show/hide based on christmas state */
   :global(html:not(.christmas)) .lightrope {
     opacity: 0;
     transform: translateY(-40px);

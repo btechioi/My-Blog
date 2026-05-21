@@ -4,9 +4,9 @@
  * Nanostores-based state for Christmas effects (snowfall, color scheme, hat, etc.)
  * Supports runtime toggle with localStorage persistence.
  *
- * 两种关闭模式：
- * - 下拉装饰球关闭：只关闭特效，装饰球保留（方便再次开启）
- * - 浮动按钮关闭：彻底关闭，装饰球也隐藏
+ * Two close modes:
+ * - Pull-down ornament close: only turn off effects, ornament stays (for easy re-enable)
+ * - Floating button close: completely disable, ornament also hidden
  */
 
 import { christmasConfig } from '@constants/site-config';

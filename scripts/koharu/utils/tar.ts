@@ -43,7 +43,7 @@ function listTarEntries(archivePath: string): string[] {
 }
 
 /**
- * 从 tar.gz 中提取 manifest.json 内容（不解压整个文件）
+ * Extract manifest.json content from tar.gz (without decompressing the entire file)
  */
 export function tarExtractManifest(archivePath: string): string | null {
   const result = spawnSync('tar', ['-xzf', archivePath, '-O', 'manifest.json'], {
@@ -58,14 +58,14 @@ export function tarExtractManifest(archivePath: string): string | null {
 }
 
 /**
- * 列出 tar.gz 归档内容
+ * List tar.gz archive contents
  */
 export function tarList(archivePath: string): string[] {
   return listTarEntries(archivePath);
 }
 
 /**
- * 创建 tar.gz 归档
+ * Create tar.gz archive
  */
 export function tarCreate(archivePath: string, sourceDir: string): void {
   const result = spawnSync('tar', ['-czf', archivePath, '-C', sourceDir, '.'], {
@@ -77,7 +77,7 @@ export function tarCreate(archivePath: string, sourceDir: string): void {
 }
 
 /**
- * 解压 tar.gz 归档到指定目录
+ * Extract tar.gz archive to specified directory
  */
 export function tarExtract(archivePath: string, destDir: string): void {
   listTarEntries(archivePath);

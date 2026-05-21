@@ -43,7 +43,7 @@ export interface BlogSchemaInput extends Omit<BlogSchema, 'date' | 'updated'> {
 export type BlogPost = CollectionEntry<'blog'>;
 
 /**
- * 最小文章引用 - 用于导航（3 字段）
+ * Minimum post reference - for navigation (3 fields)
  */
 export interface PostRef {
   slug: string;
@@ -52,14 +52,14 @@ export interface PostRef {
 }
 
 /**
- * 带分类的文章引用 - 用于列表展示（4 字段）
+ * Post reference with category - for list display (4 fields)
  */
 export interface PostRefWithCategory extends PostRef {
   categoryName?: string;
 }
 
 /**
- * 文章卡片数据 - 用于卡片展示
+ * Post card data - for card display
  */
 export interface PostCardData {
   slug: string;
@@ -71,7 +71,7 @@ export interface PostCardData {
   tags?: string[];
   categories?: string[] | string[][];
   draft?: boolean;
-  wordCount: number; // 预计算的字数
-  readingTime: string; // 预计算的阅读时间
-  postLocale?: string; // 文章的原始语言代码（用于 fallback 标记）
+  wordCount: number; // Pre-computed word count
+  readingTime: string; // Pre-computed reading time
+  postLocale?: string; // Post's original locale code (for fallback marking)
 }

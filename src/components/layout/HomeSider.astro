@@ -24,10 +24,10 @@ const { type = HomeSiderType.HOME, className, isDrawer = false, post } = Astro.p
 const locale = getLocaleFromUrl(Astro.url.pathname);
 const defaultSegmentType = type === HomeSiderType.POST ? HomeSiderSegmentType.DIRECTORY : HomeSiderSegmentType.INFO;
 
-// 获取系列文章（转换为轻量级引用）
+// Get series posts (converted to lightweight references)
 const seriesPosts = post && type === HomeSiderType.POST ? toPostRefs(await getSeriesPosts(post, locale)) : [];
 
-// 获取上一篇和下一篇（转换为轻量级引用）
+// Get previous and next posts (converted to lightweight references)
 const adjacentPosts =
   post && type === HomeSiderType.POST ? await getAdjacentSeriesPosts(post, locale) : { prevPost: null, nextPost: null };
 const prevPost = adjacentPosts.prevPost ? toPostRef(adjacentPosts.prevPost) : null;
@@ -69,7 +69,7 @@ const nextPost = adjacentPosts.nextPost ? toPostRef(adjacentPosts.nextPost) : nu
     </div>
   </sider-content>
 
-  <!-- 内联脚本：在 DOM 解析后立即隐藏不需要的内容，避免闪烁 -->
+  <!-- Inline script: hide unnecessary content immediately after DOM parsing to avoid flickering -->
   <script is:inline data-astro-rerun>
     (function () {
       const container = document.querySelector('sider-content');
@@ -100,9 +100,9 @@ const nextPost = adjacentPosts.nextPost ? toPostRef(adjacentPosts.nextPost) : nu
   import { HomeSiderType, HomeSiderSegmentType } from '@constants/enum';
   import { homeSiderSegmentType } from '@store/app';
 
-  // 定义SiderContent自定义元素
+  // Define SiderContent custom element
   class SiderContent extends HTMLElement {
-    // 私有属性定义
+    // Private property definitions
     private infoContent: HTMLElement | null = null;
     private directoryContent: HTMLElement | null = null;
     private seriesContent: HTMLElement | null = null;
@@ -112,21 +112,21 @@ const nextPost = adjacentPosts.nextPost ? toPostRef(adjacentPosts.nextPost) : nu
     constructor() {
       super();
 
-      // 保存最初的内容片段
+      // Store initial content fragments
       this.infoContent = this.querySelector('[slot="info"]');
       this.directoryContent = this.querySelector('[slot="directory"]');
       this.seriesContent = this.querySelector('[slot="series"]');
 
-      // 从HTML属性中获取当前页面类型和默认分段类型
+      // Get current page type and default segment type from HTML attributes
       this.pageType = this.getAttribute('data-type');
       this.defaultType = this.getAttribute('data-default-type');
 
-      // 初始化
+      // Initialize
       this.init();
     }
 
     init() {
-      // 确保DOM已准备好
+      // Ensure DOM is ready
       if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => this.initContent());
       } else {
@@ -135,16 +135,16 @@ const nextPost = adjacentPosts.nextPost ? toPostRef(adjacentPosts.nextPost) : nu
     }
 
     initContent() {
-      // 首页直接显示HomeInfo（无动画）
+      // Show HomeInfo directly on homepage (no animation)
       if (this.pageType === HomeSiderType.HOME) {
         this.showContent(HomeSiderSegmentType.INFO, true);
       } else {
-        // 设置初始值（无动画）
+        // Set initial value (no animation)
         const initialType = (this.defaultType as HomeSiderSegmentType) || HomeSiderSegmentType.INFO;
         homeSiderSegmentType.set(initialType);
         this.showContent(initialType, true);
 
-        // 监听状态变化（有动画）
+        // Listen for state changes (with animation)
         homeSiderSegmentType.listen((value) => {
           this.showContent(value, false);
         });
@@ -152,7 +152,7 @@ const nextPost = adjacentPosts.nextPost ? toPostRef(adjacentPosts.nextPost) : nu
     }
 
     showContent(type: HomeSiderSegmentType, skipAnimation = false) {
-      // 确定目标内容
+      // Determine target content
       let targetContent: HTMLElement | null = null;
       if (type === HomeSiderSegmentType.DIRECTORY) {
         targetContent = this.directoryContent;
@@ -162,23 +162,23 @@ const nextPost = adjacentPosts.nextPost ? toPostRef(adjacentPosts.nextPost) : nu
         targetContent = this.infoContent;
       }
 
-      // 如果是初始化或者跳过动画，直接切换
+      // If initializing or skipping animation, switch directly
       if (skipAnimation) {
-        // 先隐藏所有
+        // Hide all first
         [this.infoContent, this.directoryContent, this.seriesContent].forEach((content) => {
           content?.classList.add('hidden');
         });
-        // 再显示目标
+        // Then show target
         targetContent?.classList.remove('hidden');
         return;
       }
 
-      // 如果已经在显示目标内容，直接返回
+      // If already showing target content, return directly
       if (targetContent && !targetContent.classList.contains('hidden')) {
         return;
       }
 
-      // 隐藏其他内容（添加退出动画）
+      // Hide other content (with exit animation)
       [this.infoContent, this.directoryContent, this.seriesContent].forEach((content) => {
         if (content && content !== targetContent && !content.classList.contains('hidden')) {
           content.classList.add('exiting');
@@ -189,7 +189,7 @@ const nextPost = adjacentPosts.nextPost ? toPostRef(adjacentPosts.nextPost) : nu
         }
       });
 
-      // 显示目标内容（添加进入动画）
+      // Show target content (with entry animation)
       if (targetContent) {
         targetContent.classList.remove('hidden');
         requestAnimationFrame(() => {
@@ -202,12 +202,12 @@ const nextPost = adjacentPosts.nextPost ? toPostRef(adjacentPosts.nextPost) : nu
     }
   }
 
-  // 注册自定义元素
+  // Register custom element
   customElements.define('sider-content', SiderContent);
 </script>
 
 <style>
-  /* 圣诞模式下调整 z-index，让装饰效果正确显示 */
+  /* Adjust z-index in Christmas mode so decorations display correctly */
   :global(html.christmas) .page-home-sider {
     z-index: 5;
   }
@@ -233,13 +233,13 @@ const nextPost = adjacentPosts.nextPost ? toPostRef(adjacentPosts.nextPost) : nu
     display: none;
   }
 
-  /* 默认无动画，适用于 prefers-reduced-motion: reduce */
+  /* No animation by default, for prefers-reduced-motion: reduce */
   .sider-slot.entering,
   .sider-slot.exiting {
     animation: none;
   }
 
-  /* 只在用户未设置 reduce-motion 时应用动画 */
+  /* Only apply animation when user hasn't set reduce-motion */
   @media (prefers-reduced-motion: no-preference) {
     @keyframes slide-in-from-right {
       from {

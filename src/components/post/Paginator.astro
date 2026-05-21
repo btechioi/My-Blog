@@ -7,15 +7,15 @@ import { getLocaleFromUrl, localizedPath, t } from '@/i18n';
 
 interface Props {
   page: Page<BlogPost>;
-  baseUrl?: string; // 分页基础路径，默认为 '/posts'
-  isHomePage?: boolean; // 是否是首页
+  baseUrl?: string; // Base path for pagination, defaults to '/posts'
+  isHomePage?: boolean; // Whether this is the homepage
 }
 
 const locale = getLocaleFromUrl(Astro.url.pathname);
 const defaultBaseUrl = localizedPath('/posts', locale);
 const { page, baseUrl = defaultBaseUrl, isHomePage = false } = Astro.props;
 
-// 生成页面链接的辅助函数
+// Helper function to generate page links
 const homeUrl = localizedPath('/', locale);
 const getPageUrl = (pageNum: number) => {
   if (isHomePage) {

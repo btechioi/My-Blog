@@ -24,15 +24,15 @@ export async function GET(context: APIContext) {
     stylesheet: '/rss/feed.xsl', // https://docs.astro.build/en/recipes/rss/#adding-a-stylesheet
     items: posts
       .map((post: BlogPost) => {
-        // 获取分类数组
+        // Get category array
         const categoryArr = getCategoryArr(post.data.categories?.[0]);
 
-        // 构建 categories 数组，包含分类和标签
+        // Build categories array, includes categories and tags
         const categories = [
-          // 添加分类信息 (使用 domain 属性区分)
+          // Add category info (use domain property to distinguish)
           ...(categoryArr || []).map((cat) => `category:${cat}`),
-          // 添加标签信息
-          ...(post.data.tags || []).map((tag) => `tag:${tag}`),
+          // Add tag info
+          ...(post.data.tags || []).map((tag: string) => `tag:${tag}`),
         ];
 
         const postSlug = getPostSlug(post);

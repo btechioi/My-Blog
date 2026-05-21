@@ -21,9 +21,9 @@ export interface SiteBasicConfig {
   startYear?: number;
   defaultOgImage?: string;
   keywords?: string[];
-  /** 面包屑导航中首页的显示名称 @default '首页' */
+  /** Display name for home in breadcrumb navigation @default 'Home' */
   breadcrumbHome?: string;
-  /** 时区配置 (IANA 格式) @default 'Asia/Shanghai' */
+  /** Timezone configuration (IANA format) @default 'Asia/Shanghai' */
   timezone?: string;
 }
 
@@ -215,32 +215,26 @@ export type WalineEmojiPresets = `//${string}` | `http://${string}` | `https://$
 
 export interface WalineEmojiInfo {
   /**
-   * Emoji 名称
    * Emoji name show on tab
    */
   name: string;
   /**
-   * 所在文件夹链接
    * Current folder link
    */
   folder?: string;
   /**
-   * Emoji 通用路径前缀
    * Common prefix of Emoji icons
    */
   prefix?: string;
   /**
-   * Emoji 图片的类型,会作为文件扩展名使用
    * Type of Emoji icons, will be regarded as file extension
    */
   type?: string;
   /**
-   * 选项卡显示的 Emoji 图标
    * Emoji icon show on tab
    */
   icon: string;
   /**
-   * Emoji 图片列表
    * Emoji image list
    */
   items: string[];
@@ -248,90 +242,77 @@ export interface WalineEmojiInfo {
 
 export interface WalineConfig {
   /**
-   * Waline 服务端地址 (必填)
    * Waline server address (required)
    */
   serverURL: string;
 
   /**
-   * 显示语言
    * Display language
    * @default 'zh-CN'
    */
   lang?: string;
 
   /**
-   * 暗黑模式适配
    * Darkmode support
    * @default 'html.dark'
    */
   dark?: string | boolean;
 
   /**
-   * 评论者相关属性
    * Reviewer attributes
    * @default ['nick', 'mail', 'link']
    */
   meta?: WalineMeta[];
 
   /**
-   * 必填项
    * Required fields
    * @default []
    */
   requiredMeta?: WalineMeta[];
 
   /**
-   * 登录模式
    * Login mode status
    * @default 'enable'
    */
   login?: WalineLoginStatus;
 
   /**
-   * 评论字数限制
    * Comment word limit (0 = no limit)
    * @default 0
    */
   wordLimit?: number | [number, number];
 
   /**
-   * 评论列表分页，每页条数
-   * Number of pages per page
+   * Number of comments per page
    * @default 10
    */
   pageSize?: number;
 
   /**
-   * 图片上传功能
    * Image upload feature
    * @default false
    */
   imageUploader?: boolean;
 
   /**
-   * 代码高亮
    * Code highlighting
    * @default true
    */
   highlighter?: boolean;
 
   /**
-   * LaTeX 渲染
    * LaTeX rendering
    * @default false
    */
   texRenderer?: boolean;
 
   /**
-   * 搜索功能
    * Search feature
    * @default false
    */
   search?: boolean;
 
   /**
-   * 文章反应
    * Article reaction
    * @default false
    */
@@ -350,42 +331,36 @@ export interface WalineConfig {
   turnstileKey?: string;
 
   /**
-   * 表情包配置
    * Emoji configuration
    * @default ['//unpkg.com/@waline/emojis@1.2.0/weibo']
    */
   emoji?: (WalineEmojiInfo | WalineEmojiPresets)[] | boolean;
 
   /**
-   * 评论列表排序方式
    * Sorting method for comment list
    * @default 'latest'
    */
   commentSorting?: WalineCommentSorting;
 
   /**
-   * 是否在页脚隐藏版权信息
-   * Whether hide copyright in footer
+   * Whether to hide copyright in footer
    * @default false
    */
   noCopyright?: boolean;
 
   /**
-   * 评论数统计
    * Comment count support
    * @default true
    */
   comment?: string | boolean;
 
   /**
-   * 页面访问量统计
    * Pageview count support
    * @default true
    */
   pageview?: string | boolean;
 
   /**
-   * 自定义语言显示
    * Custom display language
    */
   locale?: Record<string, string>;
@@ -393,29 +368,23 @@ export interface WalineConfig {
 
 export interface TwikooConfig {
   /**
-   * Twikoo 环境 ID (腾讯云) 或 Vercel 环境地址 (必填)
    * Twikoo environment ID (Tencent Cloud) or Vercel environment address (required)
    */
   envId: string;
 
   /**
-   * 环境地域，默认为 ap-shanghai
    * Environment region, default is ap-shanghai
-   * 腾讯云环境填 ap-shanghai 或 ap-guangzhou；Vercel 环境不填
    * For Tencent Cloud, fill in ap-shanghai or ap-guangzhou; for Vercel, leave blank
    */
   region?: string;
 
   /**
-   * 用于区分不同文章的自定义 js 路径
    * Custom js path to distinguish different articles
-   * 如果您的文章路径不是 location.pathname，需传此参数
    * If your article path is not location.pathname, you need to pass this parameter
    */
   path?: string;
 
   /**
-   * 用于手动设定评论区语言
    * Manually set comment area language
    */
   lang?: string;
@@ -542,7 +511,7 @@ export interface BgmConfig {
 export interface LocaleConfig {
   /** Locale code (BCP 47 short format, e.g., 'zh', 'en', 'ja') */
   code: string;
-  /** Display label for the locale (e.g., '中文', 'English') */
+  /** Display label for the locale (e.g., 'Chinese', 'English') */
   label?: string;
   /** Whether this locale is active. Defaults to true. Set false to keep content but hide locale from routing/UI. */
   enabled?: boolean;
@@ -573,7 +542,7 @@ export interface SiteYamlConfig {
   analytics?: AnalyticsConfig;
   /** SEO configuration for robots.txt and meta tags */
   seo?: SeoConfig;
-  categoryMap?: Record<string, string>; // TODO: i18n, now use eg: { '随笔': 'life' }
+  categoryMap?: Record<string, string>; // TODO: i18n, now use eg: { 'Essays': 'life' }
   /** Background music player configuration */
   bgm?: BgmConfig;
   christmas?: ChristmasConfig;

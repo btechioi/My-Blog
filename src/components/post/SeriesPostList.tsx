@@ -1,5 +1,5 @@
 /**
- * SeriesPostList - 显示系列文章列表
+ * SeriesPostList - Display series post list
  */
 
 import { Routes } from '@constants/router';
@@ -38,7 +38,7 @@ export function SeriesPostList({ posts, currentPostSlug, className, locale }: Se
               isActive && 'font-medium text-primary',
             )}
           >
-            {/* 圆点指示器 */}
+            {/* Dot indicator */}
             <span
               className={cn(
                 'mt-2 h-2 w-2 shrink-0 rounded-full transition-colors',
@@ -46,7 +46,7 @@ export function SeriesPostList({ posts, currentPostSlug, className, locale }: Se
               )}
             />
 
-            {/* 文章标题 */}
+            {/* Post title */}
             <span
               className={cn(
                 'line-clamp-2 flex-1 text-sm leading-relaxed transition-colors',

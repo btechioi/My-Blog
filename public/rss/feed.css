@@ -42,7 +42,7 @@ html {
 }
 
 body {
-  font-family: 'Quicksand', '寒蝉全圆体', 'Chill Round', sans-serif;
+  font-family: 'Quicksand', 'Chill Round', 'Chill Round', sans-serif;
   background-color: var(--bg-dark);
   color: var(--text-main);
   line-height: 1.5;
@@ -322,10 +322,10 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
-  align-items: flex-end; /* 右对齐 */
+  align-items: flex-end; /* Right-aligned */
   justify-content: center;
   flex-shrink: 0;
-  margin-left: auto; /* 推到最右侧 */
+  margin-left: auto; /* Push to far right */
 }
 
 .feed-badge {
@@ -691,7 +691,7 @@ body {
     grid-template-columns: 1fr;
   }
 
-  /* 移动端限制标签数量 */
+  /* Limit tags on mobile */
   .tag-badge:nth-child(n + 4) {
     display: none;
   }

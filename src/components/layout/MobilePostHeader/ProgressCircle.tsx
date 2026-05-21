@@ -37,7 +37,7 @@ export function ProgressCircle({ size = 28, strokeWidth = 2, className }: Progre
       width={size}
       height={size}
       className={className}
-      aria-label="阅读进度"
+      aria-label="Reading progress"
       role="progressbar"
       style={{ transform: 'rotate(-90deg)' }}
     >

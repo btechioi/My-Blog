@@ -16,7 +16,7 @@ import { restoreBackup } from './restore-operations';
 import { getVersion } from './version';
 
 /**
- * 执行 Git 命令
+ * Execute Git command
  */
 function git(args: string): string {
   try {
@@ -34,7 +34,7 @@ function git(args: string): string {
 }
 
 /**
- * 安全执行 Git 命令（不抛出异常）
+ * Safely execute Git command (does not throw exception)
  */
 function gitSafe(args: string): string | null {
   try {
@@ -73,7 +73,7 @@ export interface EnsureUpstreamResult {
 }
 
 /**
- * 检查 Git 状态
+ * Check Git status
  */
 export function checkGitStatus(): GitStatusInfo {
   const currentBranch = git('rev-parse --abbrev-ref HEAD');
@@ -89,7 +89,7 @@ export function checkGitStatus(): GitStatusInfo {
 }
 
 /**
- * 检查是否已配置 upstream remote
+ * Check if upstream remote is configured
  */
 export function hasUpstreamRemote(): boolean {
   return Boolean(gitSafe(`remote get-url ${UPSTREAM_REMOTE}`));
@@ -104,7 +104,7 @@ export function getUpstreamRemoteUrl(): string | null {
 }
 
 /**
- * 添加 upstream remote
+ * Add upstream remote
  */
 export function addUpstreamRemote(): boolean {
   try {
@@ -116,7 +116,7 @@ export function addUpstreamRemote(): boolean {
 }
 
 /**
- * 确保 upstream remote 已配置
+ * Ensure upstream remote is configured
  */
 export function ensureUpstreamRemote(options: EnsureUpstreamOptions = {}): EnsureUpstreamResult {
   const allowAdd = options.allowAdd ?? true;
@@ -137,7 +137,7 @@ export function ensureUpstreamRemote(options: EnsureUpstreamOptions = {}): Ensur
 }
 
 /**
- * 从 upstream 获取最新代码
+ * Fetch latest code from upstream
  */
 export function fetchUpstream(): boolean {
   try {
@@ -149,7 +149,7 @@ export function fetchUpstream(): boolean {
 }
 
 /**
- * 解析提交信息
+ * Parse commit info
  */
 function parseCommits(output: string): CommitInfo[] {
   if (!output.trim()) return [];
@@ -166,15 +166,15 @@ function parseCommits(output: string): CommitInfo[] {
 }
 
 /**
- * 规范化版本号为带 v 前缀的格式
+ * Normalize version number to format with v prefix
  */
 function normalizeTag(tag: string): string {
   return tag.startsWith('v') ? tag : `v${tag}`;
 }
 
 /**
- * 获取更新信息
- * @param targetTag 可选的目标版本 tag，不指定时更新到 upstream/main
+ * Get update info
+ * @param targetTag Optional target version tag, updates to upstream/main when not specified
  */
 export function getUpdateInfo(targetTag?: string): UpdateInfo {
   const hasUpstream = hasUpstreamRemote();
@@ -192,7 +192,7 @@ export function getUpdateInfo(targetTag?: string): UpdateInfo {
     };
   }
 
-  // 确定目标引用：指定 tag 或 upstream/main
+  // Determine target ref: specified tag or upstream/main
   const normalizedTag = targetTag ? normalizeTag(targetTag) : null;
   const targetRef = normalizedTag || `${UPSTREAM_REMOTE}/${MAIN_BRANCH}`;
 
@@ -202,7 +202,7 @@ export function getUpdateInfo(targetTag?: string): UpdateInfo {
   const aheadCount = Number.parseInt(aheadStr, 10) || 0;
   const behindCount = Number.parseInt(behindStr, 10) || 0;
 
-  // 判断是否为降级操作：指定 tag 且 HEAD 在目标之前（aheadCount > 0, behindCount === 0）
+  // Determine if it is a downgrade operation: tag specified and HEAD is ahead of target (aheadCount > 0, behindCount === 0)
   const isDowngrade = Boolean(normalizedTag && aheadCount > 0 && behindCount === 0);
 
   // Get commits
@@ -210,23 +210,23 @@ export function getUpdateInfo(targetTag?: string): UpdateInfo {
   let commits: CommitInfo[];
 
   if (isDowngrade) {
-    // 降级：获取将被移除的 commits（从目标到 HEAD 的 commits）
+    // Downgrade: get commits that will be removed (commits from target to HEAD)
     const commitsOutput = gitSafe(`log ${targetRef}..HEAD --pretty=format:"${commitFormat}" --no-merges`) || '';
     commits = parseCommits(commitsOutput);
   } else {
-    // 升级：获取新增的 commits（从 HEAD 到目标的 commits）
+    // Upgrade: get new commits (commits from HEAD to target)
     const commitsOutput = gitSafe(`log HEAD..${targetRef} --pretty=format:"${commitFormat}" --no-merges`) || '';
     commits = parseCommits(commitsOutput);
   }
 
-  // 获取本地领先于 target 的 commits（rebase 时将被重放）
+  // Get local commits ahead of target (will be replayed during rebase)
   const localCommitsOutput = gitSafe(`log ${targetRef}..HEAD --pretty=format:"${commitFormat}" --no-merges`) || '';
   const localCommits = parseCommits(localCommitsOutput);
 
-  // 获取目标版本号
+  // Get target version
   let parsedVersion = 'unknown';
   if (normalizedTag) {
-    // 使用 tag 名作为版本号（去掉 v 前缀）
+    // Use tag name as version (remove v prefix)
     parsedVersion = normalizedTag.replace(/^v/, '');
   } else {
     // Try to get latest version from upstream package.json
@@ -255,20 +255,17 @@ export function getUpdateInfo(targetTag?: string): UpdateInfo {
   };
 }
 
-/** 合并操作选项 */
+/** Merge operation options */
 export interface MergeOptions {
-  /** 目标版本 tag（如 "v2.1.0"），不指定时使用 upstream/main */
-  targetTag?: string;
-  /** 是否为降级操作，降级时使用 checkout + commit 保留历史 */
-  isDowngrade?: boolean;
-  /** 使用 rebase 模式：将本地提交重放到目标引用之上（重写历史） */
-  rebase?: boolean;
-  /** 使用 clean 模式：替换所有主题文件，后续从备份还原用户内容 */
+  /** Target version tag (e.g., "v2.1.0"), uses upstream/main when not specified */
+  /** Whether it is a downgrade operation, uses checkout + commit to preserve history */
+  /** Use rebase mode: replay local commits on top of target reference (rewrite history) */
+  /** Use clean mode: replace all theme files, then restore user content from backup */
   clean?: boolean;
 }
 
 /**
- * 获取目标版本信息用于 commit message
+ * Get target version info for commit message
  */
 function getVersionInfo(targetRef: string, normalizedTag: string | null): string {
   if (normalizedTag) return normalizedTag;
@@ -285,19 +282,19 @@ function getVersionInfo(targetRef: string, normalizedTag: string | null): string
 }
 
 /**
- * 用户内容路径前缀列表（从 BACKUP_ITEMS 的 required 项获取）
+ * User content path prefix list (obtained from BACKUP_ITEMS required items)
  */
 const USER_CONTENT_PREFIXES = BACKUP_ITEMS.filter((item) => item.required).map((item) => item.src);
 
 /**
- * 判断文件是否属于用户内容
+ * Determine if a file belongs to user content
  */
 function isUserContent(filePath: string): boolean {
   return USER_CONTENT_PREFIXES.some((prefix) => filePath === prefix || filePath.startsWith(`${prefix}/`));
 }
 
 /**
- * 将冲突文件分为用户内容和主题文件
+ * Classify conflict files into user content and theme files
  */
 function classifyConflicts(files: string[]): { userFiles: string[]; themeFiles: string[] } {
   const userFiles: string[] = [];
@@ -313,9 +310,9 @@ function classifyConflicts(files: string[]): { userFiles: string[]; themeFiles: 
 }
 
 /**
- * 对用户内容文件自动使用 --ours 解决冲突
- * 如果 checkout 成功但 add 失败，用 checkout -m 恢复冲突状态
- * @returns 解决失败的文件列表
+ * Automatically resolve conflicts for user content files using --ours
+ * If checkout succeeds but add fails, use checkout -m to restore conflict state
+ * @returns List of files that failed to resolve
  */
 function autoResolveUserContent(files: string[]): string[] {
   const failed: string[] = [];
@@ -323,7 +320,7 @@ function autoResolveUserContent(files: string[]): string[] {
     const checkoutOk = gitSafe(`checkout --ours -- "${file}"`) !== null;
     const addOk = checkoutOk && gitSafe(`add -- "${file}"`) !== null;
     if (!addOk) {
-      // checkout 成功但 add 失败时，恢复冲突标记以便用户手动解决
+      // When checkout succeeds but add fails, restore conflict markers for manual resolution
       if (checkoutOk) {
         gitSafe(`checkout -m -- "${file}"`);
       }
@@ -334,7 +331,7 @@ function autoResolveUserContent(files: string[]): string[] {
 }
 
 /**
- * Clean 模式：删除上游已移除的非用户内容文件
+ * Clean mode: remove non-user-content files that were removed upstream
  */
 function removeDeletedUpstreamFiles(targetRef: string): void {
   const localFiles = gitSafe('ls-files') || '';
@@ -361,7 +358,7 @@ function removeDeletedUpstreamFiles(targetRef: string): void {
   }
 
   if (filesToRemove.length > 0) {
-    // 分批执行 git rm，避免参数过长超过 ARG_MAX 限制
+    // Execute git rm in batches to avoid exceeding ARG_MAX limit
     const BATCH_SIZE = 100;
     for (let i = 0; i < filesToRemove.length; i += BATCH_SIZE) {
       const chunk = filesToRemove.slice(i, i + BATCH_SIZE);
@@ -372,8 +369,8 @@ function removeDeletedUpstreamFiles(targetRef: string): void {
 }
 
 /**
- * Clean 模式：从备份还原用户内容并 amend 到 merge commit
- * @param preCleanSha 合并前的 commit SHA，还原失败时回滚到此状态
+ * Clean mode: restore user content from backup and amend to merge commit
+ * @param preCleanSha Pre-merge commit SHA, rollback to this state on restore failure
  */
 export function cleanRestore(backupPath: string, preCleanSha?: string): string[] {
   try {
@@ -382,7 +379,7 @@ export function cleanRestore(backupPath: string, preCleanSha?: string): string[]
     git('commit --amend --no-edit');
     return restored;
   } catch (error) {
-    // 还原失败，回滚到合并前的状态以保护用户数据
+    // Restore failed, rollback to pre-merge state to protect user data
     if (preCleanSha) {
       gitSafe(`reset --hard ${preCleanSha}`);
     }
@@ -391,11 +388,11 @@ export function cleanRestore(backupPath: string, preCleanSha?: string): string[]
 }
 
 /**
- * 检测是否已有 upstream merge commit（用于首次迁移提示）
+ * Detect if there is already an upstream merge commit (for first migration prompt)
  *
- * 检查最近 20 个 merge commit，看是否有某个 parent 可从 upstream/main 到达。
- * 如果有 → 之前已有 regular merge → 无需迁移。
- * 如果没有 → 可能一直用 squash merge → 需要迁移提示。
+ * Check the last 20 merge commits to see if any parent is reachable from upstream/main.
+ * If yes -> previously had regular merge -> no migration needed.
+ * If no -> may have been using squash merge -> migration prompt needed.
  */
 export function hasUpstreamMergeHistory(): boolean {
   if (!hasUpstreamTrackingRef()) return false;
@@ -404,9 +401,9 @@ export function hasUpstreamMergeHistory(): boolean {
   for (const line of merges.trim().split('\n')) {
     if (!line.trim()) continue;
     const parents = line.trim().split(' ');
-    // 跳过第一个 parent（本分支），检查后续 parent 是否在 upstream 历史中
-    // 注意: merge-base --is-ancestor 用 exit code 表示结果（0=是祖先，1=不是）
-    // gitSafe 在 exit code 非零时返回 null，所以 !== null 等价于 "是祖先"
+    // Skip first parent (this branch), check if subsequent parents are in upstream history
+    // Note: merge-base --is-ancestor uses exit code (0=is ancestor, 1=is not)
+    // gitSafe returns null on non-zero exit code, so !== null is equivalent to "is ancestor"
     for (const parent of parents.slice(1)) {
       if (gitSafe(`merge-base --is-ancestor ${parent} ${UPSTREAM_REMOTE}/${MAIN_BRANCH}`) !== null) {
         return true;
@@ -417,10 +414,10 @@ export function hasUpstreamMergeHistory(): boolean {
 }
 
 /**
- * 执行合并、降级、rebase 或 clean 操作
+ * Execute merge, downgrade, rebase, or clean operations
  *
- * @param options - 合并选项
- * @returns 合并结果，包含成功状态、冲突信息等
+ * @param options - Merge options
+ * @returns Merge result, including success status, conflict info, etc.
  */
 export function mergeUpstream(options: MergeOptions = {}): MergeResult {
   const { targetTag, isDowngrade, rebase, clean } = options;
@@ -429,24 +426,24 @@ export function mergeUpstream(options: MergeOptions = {}): MergeResult {
 
   try {
     if (rebase) {
-      // Rebase 模式：将本地提交重放到目标引用之上
+      // Rebase mode: replay local commits on top of target reference
       git(`rebase ${targetRef}`);
     } else if (isDowngrade && normalizedTag) {
-      // 降级使用 checkout + commit 保留提交历史
+      // Downgrade uses checkout + commit to preserve commit history
       git(`checkout ${normalizedTag} -- .`);
       const status = gitSafe('status --porcelain') || '';
       if (status.trim().length > 0) {
         git(`commit -m "Downgrade to ${normalizedTag}"`);
       }
     } else if (clean) {
-      // Clean 模式：merge -s ours 记录 merge-base，然后用上游文件覆盖
-      // 保存合并前 SHA，用于还原失败时回滚
+      // Clean mode: merge -s ours records merge-base, then overwrite with upstream files
+      // Save pre-merge SHA for rollback on restore failure
       const preCleanSha = git('rev-parse HEAD');
       const versionInfo = getVersionInfo(targetRef, normalizedTag);
       git(`merge -s ours --no-ff --allow-unrelated-histories ${targetRef} -m "chore: clean update to ${versionInfo}"`);
       git(`checkout ${targetRef} -- .`);
       removeDeletedUpstreamFiles(targetRef);
-      // 暂存覆盖后的文件状态（用户内容将在 clean-restoring 阶段还原）
+      // Stage the overwritten file state (user content will be restored in clean-restoring phase)
       git('add -A');
       git('commit --amend --no-edit');
       return {
@@ -456,7 +453,7 @@ export function mergeUpstream(options: MergeOptions = {}): MergeResult {
         preCleanSha,
       };
     } else {
-      // 默认使用 regular merge 保留 merge-base 信息
+      // Default to regular merge to preserve merge-base info
       const versionInfo = getVersionInfo(targetRef, normalizedTag);
       git(`merge --no-ff --allow-unrelated-histories ${targetRef} -m "chore: merge upstream theme ${versionInfo}"`);
     }
@@ -466,7 +463,7 @@ export function mergeUpstream(options: MergeOptions = {}): MergeResult {
       conflictFiles: [],
     };
   } catch (error) {
-    // 降级可能产生冲突
+    // Downgrade may produce conflicts
     if (isDowngrade) {
       return {
         success: false,
@@ -479,18 +476,18 @@ export function mergeUpstream(options: MergeOptions = {}): MergeResult {
     const conflictFiles = getConflictFiles();
 
     if (conflictFiles.length > 0) {
-      // Regular merge 冲突时的智能处理：自动解决用户内容冲突
+      // Smart handling during regular merge conflicts: automatically resolve user content conflicts
       if (!rebase && !clean) {
         const { userFiles, themeFiles } = classifyConflicts(conflictFiles);
         if (userFiles.length > 0) {
           const failedFiles = autoResolveUserContent(userFiles);
-          // 解决失败的用户文件视为主题文件冲突，需要用户手动处理
+          // User files that failed to resolve are treated as theme file conflicts, requiring manual handling
           if (failedFiles.length > 0) {
             themeFiles.push(...failedFiles);
           }
         }
         const resolvedFiles = userFiles.filter((f) => !themeFiles.includes(f));
-        // 如果只有用户内容冲突且全部自动解决，自动完成合并
+        // If only user content conflicts exist and all are automatically resolved, auto-complete the merge
         if (themeFiles.length === 0) {
           try {
             git('commit --no-edit');
@@ -501,10 +498,10 @@ export function mergeUpstream(options: MergeOptions = {}): MergeResult {
               autoResolvedFiles: resolvedFiles,
             };
           } catch {
-            // commit 失败，仍然返回冲突
+            // Commit failed, still returning conflict
           }
         }
-        // 还有主题文件冲突，需要用户手动解决
+        // There are still theme file conflicts, requiring manual resolution
         return {
           success: false,
           hasConflict: true,
@@ -555,7 +552,7 @@ function getConflictFiles(): string[] {
 }
 
 /**
- * 中止合并
+ * Abort merge
  */
 export function abortMerge(): boolean {
   try {
@@ -567,7 +564,7 @@ export function abortMerge(): boolean {
 }
 
 /**
- * 中止 rebase
+ * Abort rebase
  */
 export function abortRebase(): boolean {
   try {
@@ -579,7 +576,7 @@ export function abortRebase(): boolean {
 }
 
 /**
- * 安装依赖（异步）
+ * Install dependencies (async)
  */
 export function installDeps(onOutput?: (data: string) => void): Promise<{ success: boolean; error?: string }> {
   return new Promise((resolve) => {
@@ -614,7 +611,7 @@ export function installDeps(onOutput?: (data: string) => void): Promise<{ succes
 }
 
 /**
- * 检查 tag 是否存在于 upstream remote
+ * Check if tag exists in upstream remote
  */
 export function tagExists(tag: string): boolean {
   const normalizedTag = normalizeTag(tag);
@@ -622,7 +619,7 @@ export function tagExists(tag: string): boolean {
 }
 
 /**
- * 获取最近的 tags 列表
+ * Get list of recent tags
  */
 export function listRecentTags(limit = 5): string[] {
   const output = gitSafe('tag --sort=-creatordate --list "v*"') || '';
@@ -634,7 +631,7 @@ export function listRecentTags(limit = 5): string[] {
 }
 
 /**
- * 从 GitHub API 获取 Release 信息
+ * Fetch Release info from GitHub API
  */
 export async function fetchReleaseInfo(version: string): Promise<ReleaseInfo | null> {
   const tag = normalizeTag(version);
@@ -671,7 +668,7 @@ export async function fetchReleaseInfo(version: string): Promise<ReleaseInfo | n
 }
 
 /**
- * 构建 Release 页面 URL (不依赖 API)
+ * Build Release page URL (does not depend on API)
  */
 export function buildReleaseUrl(version: string): string {
   const tag = normalizeTag(version);
@@ -679,7 +676,7 @@ export function buildReleaseUrl(version: string): string {
 }
 
 /**
- * 从 Release body 提取简要内容
+ * Extract summary from Release body
  */
 export function extractReleaseSummary(body: string | null, maxLines = 5, maxChars = 300): string[] {
   if (!body) return [];
@@ -687,9 +684,9 @@ export function extractReleaseSummary(body: string | null, maxLines = 5, maxChar
   const lines = body
     .split('\n')
     .map((line) => line.trim())
-    // 移除 Markdown 标题标记
+    // Remove Markdown heading markers
     .map((line) => line.replace(/^#{1,6}\s*/, ''))
-    // 过滤空行和纯标题行
+    // Filter empty lines and pure heading lines
     .filter((line) => line.length > 0);
 
   const result: string[] = [];
@@ -701,7 +698,7 @@ export function extractReleaseSummary(body: string | null, maxLines = 5, maxChar
     totalChars += line.length;
   }
 
-  // 如果有截断，添加省略提示
+  // If truncated, add an ellipsis hint
   if (result.length < lines.length) {
     result.push('...');
   }

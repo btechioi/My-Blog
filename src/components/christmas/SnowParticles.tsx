@@ -3,12 +3,12 @@ import { type RefObject, useMemo, useRef } from 'react';
 import * as THREE from 'three';
 
 /**
- * 性能优化的全屏雪花着色器
- * 基于 https://www.shadertoy.com/view/ldsGDn 的效果
- * 使用分层方法创建自然的雪花效果，支持动态调整迭代次数以优化性能
+ * Performance-optimized full-screen snow shader
+ * Based on https://www.shadertoy.com/view/ldsGDn effect
+ * Uses layered approach for natural snow effect, supports dynamic iteration adjustment for performance
  */
 
-// 分辨率上限，防止在 4K+ 显示器上计算量过大
+// Resolution cap to prevent excessive computation on 4K+ displays
 const MAX_RESOLUTION_WIDTH = 1920;
 const MAX_RESOLUTION_HEIGHT = 1080;
 
@@ -28,10 +28,10 @@ const SnowShaderMaterial = {
     uniform vec2 uMouse;
     uniform int uLayerStart;
     uniform int uLayerEnd;
-    uniform int uMaxLayers;      // 最大层数 (桌面: 3, 移动: 2)
-    uniform int uMaxIterations;  // 每层最大迭代次数 (桌面: 4, 移动: 3)
-    uniform float uSinTime;      // 预计算的 sin(time * 2.5)
-    uniform float uCosTime;      // 预计算的 cos(time * 2.5)
+    uniform int uMaxLayers;      // Maximum layers (desktop: 3, mobile: 2)
+    uniform int uMaxIterations;  // Max iterations per layer (desktop: 4, mobile: 3)
+    uniform float uSinTime;      // Precomputed sin(time * 2.5)
+    uniform float uCosTime;      // Precomputed cos(time * 2.5)
 
     varying vec2 vUv;
 
@@ -40,27 +40,27 @@ const SnowShaderMaterial = {
       float snow = 0.0;
       float time = uTime * uSpeed;
 
-      // 动态层数和迭代次数，通过 uniform 控制以优化性能
+      // Dynamic layers and iterations, controlled via uniforms for performance
       for(int k = 0; k < 6; k++) {
-        if(k >= uMaxLayers) break;  // 早期退出优化
+        if(k >= uMaxLayers) break;  // Early exit optimization
         if(k < uLayerStart || k > uLayerEnd) continue;
 
         for(int i = 0; i < 12; i++) {
-          if(i >= uMaxIterations) break;  // 早期退出优化
+          if(i >= uMaxIterations) break;  // Early exit optimization
 
-          // cellSize 控制雪花大小：基础值 + 迭代增量
-          // 原始值是 2.0 + i*3.0，改成 2.0 + i*2.0 让雪花整体更小
+          // cellSize controls snowflake size: base value + iteration increment
+          // Original value was 2.0 + i*3.0, changed to 2.0 + i*2.0 for smaller snowflakes
           float cellSize = 2.0 + (float(i) * 2.0);
           float downSpeed = 0.3 + (sin(time * 0.4 + float(k + i * 20)) + 1.0) * 0.00008;
 
-          // 视差偏移：不同层使用不同强度
+          // Parallax offset: different layers use different intensity
           float parallaxFactor = 0.5 + float(k) * 0.1;
           vec2 mouseOffset = uMouse * parallaxFactor;
 
           vec2 uv = (fragCoord.xy / uResolution.x) + mouseOffset + vec2(
-            // X 方向：关闭横向漂移，只保留纯垂直下落
+            // X direction: disable horizontal drift, keep pure vertical fall
             0.0,
-            // Y 方向下落
+            // Y direction fall
             downSpeed * (time + float(k * 1352)) * (1.0 / float(i))
           );
 
@@ -68,7 +68,7 @@ const SnowShaderMaterial = {
           float x = fract(sin(dot(uvStep.xy, vec2(12.9898 + float(k) * 12.0, 78.233 + float(k) * 315.156))) * 43758.5453 + float(k) * 12.0) - 0.5;
           float y = fract(sin(dot(uvStep.xy, vec2(62.2364 + float(k) * 23.0, 94.674 + float(k) * 95.0))) * 62159.8432 + float(k) * 12.0) - 0.5;
 
-          // 雪花微小晃动效果（减小幅度避免往上飘感）
+          // Snowflake gentle sway (reduce amplitude to avoid floating-up feeling)
           float randomMagnitude1 = uSinTime * 0.4 / cellSize;
           float randomMagnitude2 = uCosTime * 0.4 / cellSize;
 
@@ -82,8 +82,8 @@ const SnowShaderMaterial = {
         }
       }
 
-      // 补偿因子：原来 72 次迭代，现在减少到 maxLayers * maxIterations
-      // 需要放大 snow 值来补偿减少的迭代次数
+      // Compensation factor: originally 72 iterations, now reduced to maxLayers * maxIterations
+      // Need to amplify snow value to compensate for reduced iterations
       float compensationFactor = 72.0 / float(uMaxLayers * uMaxIterations);
       float alpha = snow * uIntensity * compensationFactor;
       gl_FragColor = vec4(1.0, 1.0, 1.0, alpha);
@@ -94,13 +94,13 @@ const SnowShaderMaterial = {
 interface SnowParticlesProps {
   speed?: number;
   intensity?: number;
-  /** 视差位置 ref，由父组件通过 Motion spring 更新 */
+  /** Parallax position ref, updated by parent via Motion spring */
   parallaxRef?: RefObject<{ x: number; y: number }>;
-  /** 渲染的层范围 [start, end]，默认 [0, 5] 全部渲染 */
+  /** Layer range to render [start, end], default [0, 5] renders all */
   layerRange?: [number, number];
-  /** 最大层数，用于性能优化 (桌面: 3, 移动: 2) */
+  /** Maximum layers for performance (desktop: 3, mobile: 2) */
   maxLayers?: number;
-  /** 每层最大迭代次数，用于性能优化 (桌面: 4, 移动: 3) */
+  /** Max iterations per layer for performance (desktop: 4, mobile: 3) */
   maxIterations?: number;
 }
 
@@ -135,17 +135,17 @@ export function SnowParticles({
     [speed, intensity, layerStart, layerEnd, maxLayers, maxIterations],
   );
 
-  // 更新时间、分辨率、三角函数和鼠标视差
+  // Update time, resolution, trig functions, and mouse parallax
   useFrame((state) => {
     if (shaderMaterial.current) {
       const time = state.clock.getElapsedTime();
       shaderMaterial.current.uniforms.uTime.value = time;
 
-      // 预计算三角函数值，减少 GPU 端每像素的计算
+      // Precompute trig values to reduce per-pixel GPU computation
       shaderMaterial.current.uniforms.uSinTime.value = Math.sin(time * 2.5);
       shaderMaterial.current.uniforms.uCosTime.value = Math.cos(time * 2.5);
 
-      // 仅在尺寸变化时更新分辨率，并应用分辨率上限
+      // Only update resolution on size change, apply resolution cap
       if (prevSize.current.width !== size.width || prevSize.current.height !== size.height) {
         const cappedWidth = Math.min(size.width, MAX_RESOLUTION_WIDTH);
         const cappedHeight = Math.min(size.height, MAX_RESOLUTION_HEIGHT);
@@ -153,7 +153,7 @@ export function SnowParticles({
         prevSize.current = { width: size.width, height: size.height };
       }
 
-      // 更新鼠标视差
+      // Update mouse parallax
       if (parallaxRef) {
         shaderMaterial.current.uniforms.uMouse.value.set(parallaxRef.current.x, parallaxRef.current.y);
       }
@@ -162,7 +162,7 @@ export function SnowParticles({
 
   return (
     <mesh>
-      {/* 全屏四边形，覆盖整个视口 */}
+      {/* Full-screen quad covering the entire viewport */}
       <planeGeometry args={[2, 2]} />
       <shaderMaterial
         ref={shaderMaterial}
