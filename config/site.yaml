@@ -80,7 +80,7 @@ featuredSeries:
     enabled: true
     icon: ri:newspaper-line
     links:
-      github: https://github.com/btecioi
+      github: https://github.com/btechioi
       rss: /rss.xml
 
 # =============================================================================
@@ -88,7 +88,7 @@ featuredSeries:
 # =============================================================================
 social:
   github:
-    url: https://github.com/btecioi
+    url: https://github.com/btechioi
     icon: ri:github-fill
     color: '#191717'
   email:
