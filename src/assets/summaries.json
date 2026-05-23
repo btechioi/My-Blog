@@ -54,5 +54,13 @@
   "life/weekly-update-dronefirmware": {
     "title": "Weekly Update: DroneFirmware, Skill Updates, and Blog Improvements",
     "summary": "This week's update covers the new DroneFirmware open-source drone flight controller project, converting all blog skills to English, fixing lint warnings, and adding comprehensive usage guides for the firmware."
+  },
+  "tools/nova-ai-companion": {
+    "title": "NOVA — Your Self-Hosted AI Companion, Inspired by Neuro-sama",
+    "summary": "NOVA is an open-source, self-hosted AI companion platform inspired by Neuro-sama, capable of realtime voice chat, playing Minecraft and Factorio, and rendering Live2D/VRM avatars. It runs entirely in-browser via WebGPU or as a native desktop app with CUDA/Metal acceleration."
+  },
+  "life/weekly-back-after-hiatus": {
+    "title": "Back After a Hiatus — Sinhala & Tamil New Year and Family Time",
+    "summary": "A brief update after a two-month hiatus due to Sinhala and Tamil New Year celebrations and family commitments. The author is easing back into the groove with new projects and posts coming soon."
   }
 }
