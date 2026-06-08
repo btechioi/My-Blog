@@ -5,7 +5,7 @@ import type { HomeSiderType } from '@constants/enum';
 import { RESERVED_ROUTES, routers } from '@constants/router';
 import { christmasConfig, configuredSeriesSlugs, enabledSeriesSlugs, siteConfig } from '@constants/site-config';
 import { getAllTags, getCategoryList, getPostCount, getSortedPosts } from '@lib/content';
-import { getLqipStyle } from '@lib/lqip';
+import { getLqipStyle, isExternalImage } from '@lib/lqip';
 import { cn, filterNavItems } from '@lib/utils';
 import { Icon } from 'astro-icon/components';
 import { getLocaleFromUrl, localizedPath, resolveNavName, stripLocaleFromPath, t } from '@/i18n';
@@ -37,7 +37,7 @@ const strippedPath = stripLocaleFromPath(Astro.url.pathname);
 ---
 
 <div class={cn('flex flex-col items-center', className)} data-home-info-container={uniqueId}>
-  <div class="relative aspect-square w-40 rounded-full" style={getLqipStyle(siteConfig.avatar ?? '/img/avatar.webp')}>
+  <div class="relative h-40 w-40 rounded-full bg-muted overflow-hidden" style={isExternalImage(siteConfig.avatar) ? undefined : getLqipStyle(siteConfig.avatar ?? '/img/avatar.webp')}>
     <img
       transition:persist="page-home-info-avatar"
       class="shadow-card-darker hover:animate-shake h-full w-full rounded-full object-cover transition"
