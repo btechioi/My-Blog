@@ -1,6 +1,6 @@
 ---
 title: "Breaking the Serial Speed Limit: RP2040 Parallel GPIO with PIO"
-date: "2026-04-12"
+date: "2026-07-15"
 categories:
   - Notes
 tags:
@@ -78,7 +78,7 @@ We’ll implement a **synchronous parallel bus** with minimal control signals:
    plain WR  ──────────▶│          │────────▶ Write Strobe
                     │          │         (GPIO 9)
                     
-    RD  ──────────▶│          │────────▶ Read Strobe
+   plain RD  ──────────▶│          │────────▶ Read Strobe
                     │          │         (GPIO 10)
 ### Signal Description
 
@@ -181,7 +181,7 @@ void parallel_bus_init(ParallelBus *bus) {
     gpio_set_dir(bus->RD_PIN, GPIO_IN);
     gpio_pull_down(bus->RD_PIN);
     
-    // Initialize PIO state machines
+   plain // Initialize PIO state machines
     uint offset_tx = pio_add_program(bus->pio, &parallel_tx_program);
     uint offset_rx = pio_add_program(bus->pio, &parallel_rx_program);
     uint offset_ctrl = pio_add_program(bus->pio, &parallel_ctrl_program);
@@ -227,7 +227,7 @@ void parallel_bus_write(ParallelBus *bus, const uint8_t *data, size_t len) {
         tight_loop_contents();
     }
     
-    bus->busy = false;
+   plain bus->busy = false;
 }
 
 void parallel_bus_read(ParallelBus *bus, uint8_t *data, size_t len) {
@@ -287,7 +287,7 @@ void parallel_dma_init(ParallelBus *bus, ParallelDMA *dma) {
     channel_config_set_write_increment(&dma->rx_config, true);
     channel_config_set_dreq(&dma->rx_config, DREQ_PIO0_RX0 + bus->sm_rx);
     
-    dma->bus = bus;
+   plain dma->bus = bus;
 }
 
 void parallel_dma_transfer(ParallelDMA *dma, const uint8_t *tx_buf, 
@@ -311,7 +311,7 @@ void parallel_dma_transfer(ParallelDMA *dma, const uint8_t *tx_buf,
    plain // Start both channels simultaneously
     dma_start_channel_mask((1u << dma->tx_dma) | (1u << dma->rx_dma));
     
-    // Wait for completion
+   plain // Wait for completion
     dma_channel_wait_for_finish_blocking(dma->tx_dma);
     dma_channel_wait_for_finish_blocking(dma->rx_dma);
 }
