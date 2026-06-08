@@ -1,68 +1,56 @@
-# Banu's Blog
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=waving&amp;color=0:00e1ff,100:0055ff&amp;height=200&amp;section=header&amp;text=My-Blog&amp;fontSize=50&amp;fontAlignY=35&amp;animation=fadeIn&amp;fontColor=ffffff"/>
+</p>
 
-A personal blog about technology, embedded systems, robotics, and life. Built with Astro.
+<p align="center">
+  <img src="https://img.shields.io/badge/-Astro-BC52EE?logo=astro&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-React-61DAFB?logo=react&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-Tailwind%20CSS-06B6D4?logo=tailwindcss&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-Three.js-000000?logo=threedotjs&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-MDX-1B1B1F?logo=mdx&amp;logoColor=white&amp;style=for-the-badge"/>
+</p>
 
-## Quick Start
+<p align="center">
+  <b>Personal blog about tech, embedded systems, robotics, and life</b>
+</p>
 
-```bash
-pnpm install
-pnpm dev
-```
-
-Open [http://localhost:4321](http://localhost:4321)
-
-## Project Structure
-
-```plain
-src/
-├── content/blog/    # Blog posts (Markdown)
-├── components/     # React & Astro components
-├── layouts/        # Page layouts
-├── lib/            # Utilities
-├── hooks/          # React hooks
-└── pages/          # Routes
-config/
-├── site.yaml       # Main configuration
-└── i18n-content.yaml
-```
-
-## Writing Posts
-
-Create a `.md` file in `src/content/blog/` with frontmatter:
-
-```yaml
----
-title: "My Post Title"
-date: 2026-01-01
-categories:
-  - Tools
-tags:
-  - Embedded
-  - Linux
-description: "Post description..."
 ---
 
-Your content here...
+## 🌱 Overview
+
+Banu's personal blog built with Astro v6 — featuring i18n, encrypted posts, Three.js 3D graphics, Mermaid diagrams, KaTeX math, Umami analytics, and a full custom remark/rehype plugin pipeline.
+
+---
+
+## 🛠️ Features
+
+```mermaid
+flowchart TD
+    A[Astro v6] --> B[i18n]
+    A --> C[MDX Content]
+    A --> D[3D Graphics\nThree.js]
+    A --> E[Theme System]
+    C --> F[Encrypted Posts]
+    C --> G[Katex Math]
+    C --> H[Mermaid Diagrams]
+    A --> I[Comments\nWaline / Twikoo]
+    A --> J[Search\nPagefind]
+    A --> K[Analytics\nUmami]
 ```
 
-## Commands
+- Internationalization (i18n) support
+- Encrypted/protected blog posts
+- 3D interactive elements (Three.js / React Three Fiber)
+- Mermaid diagrams and KaTeX math rendering
+- Full-text search via Pagefind
+- Waline + Twikoo comment systems
+- Umami analytics integration
+- Shiki syntax highlighting
 
-```bash
-pnpm dev          # Development server
-pnpm build        # Production build
-pnpm preview      # Preview production build
-pnpm check        # Type checking
-pnpm lint:fix     # Lint and format
-pnpm cms          # Start CMS (local-only)
-```
+---
 
-## Development
+## 🚀 Tech Stack
 
-```bash
-pnpm generate:summaries  # Generate AI summaries
-pnpm generate:lqips       # Generate image placeholders
-```
+<img src="https://img.shields.io/badge/-Astro-BC52EE?logo=astro&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-TypeScript-3178C6?logo=typescript&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-React-61DAFB?logo=react&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-Tailwind%20CSS-06B6D4?logo=tailwindcss&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-Three.js-000000?logo=threedotjs&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-MDX-1B1B1F?logo=mdx&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-Netlify-00C7B7?logo=netlify&amp;logoColor=white&amp;style=for-the-badge"/> <img src="https://img.shields.io/badge/-pnpm-F69220?logo=pnpm&amp;logoColor=white&amp;style=for-the-badge"/>
 
-## License
+---
 
-MIT
+<p align="center">
+  <img src="https://capsule-render.vercel.app/api?type=soft&amp;color=0:00e1ff,100:0055ff&amp;height=100&amp;section=footer&amp;text=writing%20code%2C%20sharing%20stories&amp;fontSize=20&amp;fontAlignY=50&amp;fontColor=ffffff"/>
+</p>
