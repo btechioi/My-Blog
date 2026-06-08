@@ -62,5 +62,9 @@
   "life/weekly-back-after-hiatus": {
     "title": "Back After a Hiatus — Sinhala & Tamil New Year and Family Time",
     "summary": "A brief update after a two-month hiatus due to Sinhala and Tamil New Year celebrations and family commitments. The author is easing back into the groove with new projects and posts coming soon."
+  },
+  "tools/mesh-espnow-network-library": {
+    "title": "ESP-NOW Mesh v3: A Self-Healing Wireless Network for ESP32",
+    "summary": "ESP-NOW Mesh v3 is a lightweight, metric-based mesh networking library for ESP32 that builds a self-healing multi-hop network using only ESP-NOW — no Wi-Fi infrastructure or IP stack required. It features intelligent composite routing (hop count, RSSI, battery, reliability), AES-128-CCM encryption, sub-2s failover, and deep sleep current as low as 14µA for years of battery life. The library supports 1000+ nodes across 32 hops and powers the wireless RC link in the DroneFirmware project."
   }
 }
