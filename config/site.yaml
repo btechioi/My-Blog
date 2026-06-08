@@ -12,11 +12,11 @@ site:
   subtitle: Tech, Projects & Life
   name: BTech_IOI
   description: A personal blog about technology, embedded systems, and life
-  avatar: /img/avatar.webp
+  avatar: https://avatars.githubusercontent.com/u/89692289?v=4
   showLogo: true
   author: Banumath Hettiarachchi
   url: https://btechioi.netlify.app/
-  defaultOgImage: /img/avatar.webp
+  defaultOgImage: https://avatars.githubusercontent.com/u/89692289?v=4
   startYear: 2026
   timezone: Asia/Colombo
   keywords:
