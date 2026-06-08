@@ -177,9 +177,15 @@ const websiteJsonLd = {
           }
         });
 
-        // Re-apply theme after View Transition page swap (before DOM render)
-        document.addEventListener('astro:after-swap', function() {
-          applyTheme(getTheme());
+        // Apply theme to incoming document before View Transition DOM swap
+        // Prevents the new page's <html> from overwriting the theme class
+        document.addEventListener('astro:before-swap', function(e) {
+          var nd = e.newDocument;
+          if (nd) {
+            var theme = getTheme();
+            nd.documentElement.classList.toggle('dark', theme === 'dark');
+            nd.documentElement.dataset.theme = theme;
+          }
         });
       })();
     </script>
