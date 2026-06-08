@@ -1,6 +1,6 @@
 ---
 title: "Pico-Pro Platform on Alpine Linux - Buildroot-Free Implementation"
-date: "2026-02-18"
+date: "2026-04-12"
 categories:
   - Tools
 tags:
@@ -38,7 +38,7 @@ graph TD
         end
     end
     
-    subgraph "SPI Multi-Processor"
+   plain subgraph "SPI Multi-Processor"
         SC -->|SPI Master| PICO[Pi Pico Slave<br/>Real-time I/O]
         SC -->|SPI Master| ESP32[ESP32 Slave<br/>Wi-Fi/IMU]
     end
@@ -197,7 +197,7 @@ public:
         }
     }
 
-    ~GPIOControl() {
+   plain ~GPIOControl() {
         if (line) gpiod_line_release(line);
         if (chip) gpiod_chip_close(chip);
     }
@@ -246,7 +246,7 @@ public:
         stop();
     }
 
-    void setState(SystemState state) {
+   plain void setState(SystemState state) {
         current_state = state;
     }
 
@@ -319,7 +319,7 @@ public:
             return false;
         }
         
-        // Set timeout (write to watchdog magic close timeout)
+   plain     // Set timeout (write to watchdog magic close timeout)
         std::ofstream timeout_file("/sys/class/watchdog/watchdog0/timeout");
         if (timeout_file.is_open()) {
             timeout_file << timeout_seconds;
@@ -371,7 +371,7 @@ public:
         on_timeout_callback = cb;
     }
 
-    void start() {
+   plain void start() {
         running = true;
         monitor_thread = new std::thread([this]() {
             // Create named pipe if it doesn't exist
@@ -424,7 +424,7 @@ public:
         std::ifstream file(boot_partition_file);
         std::string content;
         
-        if (file.is_open()) {
+   plain     if (file.is_open()) {
             std::getline(file, content);
             file.close();
         }
@@ -483,7 +483,7 @@ public:
    plain     // Create gadget directory
         mkdir(gadget_dir.c_str(), 0755);
         
-        // Configure gadget properties
+   plain     // Configure gadget properties
         std::ofstream idVendor(gadget_dir + "/idVendor");
         idVendor << "0x1d6b";  // Linux Foundation
         idVendor.close();
@@ -546,7 +546,7 @@ public:
         delete usb_gadget;
     }
 
-    bool initialize() {
+   plain bool initialize() {
         std::cout << "Initializing Pico-Pro System Controller..." << std::endl;
         
         // Detect boot mode from GPIO
@@ -678,7 +678,7 @@ int main(int argc, char* argv[]) {
     signal(SIGTERM, signal_handler);
     signal(SIGSEGV, signal_handler);
 
-    // Initialize and run controller
+   plain // Initialize and run controller
     SystemController controller;
     g_controller = &controller;
 
@@ -726,7 +726,7 @@ start() {
     echo "0" > /sys/class/gpio/export 2>/dev/null
     echo "out" > /sys/class/gpio/gpio47/direction
     
-    # Create PWM device link
+   plain # Create PWM device link
     [ -d /sys/class/pwm/pwmchip0 ] && echo "0" > /sys/class/pwm/pwmchip0/export
     
     eend $?
@@ -800,7 +800,7 @@ public:
         bits_per_word = 8;
         speed = 10000000;  // 10 MHz
         
-        ioctl(fd, SPI_IOC_WR_MODE, &mode);
+   plain     ioctl(fd, SPI_IOC_WR_MODE, &mode);
         ioctl(fd, SPI_IOC_WR_BITS_PER_WORD, &bits_per_word);
         ioctl(fd, SPI_IOC_WR_MAX_SPEED_HZ, &speed);
     }
@@ -934,7 +934,7 @@ while true; do
    plain # CPU Usage
     cpu=$(top -bn1 | grep "Cpu(s)" | awk '{print $2}' | cut -d'%' -f1)
     
-    # Memory Usage
+   plain # Memory Usage
     mem=$(free | grep Mem | awk '{printf "%.1f", $3/$2 * 100}')
     
     # Disk Usage
@@ -960,7 +960,7 @@ while true; do
    plain if [ "$temp" -gt "$MAX_TEMP" ]; then
         logger -t pico-pro-temp "CRITICAL: Temperature ${temp}C exceeded ${MAX_TEMP}C, shutting down!"
         
-        # Notify Pico to stop motors first
+   plain     # Notify Pico to stop motors first
         # (implement SPI command to emergency stop)
         
         # Sync and shutdown

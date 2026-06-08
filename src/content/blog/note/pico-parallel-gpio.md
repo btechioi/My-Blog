@@ -1,6 +1,6 @@
 ---
 title: "Breaking the Serial Speed Limit: RP2040 Parallel GPIO with PIO"
-date: "2026-07-15"
+date: "2026-04-12"
 categories:
   - Notes
 tags:
@@ -75,7 +75,7 @@ We’ll implement a **synchronous parallel bus** with minimal control signals:
     CLK ──────────▶│ Machine  │────────▶ Clock Output
                     └──────────┘         (GPIO 8)
                     
-    WR  ──────────▶│          │────────▶ Write Strobe
+   plain WR  ──────────▶│          │────────▶ Write Strobe
                     │          │         (GPIO 9)
                     
     RD  ──────────▶│          │────────▶ Read Strobe
@@ -177,7 +177,7 @@ void parallel_bus_init(ParallelBus *bus) {
     gpio_set_dir(bus->WR_PIN, GPIO_IN);
     gpio_pull_down(bus->WR_PIN);
     
-    gpio_init(bus->RD_PIN);
+   plain gpio_init(bus->RD_PIN);
     gpio_set_dir(bus->RD_PIN, GPIO_IN);
     gpio_pull_down(bus->RD_PIN);
     
@@ -222,7 +222,7 @@ void parallel_bus_write(ParallelBus *bus, const uint8_t *data, size_t len) {
         pio_sm_put(bus->pio, bus->sm_tx, data[i]);
     }
     
-    // Wait for all data transmitted
+   plain // Wait for all data transmitted
     while (bus->word_count > 0) {
         tight_loop_contents();
     }
@@ -280,7 +280,7 @@ void parallel_dma_init(ParallelBus *bus, ParallelDMA *dma) {
     channel_config_set_write_increment(&dma->tx_config, false);
     channel_config_set_dreq(&dma->tx_config, DREQ_PIO0_TX0 + bus->sm_tx);
     
-    // RX DMA: PIO → Memory
+   plain // RX DMA: PIO → Memory
     dma->rx_config = dma_channel_get_default_config(dma->rx_dma);
     channel_config_set_transfer_data_size(&dma->rx_config, DMA_SIZE_8);
     channel_config_set_read_increment(&dma->rx_config, false);
@@ -308,7 +308,7 @@ void parallel_dma_transfer(ParallelDMA *dma, const uint8_t *tx_buf,
         false
     );
     
-    // Start both channels simultaneously
+   plain // Start both channels simultaneously
     dma_start_channel_mask((1u << dma->tx_dma) | (1u << dma->rx_dma));
     
     // Wait for completion

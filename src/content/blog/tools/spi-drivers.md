@@ -1,6 +1,6 @@
 ---
 title: "SPI Driver Documentation"
-date: "2026-04-07"
+date: "2026-04-12"
 categories:
   - Tools
 tags:
@@ -72,7 +72,7 @@ int main() {
         24                    // GPIO for IRQ (optional)
     );
     
-    // Configure SPI parameters
+   plain // Configure SPI parameters
     spi.set_speed(10'000'000);    // 10 MHz
     spi.set_mode(SPI_MODE_0);     // Mode 0
     
@@ -167,7 +167,7 @@ int main() {
    plain // Initialize SPI slave with default pins
     spi_slave_init();  // CS=17, SCK=18, MOSI=19, MISO=16
     
-    // Or with custom pins:
+   plain // Or with custom pins:
     // spi_slave_init(17, 18, 19, 16);
     
     // Initialize motor PWM outputs
@@ -316,7 +316,7 @@ int main() {
     spi.add_slave(SPISlaveID::PICO, "/dev/spidev0.0", 8, 24);
     spi.set_speed(10'000'000);
     
-    if (!spi.initialize()) {
+   plain if (!spi.initialize()) {
         std::cerr << "SPI init failed: " << spi.get_error() << std::endl;
         return 1;
     }
@@ -362,7 +362,7 @@ int main() {
     
    plain printf("=== SPI Slave Demo ===\n");
     
-    spi_slave_init();
+   plain spi_slave_init();
     motor_init(4, nullptr);
     motor_disarm();
     ultrasonic_init();
